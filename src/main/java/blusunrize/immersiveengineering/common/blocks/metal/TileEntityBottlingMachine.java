@@ -1,14 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.crafting.BottlingMachineRecipe;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockBottlingMachine;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyReceiver;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,8 +19,19 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.crafting.BottlingMachineRecipe;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockBottlingMachine;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyReceiver;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class TileEntityBottlingMachine extends TileEntityMultiblockPart
-        implements ISidedInventory, IEnergyReceiver, IFluidHandler {
+    implements ISidedInventory, IEnergyReceiver, IFluidHandler {
+
     public int facing = 2;
     public EnergyStorage energyStorage = new EnergyStorage(16000);
     public ItemStack[] inventory = new ItemStack[5];
@@ -60,63 +62,49 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
         if (worldObj.isRemote || (computerControlled && !computerOn)) return;
         boolean update = false;
         int consumed = Config.getInt("bottlingMachine_consumption");
-        for (int i = 0; i < inventory.length; i++)
-            if (inventory[i] != null) {
-                if (this.energyStorage.extractEnergy(consumed, true) == consumed) {
-                    this.energyStorage.extractEnergy(consumed, false);
-                    if (process[i]++ <= 72) {
-                        ItemStack filled = getFilledItem(inventory[i], false);
-                        if (predictedOutput[i] == null || !OreDictionary.itemMatches(filled, predictedOutput[i], true))
-                            predictedOutput[i] = filled;
-                        if (process[i] == 1) update = true;
-                        if (filled != null && process[i] > 72)
-                            inventory[i] = getFilledItem(inventory[i], true).copy();
-                    }
-                }
-                if (process[i] > 120) {
-                    ItemStack output = inventory[i].copy();
-                    TileEntity invOutput = worldObj.getTileEntity(
-                            xCoord
-                                    + (facing == 4
-                                            ? 1
-                                            : facing == 5 ? -1 : ((mirrored ? -1 : 1) * (facing == 3 ? 1 : -1))),
-                            yCoord + 1,
-                            zCoord
-                                    + (facing == 2
-                                            ? 1
-                                            : facing == 3 ? -1 : ((mirrored ? -1 : 1) * (facing == 4 ? 1 : -1))));
-                    if ((invOutput instanceof ISidedInventory
-                                    && ((ISidedInventory) invOutput).getAccessibleSlotsFromSide(facing).length > 0)
-                            || (invOutput instanceof IInventory && ((IInventory) invOutput).getSizeInventory() > 0))
-                        output = Utils.insertStackIntoInventory((IInventory) invOutput, output, facing);
-
-                    if (output != null) {
-                        ForgeDirection fd = ForgeDirection.getOrientation(facing);
-                        EntityItem ei = new EntityItem(
-                                worldObj,
-                                xCoord
-                                        + .5
-                                        + (facing == 4
-                                                ? 1
-                                                : facing == 5 ? -1 : ((mirrored ? -1 : 1) * (facing == 3 ? 1 : -1))),
-                                yCoord + 1 + .25,
-                                zCoord
-                                        + .5
-                                        + (facing == 2
-                                                ? 1
-                                                : facing == 3 ? -1 : ((mirrored ? -1 : 1) * (facing == 4 ? 1 : -1))),
-                                output.copy());
-                        ei.motionX = (0.075F * fd.offsetX);
-                        ei.motionY = 0.025000000372529D;
-                        ei.motionZ = (0.075F * fd.offsetZ);
-                        this.worldObj.spawnEntityInWorld(ei);
-                    }
-                    process[i] = -1;
-                    inventory[i] = null;
-                    predictedOutput[i] = null;
-                    update = true;
+        for (int i = 0; i < inventory.length; i++) if (inventory[i] != null) {
+            if (this.energyStorage.extractEnergy(consumed, true) == consumed) {
+                this.energyStorage.extractEnergy(consumed, false);
+                if (process[i]++ <= 72) {
+                    ItemStack filled = getFilledItem(inventory[i], false);
+                    if (predictedOutput[i] == null || !OreDictionary.itemMatches(filled, predictedOutput[i], true))
+                        predictedOutput[i] = filled;
+                    if (process[i] == 1) update = true;
+                    if (filled != null && process[i] > 72) inventory[i] = getFilledItem(inventory[i], true).copy();
                 }
             }
+            if (process[i] > 120) {
+                ItemStack output = inventory[i].copy();
+                TileEntity invOutput = worldObj.getTileEntity(
+                    xCoord + (facing == 4 ? 1 : facing == 5 ? -1 : ((mirrored ? -1 : 1) * (facing == 3 ? 1 : -1))),
+                    yCoord + 1,
+                    zCoord + (facing == 2 ? 1 : facing == 3 ? -1 : ((mirrored ? -1 : 1) * (facing == 4 ? 1 : -1))));
+                if ((invOutput instanceof ISidedInventory
+                    && ((ISidedInventory) invOutput).getAccessibleSlotsFromSide(facing).length > 0)
+                    || (invOutput instanceof IInventory && ((IInventory) invOutput).getSizeInventory() > 0))
+                    output = Utils.insertStackIntoInventory((IInventory) invOutput, output, facing);
+
+                if (output != null) {
+                    ForgeDirection fd = ForgeDirection.getOrientation(facing);
+                    EntityItem ei = new EntityItem(
+                        worldObj,
+                        xCoord + .5
+                            + (facing == 4 ? 1 : facing == 5 ? -1 : ((mirrored ? -1 : 1) * (facing == 3 ? 1 : -1))),
+                        yCoord + 1 + .25,
+                        zCoord + .5
+                            + (facing == 2 ? 1 : facing == 3 ? -1 : ((mirrored ? -1 : 1) * (facing == 4 ? 1 : -1))),
+                        output.copy());
+                    ei.motionX = (0.075F * fd.offsetX);
+                    ei.motionY = 0.025000000372529D;
+                    ei.motionZ = (0.075F * fd.offsetZ);
+                    this.worldObj.spawnEntityInWorld(ei);
+                }
+                process[i] = -1;
+                inventory[i] = null;
+                predictedOutput[i] = null;
+                update = true;
+            }
+        }
 
         if (update) {
             this.markDirty();
@@ -126,15 +114,14 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
 
     public int getNextProcessID() {
         if (master() != null) return master().getNextProcessID();
-        for (int i = 0; i < inventory.length; i++)
-            if (inventory[i] == null) {
-                int lowestProcess = 200;
-                for (int j = 0; j < inventory.length; j++) {
-                    if (inventory[j] != null && process[j] < lowestProcess) lowestProcess = process[j];
-                }
-                if (lowestProcess == 200 || lowestProcess > 24) return i;
-                else return -1;
+        for (int i = 0; i < inventory.length; i++) if (inventory[i] == null) {
+            int lowestProcess = 200;
+            for (int j = 0; j < inventory.length; j++) {
+                if (inventory[j] != null && process[j] < lowestProcess) lowestProcess = process[j];
             }
+            if (lowestProcess == 200 || lowestProcess > 24) return i;
+            else return -1;
+        }
         return -1;
     }
 
@@ -146,8 +133,8 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
             return recipe.output;
         }
 
-        ItemStack filled =
-                FluidContainerRegistry.fillFluidContainer(new FluidStack(tank.getFluid(), Integer.MAX_VALUE), empty);
+        ItemStack filled = FluidContainerRegistry
+            .fillFluidContainer(new FluidStack(tank.getFluid(), Integer.MAX_VALUE), empty);
         FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(filled);
         if (filled != null && fs.amount <= tank.getFluidAmount()) {
             if (drainTank) tank.drain(fs.amount, true);
@@ -206,11 +193,9 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            if (pos == 4)
-                renderAABB = AxisAlignedBB.getBoundingBox(
-                        xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (pos == 4) renderAABB = AxisAlignedBB
+            .getBoundingBox(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 
@@ -222,16 +207,9 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
 
     @Override
     public float[] getBlockBounds() {
-        if (pos < 6) return new float[] {0, 0, 0, 1, 1, 1};
-        if (pos == 10)
-            return new float[] {
-                facing < 4 ? -.0625f : 0,
-                0,
-                facing > 3 ? -.0625f : 0,
-                facing < 4 ? 1.0625f : 1,
-                1,
-                facing > 3 ? 1.0625f : 1
-            };
+        if (pos < 6) return new float[] { 0, 0, 0, 1, 1, 1 };
+        if (pos == 10) return new float[] { facing < 4 ? -.0625f : 0, 0, facing > 3 ? -.0625f : 0,
+            facing < 4 ? 1.0625f : 1, 1, facing > 3 ? 1.0625f : 1 };
 
         float xMin = 0;
         float yMin = 0;
@@ -252,7 +230,7 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
         else if ((pos % 3 == 0 && ff == 3) || (pos % 3 == 2 && ff == 2)) xMin = .4375f;
         else if ((pos % 3 == 0 && ff == 2) || (pos % 3 == 2 && ff == 3)) xMax = .5625f;
 
-        return new float[] {xMin, yMin, zMin, xMax, yMax, zMax};
+        return new float[] { xMin, yMin, zMin, xMax, yMax, zMax };
     }
 
     @Override
@@ -268,45 +246,42 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
             int startY = master.yCoord;
             int startZ = master.zCoord;
 
-            for (int yy = 0; yy <= 1; yy++)
-                for (int zz = (f == 3 ? 0 : -1); zz <= (f == 2 ? 0 : 1); zz++)
-                    for (int xx = (f == 5 ? 0 : -1); xx <= (f == 4 ? 0 : 1); xx++) {
-                        ItemStack s = null;
-                        int prevPos = 0;
-                        TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (te instanceof TileEntityBottlingMachine) {
-                            s = ((TileEntityBottlingMachine) te).getOriginalBlock();
-                            prevPos = ((TileEntityBottlingMachine) te).pos;
-                            ((TileEntityBottlingMachine) te).formed = false;
+            for (int yy = 0; yy <= 1; yy++) for (int zz = (f == 3 ? 0 : -1); zz <= (f == 2 ? 0 : 1); zz++)
+                for (int xx = (f == 5 ? 0 : -1); xx <= (f == 4 ? 0 : 1); xx++) {
+                    ItemStack s = null;
+                    int prevPos = 0;
+                    TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                    if (te instanceof TileEntityBottlingMachine) {
+                        s = ((TileEntityBottlingMachine) te).getOriginalBlock();
+                        prevPos = ((TileEntityBottlingMachine) te).pos;
+                        ((TileEntityBottlingMachine) te).formed = false;
+                    }
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        s = this.getOriginalBlock();
+                    if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord) worldObj
+                            .spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                        else {
+                            if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                                worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                            worldObj.setBlock(
+                                startX + xx,
+                                startY + yy,
+                                startZ + zz,
+                                Block.getBlockFromItem(s.getItem()),
+                                s.getItemDamage(),
+                                0x3);
                         }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
-                            TileEntity tile = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                            if (tile instanceof TileEntityConveyorBelt) {
-                                int l = prevPos % 6 / 3;
-                                int w = prevPos % 3;
-                                int fExpected = l == 1
-                                        ? (w == 0 ? ForgeDirection.OPPOSITES[facing] : facing)
-                                        : w < 2 ? ForgeDirection.ROTATION_MATRIX[mirrored ? 0 : 1][facing] : facing;
-                                ((TileEntityConveyorBelt) tile).facing = fExpected;
-                            }
+                        TileEntity tile = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                        if (tile instanceof TileEntityConveyorBelt) {
+                            int l = prevPos % 6 / 3;
+                            int w = prevPos % 3;
+                            int fExpected = l == 1 ? (w == 0 ? ForgeDirection.OPPOSITES[facing] : facing)
+                                : w < 2 ? ForgeDirection.ROTATION_MATRIX[mirrored ? 0 : 1][facing] : facing;
+                            ((TileEntityConveyorBelt) tile).facing = fExpected;
                         }
                     }
+                }
         }
     }
 
@@ -331,12 +306,11 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
         TileEntityBottlingMachine master = master();
         if (master != null) return master.decrStackSize(slot, amount);
         ItemStack stack = getStackInSlot(slot);
-        if (stack != null)
-            if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-            else {
-                stack = stack.splitStack(amount);
-                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-            }
+        if (stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+        else {
+            stack = stack.splitStack(amount);
+            if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+        }
         this.markDirty();
         return stack;
     }
@@ -405,7 +379,7 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
         if (pos == 9) {
             int next = getNextProcessID();
             if (next == -1) return new int[0];
-            return new int[] {next};
+            return new int[] { next };
         }
         return new int[0];
     }
@@ -478,9 +452,9 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
 
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
-        return formed
-                && pos == 4
-                && from == ForgeDirection.getOrientation(facing).getOpposite();
+        return formed && pos == 4
+            && from == ForgeDirection.getOrientation(facing)
+                .getOpposite();
     }
 
     @Override
@@ -490,12 +464,14 @@ public class TileEntityBottlingMachine extends TileEntityMultiblockPart
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        if (pos == 4 && from == ForgeDirection.getOrientation(facing).getOpposite()) {
+        if (pos == 4 && from == ForgeDirection.getOrientation(facing)
+            .getOpposite()) {
             TileEntityBottlingMachine master = master();
-            return new FluidTankInfo[] {(master != null) ? master.tank.getInfo() : tank.getInfo()};
+            return new FluidTankInfo[] { (master != null) ? master.tank.getInfo() : tank.getInfo() };
         }
         return new FluidTankInfo[0];
     }
+
     // For computer support. These methods DON'T check whether they are running for the master tile entity
     public int getEmptyCannister(int id) throws IllegalArgumentException {
         int currId = -1;

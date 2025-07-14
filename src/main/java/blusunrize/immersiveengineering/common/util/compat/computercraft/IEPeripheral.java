@@ -1,13 +1,15 @@
 package blusunrize.immersiveengineering.common.util.compat.computercraft;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.EventHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public abstract class IEPeripheral implements IPeripheral {
+
     World w;
     int x, y, z;
 
@@ -19,7 +21,8 @@ public abstract class IEPeripheral implements IPeripheral {
     }
 
     protected TileEntity getTileEntity(Class<? extends TileEntity> type) {
-        boolean usePipeline = FMLCommonHandler.instance().getEffectiveSide() != Side.SERVER;
+        boolean usePipeline = FMLCommonHandler.instance()
+            .getEffectiveSide() != Side.SERVER;
         TileEntity te = usePipeline ? EventHandler.requestTE(w, x, y, z) : w.getTileEntity(x, y, z);
         if (te != null && type.isAssignableFrom(te.getClass())) return te;
         return null;

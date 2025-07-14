@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 4.1.1
  */
 public class ModelRelayHV extends ModelBase {
+
     public ModelRenderer Top;
     public ModelRenderer Insulator1;
     public ModelRenderer Insulator2;
@@ -75,6 +76,7 @@ public class ModelRelayHV extends ModelBase {
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
         this.Top.render(f5);
     }
+
     /**
      * This is a helper function from Tabula to set the rotation of model parts
      */

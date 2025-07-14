@@ -1,12 +1,14 @@
 package blusunrize.immersiveengineering.client.fx;
 
-import com.google.common.collect.ArrayListMultimap;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import com.google.common.collect.ArrayListMultimap;
+
 public abstract class EntityFXIEBase extends EntityFX {
+
     public static ArrayListMultimap<String, EntityFXIEBase> queuedRenders = ArrayListMultimap.create();
     public static ArrayListMultimap<String, EntityFXIEBase> queuedDepthIgnoringRenders = ArrayListMultimap.create();
 
@@ -72,28 +74,28 @@ public abstract class EntityFXIEBase extends EntityFX {
         tessellator.setBrightness(getBrightnessForRender(f7));
         tessellator.setColorRGBA_F(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
         tessellator.addVertexWithUV(
-                (double) (f11 - f3 * f10 - f6 * f10),
-                (double) (f12 - f4 * f10),
-                (double) (f13 - f5 * f10 - f7 * f10),
-                (double) f7,
-                (double) f9);
+            (double) (f11 - f3 * f10 - f6 * f10),
+            (double) (f12 - f4 * f10),
+            (double) (f13 - f5 * f10 - f7 * f10),
+            (double) f7,
+            (double) f9);
         tessellator.addVertexWithUV(
-                (double) (f11 - f3 * f10 + f6 * f10),
-                (double) (f12 + f4 * f10),
-                (double) (f13 - f5 * f10 + f7 * f10),
-                (double) f7,
-                (double) f8);
+            (double) (f11 - f3 * f10 + f6 * f10),
+            (double) (f12 + f4 * f10),
+            (double) (f13 - f5 * f10 + f7 * f10),
+            (double) f7,
+            (double) f8);
         tessellator.addVertexWithUV(
-                (double) (f11 + f3 * f10 + f6 * f10),
-                (double) (f12 + f4 * f10),
-                (double) (f13 + f5 * f10 + f7 * f10),
-                (double) f6,
-                (double) f8);
+            (double) (f11 + f3 * f10 + f6 * f10),
+            (double) (f12 + f4 * f10),
+            (double) (f13 + f5 * f10 + f7 * f10),
+            (double) f6,
+            (double) f8);
         tessellator.addVertexWithUV(
-                (double) (f11 + f3 * f10 - f6 * f10),
-                (double) (f12 - f4 * f10),
-                (double) (f13 + f5 * f10 - f7 * f10),
-                (double) f6,
-                (double) f9);
+            (double) (f11 + f3 * f10 - f6 * f10),
+            (double) (f12 - f4 * f10),
+            (double) (f13 + f5 * f10 - f7 * f10),
+            (double) f6,
+            (double) f9);
     }
 }

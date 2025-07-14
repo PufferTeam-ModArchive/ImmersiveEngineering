@@ -1,17 +1,20 @@
 package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import java.util.List;
+
+import net.minecraft.item.ItemStack;
+
+import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
 import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
-import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersiveengineering.CokeOven")
 public class CokeOven {
+
     @ZenMethod
     public static void addRecipe(IItemStack output, int fuelOutput, IIngredient input, int time) {
         Object oInput = MTHelper.toObject(input);
@@ -22,6 +25,7 @@ public class CokeOven {
     }
 
     private static class Add implements IUndoableAction {
+
         private final CokeOvenRecipe recipe;
 
         public Add(CokeOvenRecipe recipe) {
@@ -65,6 +69,7 @@ public class CokeOven {
     }
 
     private static class Remove implements IUndoableAction {
+
         private final ItemStack output;
         List<CokeOvenRecipe> removedRecipes;
 

@@ -3,6 +3,7 @@ package blusunrize.immersiveengineering.common.util.compat;
 import blusunrize.immersiveengineering.common.Config;
 
 public class ModCompatability {
+
     public static double convertRFtoEU(int rf, int maxTier) {
         return rf / (double) Config.getInt("euConversion");
     }

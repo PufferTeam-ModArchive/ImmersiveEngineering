@@ -1,13 +1,16 @@
 package blusunrize.immersiveengineering.client.gui;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.gui.ContainerDrill;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.world.World;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.gui.ContainerDrill;
+
 public class GuiDrill extends GuiContainer {
+
     public GuiDrill(InventoryPlayer inventoryPlayer, World world) {
         super(new ContainerDrill(inventoryPlayer, world));
     }

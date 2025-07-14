@@ -1,5 +1,15 @@
 package blusunrize.immersiveengineering.client.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices2;
@@ -15,16 +25,9 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityRedstoneBre
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.IBlockAccess;
-import org.lwjgl.opengl.GL11;
 
 public class BlockRenderMetalDevices2 implements ISimpleBlockRenderingHandler {
+
     public static int renderID = RenderingRegistry.getNextAvailableRenderId();
     public static int renderPass = 0;
     private static final TileEntityBlastFurnacePreheater heat = new TileEntityBlastFurnacePreheater();
@@ -61,15 +64,13 @@ public class BlockRenderMetalDevices2 implements ISimpleBlockRenderingHandler {
             } else if (metadata == BlockMetalDevices2.META_floodlight) {
                 Tessellator.instance.startDrawingQuads();
                 TileEntitySpecialRenderer tesr = TileEntityRendererDispatcher.instance.getSpecialRenderer(flood);
-                if (tesr instanceof TileRenderFloodlight)
-                    ((TileRenderFloodlight) tesr)
-                            .model.render(
-                                    flood,
-                                    Tessellator.instance,
-                                    new Matrix4().translate(0, .125, 0),
-                                    new Matrix4().rotate(Math.PI, 0, 1, 0),
-                                    0,
-                                    false);
+                if (tesr instanceof TileRenderFloodlight) ((TileRenderFloodlight) tesr).model.render(
+                    flood,
+                    Tessellator.instance,
+                    new Matrix4().translate(0, .125, 0),
+                    new Matrix4().rotate(Math.PI, 0, 1, 0),
+                    0,
+                    false);
                 Tessellator.instance.draw();
             } else if (metadata == BlockMetalDevices2.META_fluidPipe) {
                 Tessellator.instance.startDrawingQuads();
@@ -84,51 +85,51 @@ public class BlockRenderMetalDevices2 implements ISimpleBlockRenderingHandler {
                 Tessellator.instance.startDrawingQuads();
                 Tessellator.instance.setNormal(1.0F, 0.0F, 0.0F);
                 renderer.renderFaceXPos(
-                        IEContent.blockMetalDevice2,
-                        0,
-                        0,
-                        0,
-                        IEContent.blockMetalDevice2.getIcon(0, BlockMetalDevices2.META_fluidPump));
+                    IEContent.blockMetalDevice2,
+                    0,
+                    0,
+                    0,
+                    IEContent.blockMetalDevice2.getIcon(0, BlockMetalDevices2.META_fluidPump));
                 Tessellator.instance.draw();
 
                 Tessellator.instance.startDrawingQuads();
                 Tessellator.instance.setNormal(-1.0F, 0.0F, 0.0F);
                 renderer.renderFaceXNeg(
-                        IEContent.blockMetalDevice2,
-                        0,
-                        0,
-                        0,
-                        IEContent.blockMetalDevice2.getIcon(2, BlockMetalDevices2.META_fluidPump));
+                    IEContent.blockMetalDevice2,
+                    0,
+                    0,
+                    0,
+                    IEContent.blockMetalDevice2.getIcon(2, BlockMetalDevices2.META_fluidPump));
                 Tessellator.instance.draw();
 
                 Tessellator.instance.startDrawingQuads();
                 Tessellator.instance.setNormal(0.0F, 0.0F, 1.0F);
                 renderer.renderFaceZPos(
-                        IEContent.blockMetalDevice2,
-                        0,
-                        0,
-                        0,
-                        IEContent.blockMetalDevice2.getIcon(1, BlockMetalDevices2.META_fluidPump));
+                    IEContent.blockMetalDevice2,
+                    0,
+                    0,
+                    0,
+                    IEContent.blockMetalDevice2.getIcon(1, BlockMetalDevices2.META_fluidPump));
                 Tessellator.instance.draw();
 
                 Tessellator.instance.startDrawingQuads();
                 Tessellator.instance.setNormal(0.0F, 0.0F, -1.0F);
                 renderer.renderFaceZNeg(
-                        IEContent.blockMetalDevice2,
-                        0,
-                        0,
-                        0,
-                        IEContent.blockMetalDevice2.getIcon(0, BlockMetalDevices2.META_fluidPump));
+                    IEContent.blockMetalDevice2,
+                    0,
+                    0,
+                    0,
+                    IEContent.blockMetalDevice2.getIcon(0, BlockMetalDevices2.META_fluidPump));
                 Tessellator.instance.draw();
 
                 Tessellator.instance.startDrawingQuads();
                 Tessellator.instance.setNormal(0.0F, -1.0f, 0.0F);
                 renderer.renderFaceYNeg(
-                        IEContent.blockMetalDevice2,
-                        0,
-                        0,
-                        0,
-                        IEContent.blockMetalDevice2.getIcon(3, BlockMetalDevices2.META_fluidPump));
+                    IEContent.blockMetalDevice2,
+                    0,
+                    0,
+                    0,
+                    IEContent.blockMetalDevice2.getIcon(3, BlockMetalDevices2.META_fluidPump));
                 Tessellator.instance.draw();
 
                 Tessellator.instance.startDrawingQuads();
@@ -171,12 +172,11 @@ public class BlockRenderMetalDevices2 implements ISimpleBlockRenderingHandler {
     }
 
     @Override
-    public boolean renderWorldBlock(
-            IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId,
+        RenderBlocks renderer) {
         int metadata = world.getBlockMetadata(x, y, z);
-        if (renderPass == 0
-                || metadata == BlockMetalDevices2.META_floodlight
-                || metadata == BlockMetalDevices2.META_chargingStation)
+        if (renderPass == 0 || metadata == BlockMetalDevices2.META_floodlight
+            || metadata == BlockMetalDevices2.META_chargingStation)
             if (metadata == BlockMetalDevices2.META_breakerSwitch) {
                 TileEntityBreakerSwitch tile = (TileEntityBreakerSwitch) world.getTileEntity(x, y, z);
                 ClientUtils.handleStaticTileRenderer(tile);
@@ -209,7 +209,7 @@ public class BlockRenderMetalDevices2 implements ISimpleBlockRenderingHandler {
                     Block cover = Block.getBlockFromItem(tile.scaffoldCovering.getItem());
                     float f = .015625f;
                     AxisAlignedBB aabb = AxisAlignedBB.getBoundingBox(1 - f, 1 - f, 1 - f, f, f, f)
-                            .getOffsetBoundingBox(x, y, z);
+                        .getOffsetBoundingBox(x, y, z);
                     ClientUtils.drawWorldBlock(world, cover, x, y, z, tile.scaffoldCovering.getItemDamage());
                     ClientUtils.drawWorldBlock(world, cover, x, y, z, tile.scaffoldCovering.getItemDamage(), aabb);
                 }
@@ -219,36 +219,35 @@ public class BlockRenderMetalDevices2 implements ISimpleBlockRenderingHandler {
                 if (!tile.dummy) {
                     ClientUtils.handleStaticTileRenderer(tile);
                     renderer.renderFaceXPos(
-                            IEContent.blockMetalDevice2,
-                            x,
-                            y,
-                            z,
-                            IEContent.blockMetalDevice2.getIcon(tile.sideConfig[5], BlockMetalDevices2.META_fluidPump));
+                        IEContent.blockMetalDevice2,
+                        x,
+                        y,
+                        z,
+                        IEContent.blockMetalDevice2.getIcon(tile.sideConfig[5], BlockMetalDevices2.META_fluidPump));
                     renderer.renderFaceXNeg(
-                            IEContent.blockMetalDevice2,
-                            x,
-                            y,
-                            z,
-                            IEContent.blockMetalDevice2.getIcon(tile.sideConfig[4], BlockMetalDevices2.META_fluidPump));
+                        IEContent.blockMetalDevice2,
+                        x,
+                        y,
+                        z,
+                        IEContent.blockMetalDevice2.getIcon(tile.sideConfig[4], BlockMetalDevices2.META_fluidPump));
                     renderer.renderFaceZPos(
-                            IEContent.blockMetalDevice2,
-                            x,
-                            y,
-                            z,
-                            IEContent.blockMetalDevice2.getIcon(tile.sideConfig[3], BlockMetalDevices2.META_fluidPump));
+                        IEContent.blockMetalDevice2,
+                        x,
+                        y,
+                        z,
+                        IEContent.blockMetalDevice2.getIcon(tile.sideConfig[3], BlockMetalDevices2.META_fluidPump));
                     renderer.renderFaceZNeg(
-                            IEContent.blockMetalDevice2,
-                            x,
-                            y,
-                            z,
-                            IEContent.blockMetalDevice2.getIcon(tile.sideConfig[2], BlockMetalDevices2.META_fluidPump));
+                        IEContent.blockMetalDevice2,
+                        x,
+                        y,
+                        z,
+                        IEContent.blockMetalDevice2.getIcon(tile.sideConfig[2], BlockMetalDevices2.META_fluidPump));
                     renderer.renderFaceYNeg(
-                            IEContent.blockMetalDevice2,
-                            x,
-                            y,
-                            z,
-                            IEContent.blockMetalDevice2.getIcon(
-                                    3 + tile.sideConfig[0], BlockMetalDevices2.META_fluidPump));
+                        IEContent.blockMetalDevice2,
+                        x,
+                        y,
+                        z,
+                        IEContent.blockMetalDevice2.getIcon(3 + tile.sideConfig[0], BlockMetalDevices2.META_fluidPump));
                 }
 
                 return true;

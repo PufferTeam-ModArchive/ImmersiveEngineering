@@ -1,10 +1,13 @@
 package blusunrize.lib.manual;
 
-import blusunrize.lib.manual.gui.GuiManual;
-import com.google.common.collect.ArrayListMultimap;
 import net.minecraft.client.gui.FontRenderer;
 
+import com.google.common.collect.ArrayListMultimap;
+
+import blusunrize.lib.manual.gui.GuiManual;
+
 public abstract class ManualInstance {
+
     public FontRenderer fontRenderer;
     public String texture;
 
@@ -57,6 +60,7 @@ public abstract class ManualInstance {
     }
 
     public static class ManualEntry {
+
         String name;
         String category;
         IManualPage[] pages;

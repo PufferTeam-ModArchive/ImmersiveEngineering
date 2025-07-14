@@ -3,7 +3,8 @@ package blusunrize.immersiveengineering.common.blocks.wooden;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class TileEntityWindmillAdvanced extends TileEntityWindmill {
-    public byte[] dye = new byte[] {15, 15, 15, 15, 15, 15, 15, 15};
+
+    public byte[] dye = new byte[] { 15, 15, 15, 15, 15, 15, 15, 15 };
 
     @Override
     protected float getSpeedModifier() {

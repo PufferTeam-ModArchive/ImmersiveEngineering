@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ChestContainer {
+
     // Set to true if the Inventory Tweaks sorting buttons should be shown for this container.
     boolean showButtons() default true;
 

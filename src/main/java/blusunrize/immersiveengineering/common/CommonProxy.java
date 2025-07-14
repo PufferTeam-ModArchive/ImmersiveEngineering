@@ -1,5 +1,15 @@
 package blusunrize.immersiveengineering.common;
 
+import java.util.UUID;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+import com.mojang.authlib.GameProfile;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityArcFurnace;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityAssembler;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBucketWheel;
@@ -27,16 +37,10 @@ import blusunrize.immersiveengineering.common.gui.ContainerToolbox;
 import blusunrize.immersiveengineering.common.items.ItemRevolver;
 import blusunrize.immersiveengineering.common.items.ItemToolbox;
 import blusunrize.immersiveengineering.common.util.Lib;
-import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.network.IGuiHandler;
-import java.util.UUID;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class CommonProxy implements IGuiHandler {
+
     public void init() {}
 
     @Override
@@ -46,9 +50,9 @@ public class CommonProxy implements IGuiHandler {
             return new ContainerCokeOven(player.inventory, (TileEntityCokeOven) te);
         if (ID == Lib.GUIID_BlastFurnace && te instanceof TileEntityBlastFurnace)
             return new ContainerBlastFurnace(player.inventory, (TileEntityBlastFurnace) te);
-        if (ID == Lib.GUIID_Revolver
-                && player.getCurrentEquippedItem() != null
-                && player.getCurrentEquippedItem().getItem() instanceof ItemRevolver)
+        if (ID == Lib.GUIID_Revolver && player.getCurrentEquippedItem() != null
+            && player.getCurrentEquippedItem()
+                .getItem() instanceof ItemRevolver)
             return new ContainerRevolver(player.inventory, world);
         if (ID == Lib.GUIID_WoodenCrate && te instanceof TileEntityWoodenCrate)
             return new ContainerCrate(player.inventory, (TileEntityWoodenCrate) te);
@@ -60,18 +64,18 @@ public class CommonProxy implements IGuiHandler {
             return new ContainerSorter(player.inventory, (TileEntityConveyorSorter) te);
         if (ID == Lib.GUIID_Refinery && te instanceof TileEntityRefinery)
             return new ContainerRefinery(player.inventory, (TileEntityRefinery) te);
-        //		if(ID==Lib.GUIID_Workbench && player.getCurrentEquippedItem()!=null &&
+        // if(ID==Lib.GUIID_Workbench && player.getCurrentEquippedItem()!=null &&
         // player.getCurrentEquippedItem().getItem() instanceof ItemDrill)
-        //			return new ContainerDrill(player.inventory, world);
+        // return new ContainerDrill(player.inventory, world);
         if (ID == Lib.GUIID_Workbench && te instanceof TileEntityModWorkbench)
             return new ContainerModWorkbench(player.inventory, (TileEntityModWorkbench) te);
         if (ID == Lib.GUIID_ArcFurnace && te instanceof TileEntityArcFurnace)
             return new ContainerArcFurnace(player.inventory, (TileEntityArcFurnace) te);
         if (ID == Lib.GUIID_Assembler && te instanceof TileEntityAssembler)
             return new ContainerAssembler(player.inventory, (TileEntityAssembler) te);
-        if (ID == Lib.GUIID_Toolbox
-                && player.getCurrentEquippedItem() != null
-                && player.getCurrentEquippedItem().getItem() instanceof ItemToolbox)
+        if (ID == Lib.GUIID_Toolbox && player.getCurrentEquippedItem() != null
+            && player.getCurrentEquippedItem()
+                .getItem() instanceof ItemToolbox)
             return new ContainerToolbox(player.inventory, world);
         return null;
     }
@@ -95,23 +99,13 @@ public class CommonProxy implements IGuiHandler {
 
     public void spawnSparkFX(World world, double x, double y, double z, double mx, double my, double mz) {}
 
-    public void spawnRedstoneFX(
-            World world,
-            double x,
-            double y,
-            double z,
-            double mx,
-            double my,
-            double mz,
-            float size,
-            float r,
-            float g,
-            float b) {}
+    public void spawnRedstoneFX(World world, double x, double y, double z, double mx, double my, double mz, float size,
+        float r, float g, float b) {}
 
     public void draw3DBlockCauldron() {}
 
     public String[] splitStringOnWidth(String s, int w) {
-        return new String[] {s};
+        return new String[] { s };
     }
 
     public World getClientWorld() {
@@ -120,13 +114,12 @@ public class CommonProxy implements IGuiHandler {
 
     public String getNameFromUUID(String uuid) {
         return MinecraftServer.getServer()
-                .func_147130_as()
-                .fillProfileProperties(
-                        new GameProfile(
-                                UUID.fromString(
-                                        uuid.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5")),
-                                null),
-                        false)
-                .getName();
+            .func_147130_as()
+            .fillProfileProperties(
+                new GameProfile(
+                    UUID.fromString(uuid.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5")),
+                    null),
+                false)
+            .getName();
     }
 }

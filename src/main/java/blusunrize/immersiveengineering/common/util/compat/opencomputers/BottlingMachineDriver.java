@@ -2,18 +2,20 @@ package blusunrize.immersiveengineering.common.util.compat.opencomputers;
 
 import static blusunrize.immersiveengineering.common.util.Utils.saveStack;
 
+import java.util.Map;
+
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBottlingMachine;
 import blusunrize.immersiveengineering.common.util.Utils;
-import java.util.Map;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.prefab.DriverTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class BottlingMachineDriver extends DriverTileEntity {
 
@@ -26,11 +28,11 @@ public class BottlingMachineDriver extends DriverTileEntity {
             if (offsetY == 0 && pos != 0 && pos != 2) {
                 TileEntityBottlingMachine bottle = (TileEntityBottlingMachine) te;
                 return new BottlingMachineEnvironment(
-                        w,
-                        bottle.xCoord - bottle.offset[0],
-                        bottle.yCoord - bottle.offset[1],
-                        bottle.zCoord - bottle.offset[2],
-                        TileEntityBottlingMachine.class);
+                    w,
+                    bottle.xCoord - bottle.offset[0],
+                    bottle.yCoord - bottle.offset[1],
+                    bottle.zCoord - bottle.offset[2],
+                    TileEntityBottlingMachine.class);
             }
         }
         return null;
@@ -74,7 +76,7 @@ public class BottlingMachineDriver extends DriverTileEntity {
 
         @Callback(doc = "function():table -- returns the internal fluid tank")
         public Object[] getFluid(Context context, Arguments args) {
-            return new Object[] {Utils.saveFluidTank(getTileEntity().tank)};
+            return new Object[] { Utils.saveFluidTank(getTileEntity().tank) };
         }
 
         @Callback(doc = "function(pos:int):table -- returns the empty cannister at the specified position")
@@ -85,13 +87,13 @@ public class BottlingMachineDriver extends DriverTileEntity {
             int id = master.getEmptyCannister(param - 1);
             Map<String, Object> map = saveStack(master.inventory[id]);
             map.put("process", master.process[id]);
-            return new Object[] {map};
+            return new Object[] { map };
         }
 
         @Callback(doc = "function():int -- returns amount of empty cannisters")
         public Object[] getEmptyCannisterCount(Context context, Arguments args) {
             TileEntityBottlingMachine master = getTileEntity();
-            return new Object[] {master.getEmptyCount()};
+            return new Object[] { master.getEmptyCount() };
         }
 
         @Callback(doc = "function(pos:int):table -- returns the filled cannister at the specified position")
@@ -102,13 +104,13 @@ public class BottlingMachineDriver extends DriverTileEntity {
             int id = master.getFilledCannister(param - 1);
             Map<String, Object> map = saveStack(master.inventory[id]);
             map.put("process", master.process[id]);
-            return new Object[] {map};
+            return new Object[] { map };
         }
 
         @Callback(doc = "function():int -- returns the amount of filled cannisters")
         public Object[] getFilledCannisterCount(Context context, Arguments args) {
             TileEntityBottlingMachine master = getTileEntity();
-            return new Object[] {master.getFilledCount()};
+            return new Object[] { master.getFilledCount() };
         }
 
         @Callback(doc = "function(on:boolean) -- turns the bottling machine on or off")
@@ -120,12 +122,12 @@ public class BottlingMachineDriver extends DriverTileEntity {
 
         @Callback(doc = "function():int -- returns the maximum amount of energy that can be stored")
         public Object[] getMaxEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().energyStorage.getMaxEnergyStored()};
+            return new Object[] { getTileEntity().energyStorage.getMaxEnergyStored() };
         }
 
         @Callback(doc = "function():int -- returns the amount of energy stored")
         public Object[] getEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().energyStorage.getEnergyStored()};
+            return new Object[] { getTileEntity().energyStorage.getEnergyStored() };
         }
     }
 }

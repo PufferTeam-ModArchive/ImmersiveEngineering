@@ -1,19 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.IPostBlock;
-import blusunrize.immersiveengineering.client.render.BlockRenderMetalDevices;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -36,9 +25,23 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.api.IPostBlock;
+import blusunrize.immersiveengineering.client.render.BlockRenderMetalDevices;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 // @Optional.Interface(iface = "blusunrize.aquatweaks.api.IAquaConnectable", modid = "AquaTweaks")
 public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aquatweaks.api.IAquaConnectable
 {
+
     public IIcon[][] icon_capacitorTop = new IIcon[3][3];
     public IIcon[][] icon_capacitorBot = new IIcon[3][3];
     public IIcon[][] icon_capacitorSide = new IIcon[3][3];
@@ -63,26 +66,26 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
 
     public BlockMetalDevices() {
         super(
-                "metalDevice",
-                Material.iron,
-                4,
-                ItemBlockMetalDevices.class,
-                "connectorLV",
-                "capacitorLV",
-                "connectorMV",
-                "capacitorMV",
-                "transformer",
-                "relayHV",
-                "connectorHV",
-                "capacitorHV",
-                "transformerHV",
-                "dynamo",
-                "thermoelectricGen",
-                "conveyorBelt",
-                "furnaceHeater",
-                "sorter",
-                "sampleDrill",
-                "conveyorDropper");
+            "metalDevice",
+            Material.iron,
+            4,
+            ItemBlockMetalDevices.class,
+            "connectorLV",
+            "capacitorLV",
+            "connectorMV",
+            "capacitorMV",
+            "transformer",
+            "relayHV",
+            "connectorHV",
+            "capacitorHV",
+            "transformerHV",
+            "dynamo",
+            "thermoelectricGen",
+            "conveyorBelt",
+            "furnaceHeater",
+            "sorter",
+            "sampleDrill",
+            "conveyorDropper");
         setHardness(3.0F);
         setResistance(15.0F);
         this.setMetaLightOpacity(META_capacitorLV, 255);
@@ -106,9 +109,8 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof TileEntityCapacitorLV) {
             ItemStack stack = new ItemStack(this, 1, world.getBlockMetadata(x, y, z));
-            if (((TileEntityCapacitorLV) te).energyStorage.getEnergyStored() > 0)
-                ItemNBTHelper.setInt(
-                        stack, "energyStorage", ((TileEntityCapacitorLV) te).energyStorage.getEnergyStored());
+            if (((TileEntityCapacitorLV) te).energyStorage.getEnergyStored() > 0) ItemNBTHelper
+                .setInt(stack, "energyStorage", ((TileEntityCapacitorLV) te).energyStorage.getEnergyStored());
             int[] sides = ((TileEntityCapacitorLV) te).sideConfig;
             ItemNBTHelper.setIntArray(stack, "sideConfig", sides);
             return stack;
@@ -119,16 +121,14 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
     @Override
     public void onBlockHarvested(World world, int x, int y, int z, int meta, EntityPlayer player) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (!world.isRemote
-                && te instanceof TileEntityCapacitorLV
-                && player != null
-                && !player.capabilities.isCreativeMode) {
+        if (!world.isRemote && te instanceof TileEntityCapacitorLV
+            && player != null
+            && !player.capabilities.isCreativeMode) {
             ItemStack stack = new ItemStack(this, 1, meta);
-            if (((TileEntityCapacitorLV) te).energyStorage.getEnergyStored() > 0)
-                ItemNBTHelper.setInt(
-                        stack, "energyStorage", ((TileEntityCapacitorLV) te).energyStorage.getEnergyStored());
+            if (((TileEntityCapacitorLV) te).energyStorage.getEnergyStored() > 0) ItemNBTHelper
+                .setInt(stack, "energyStorage", ((TileEntityCapacitorLV) te).energyStorage.getEnergyStored());
             int[] sides = ((TileEntityCapacitorLV) te).sideConfig;
-            //			if(sides[0]!=-1 || sides[1]!=0||sides[2]!=0||sides[3]!=0||sides[4]!=0||sides[5]!=0)
+            // if(sides[0]!=-1 || sides[1]!=0||sides[2]!=0||sides[3]!=0||sides[4]!=0||sides[5]!=0)
             ItemNBTHelper.setIntArray(stack, "sideConfig", sides);
             world.spawnEntityInWorld(new EntityItem(world, x + .5, y + .5, z + .5, stack));
         }
@@ -152,9 +152,8 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof TileEntityCapacitorLV) {
             TileEntityCapacitorLV capacitor = (TileEntityCapacitorLV) te;
-            return (int) (15
-                    * (capacitor.getEnergyStored(ForgeDirection.getOrientation(side))
-                            / (float) capacitor.getMaxEnergyStored(ForgeDirection.getOrientation(side))));
+            return (int) (15 * (capacitor.getEnergyStored(ForgeDirection.getOrientation(side))
+                / (float) capacitor.getMaxEnergyStored(ForgeDirection.getOrientation(side))));
         }
         return 0;
     }
@@ -166,13 +165,11 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
             if (i == META_capacitorLV || i == META_capacitorMV || i == META_capacitorHV) {
                 ItemStack stack = new ItemStack(item, 1, i);
                 ItemNBTHelper.setInt(
-                        stack,
-                        "energyStorage",
-                        i == META_capacitorLV
-                                ? Config.getInt("capacitorLV_storage")
-                                : i == META_capacitorMV
-                                        ? Config.getInt("capacitorMV_storage")
-                                        : Config.getInt("capacitorHV_storage"));
+                    stack,
+                    "energyStorage",
+                    i == META_capacitorLV ? Config.getInt("capacitorLV_storage")
+                        : i == META_capacitorMV ? Config.getInt("capacitorMV_storage")
+                            : Config.getInt("capacitorHV_storage"));
                 list.add(stack);
             }
         }
@@ -280,9 +277,8 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
                 return IEContent.blockStorage.getIcon(0, 7);
             if (((TileEntityDynamo) te).facing > 3 && side > 1) return icons[META_dynamo][side < 4 ? 3 : 2];
         }
-        if (te instanceof TileEntityConveyorBelt
-                && (((TileEntityConveyorBelt) te).facing == side
-                        || ((TileEntityConveyorBelt) te).facing == ForgeDirection.OPPOSITES[side])) {
+        if (te instanceof TileEntityConveyorBelt && (((TileEntityConveyorBelt) te).facing == side
+            || ((TileEntityConveyorBelt) te).facing == ForgeDirection.OPPOSITES[side])) {
             if (((TileEntityConveyorBelt) te).dropping) return icons[META_conveyorDropper][1];
             else return icons[META_conveyorBelt][1];
         }
@@ -318,8 +314,8 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
     }
 
     @Override
-    public boolean onBlockActivated(
-            World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
+        float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof TileEntityCapacitorLV && Utils.isHammer(player.getCurrentEquippedItem())) {
             if (player.isSneaking()) side = ForgeDirection.OPPOSITES[side];
@@ -382,29 +378,30 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
                 int chunkZ = (z >> 4);
                 String s0 = (chunkX * 16) + ", " + (chunkZ * 16);
                 String s1 = (chunkX * 16 + 16) + ", " + (chunkZ * 16 + 16);
-                player.addChatMessage(new ChatComponentTranslation(Lib.CHAT_INFO + "forChunk", s0, s1)
+                player.addChatMessage(
+                    new ChatComponentTranslation(Lib.CHAT_INFO + "forChunk", s0, s1)
                         .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.DARK_GRAY)));
                 if (!drill.isSamplingFinished()) {
                     float f = drill.getSampleProgress();
                     player.addChatMessage(
-                            new ChatComponentTranslation(Lib.CHAT_INFO + "coreDrill.progress", (int) (f * 100) + "%")
-                                    .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GRAY)));
+                        new ChatComponentTranslation(Lib.CHAT_INFO + "coreDrill.progress", (int) (f * 100) + "%")
+                            .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GRAY)));
                 } else {
                     String mineralName = drill.getVeinLocalizedName();
-                    if (mineralName == null)
-                        player.addChatMessage(new ChatComponentTranslation(Lib.CHAT_INFO + "coreDrill.result.none")
-                                .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GRAY)));
+                    if (mineralName == null) player.addChatMessage(
+                        new ChatComponentTranslation(Lib.CHAT_INFO + "coreDrill.result.none")
+                            .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GRAY)));
                     else {
                         float veinIntegrity = drill.getVeinIntegrity();
                         if (veinIntegrity < 0)
                             mineralName = StatCollector.translateToLocal(Lib.CHAT_INFO + "coreDrill.infinite") + " "
-                                    + mineralName;
+                                + mineralName;
                         player.addChatMessage(
-                                new ChatComponentTranslation(Lib.CHAT_INFO + "coreDrill.result.mineral", mineralName));
+                            new ChatComponentTranslation(Lib.CHAT_INFO + "coreDrill.result.mineral", mineralName));
                         if (veinIntegrity > 0) {
                             String f = Utils.formatDouble(veinIntegrity * 100, "0.##") + "%";
                             player.addChatMessage(
-                                    new ChatComponentTranslation(Lib.CHAT_INFO + "coreDrill.result.depl", f));
+                                new ChatComponentTranslation(Lib.CHAT_INFO + "coreDrill.result.depl", f));
                         }
                     }
                 }
@@ -419,9 +416,8 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof TileEntityConnectorLV) {
-            float length = te instanceof TileEntityRelayHV
-                    ? .875f
-                    : te instanceof TileEntityConnectorHV ? .75f : te instanceof TileEntityConnectorMV ? .5625f : .5f;
+            float length = te instanceof TileEntityRelayHV ? .875f
+                : te instanceof TileEntityConnectorHV ? .75f : te instanceof TileEntityConnectorMV ? .5625f : .5f;
 
             switch (((TileEntityConnectorLV) te).facing) {
                 case 0: // UP
@@ -469,7 +465,7 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
     @Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
         if (world.getBlockMetadata(x, y, z) == META_conveyorBelt
-                || world.getBlockMetadata(x, y, z) == META_conveyorDropper)
+            || world.getBlockMetadata(x, y, z) == META_conveyorDropper)
             return AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + .05, z + 1);
         this.setBlockBoundsBasedOnState(world, x, y, z);
         return super.getCollisionBoundingBoxFromPool(world, x, y, z);
@@ -553,20 +549,18 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
             int postX = x + (transf.postAttached == 4 ? 1 : transf.postAttached == 5 ? -1 : 0);
             int postZ = z + (transf.postAttached == 2 ? 1 : transf.postAttached == 3 ? -1 : 0);
             Block blockPost = world.getBlock(postX, y, postZ);
-            if (transf.postAttached > 0
-                    && !(blockPost instanceof IPostBlock
-                            && ((IPostBlock) blockPost).canConnectTransformer(world, postX, y, postZ))) {
+            if (transf.postAttached > 0 && !(blockPost instanceof IPostBlock
+                && ((IPostBlock) blockPost).canConnectTransformer(world, postX, y, postZ))) {
                 this.dropBlockAsItem(world, x, y, z, new ItemStack(this, 1, world.getBlockMetadata(x, y, z)));
                 world.setBlockToAir(x, y, z);
-            } else if (transf.postAttached <= 0
-                    && ((transf.dummy && world.isAirBlock(x, y + 1, z))
-                            || (!transf.dummy && world.isAirBlock(x, y - 1, z)))) world.setBlockToAir(x, y, z);
+            } else if (transf.postAttached <= 0 && ((transf.dummy && world.isAirBlock(x, y + 1, z))
+                || (!transf.dummy && world.isAirBlock(x, y - 1, z)))) world.setBlockToAir(x, y, z);
         }
         if (te instanceof TileEntitySampleDrill) {
             TileEntitySampleDrill drill = (TileEntitySampleDrill) te;
             if ((drill.pos == 0 && (world.isAirBlock(x, y + 1, z) || world.isAirBlock(x, y + 2, z)))
-                    || (drill.pos == 1 && (world.isAirBlock(x, y - 1, z) || world.isAirBlock(x, y + 1, z)))
-                    || (drill.pos == 2 && (world.isAirBlock(x, y - 1, z) || world.isAirBlock(x, y - 2, z))))
+                || (drill.pos == 1 && (world.isAirBlock(x, y - 1, z) || world.isAirBlock(x, y + 1, z)))
+                || (drill.pos == 2 && (world.isAirBlock(x, y - 1, z) || world.isAirBlock(x, y - 2, z))))
                 world.setBlockToAir(x, y, z);
         }
     }
@@ -574,14 +568,14 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
     @Override
     public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity par5Entity) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (par5Entity != null
-                && te instanceof TileEntityConveyorBelt
-                && !par5Entity.isDead
-                && !(par5Entity instanceof EntityPlayer && ((EntityPlayer) par5Entity).isSneaking())) {
+        if (par5Entity != null && te instanceof TileEntityConveyorBelt
+            && !par5Entity.isDead
+            && !(par5Entity instanceof EntityPlayer && ((EntityPlayer) par5Entity).isSneaking())) {
             if (world.isBlockIndirectlyGettingPowered(x, y, z)) return;
             TileEntityConveyorBelt tile = (TileEntityConveyorBelt) te;
             int f = tile.facing;
-            ForgeDirection fd = ForgeDirection.getOrientation(f).getOpposite();
+            ForgeDirection fd = ForgeDirection.getOrientation(f)
+                .getOpposite();
             double vBase = 1.15;
             double vX = 0.1 * vBase * fd.offsetX;
             double vY = par5Entity.motionY;
@@ -592,23 +586,23 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
 
             if (tile.transportUp || tile.transportDown) par5Entity.onGround = false;
 
-            //			if(par5Entity instanceof EntityItem)
+            // if(par5Entity instanceof EntityItem)
             if (fd == ForgeDirection.WEST || fd == ForgeDirection.EAST) {
                 if (par5Entity.posZ > z + 0.65D) vZ = -0.1D * vBase;
                 else if (par5Entity.posZ < z + 0.35D) vZ = 0.1D * vBase;
-                //				else
-                //				{
-                //					vZ = 0;
-                //					par5Entity.posZ=z+.5;
-                //				}
+                // else
+                // {
+                // vZ = 0;
+                // par5Entity.posZ=z+.5;
+                // }
             } else if (fd == ForgeDirection.NORTH || fd == ForgeDirection.SOUTH) {
                 if (par5Entity.posX > x + 0.65D) vX = -0.1D * vBase;
                 else if (par5Entity.posX < x + 0.35D) vX = 0.1D * vBase;
-                //				else
-                //				{
-                //					vX = 0;
-                //					par5Entity.posX=x+.5;
-                //				}
+                // else
+                // {
+                // vX = 0;
+                // par5Entity.posX=x+.5;
+                // }
             }
 
             par5Entity.motionX = vX;
@@ -619,41 +613,40 @@ public class BlockMetalDevices extends BlockIEBase // implements blusunrize.aqua
                 boolean dropping = ((TileEntityConveyorBelt) te).dropping;
                 if (dropping) {
                     te = world.getTileEntity(x, y - 1, z);
-                    contact = (f == 2) && (par5Entity.posZ - z >= .2)
-                            || (f == 3) && (par5Entity.posZ - z <= .8)
-                            || (f == 4) && (par5Entity.posX - x >= .2)
-                            || (f == 5) && (par5Entity.posX - x <= .8);
+                    contact = (f == 2) && (par5Entity.posZ - z >= .2) || (f == 3) && (par5Entity.posZ - z <= .8)
+                        || (f == 4) && (par5Entity.posX - x >= .2)
+                        || (f == 5) && (par5Entity.posX - x <= .8);
                     fd = ForgeDirection.DOWN;
                 } else {
                     te = world.getTileEntity(
-                            x + fd.offsetX, y + (tile.transportUp ? 1 : tile.transportDown ? -1 : 0), z + fd.offsetZ);
-                    contact = f == 3
-                            ? (par5Entity.posZ - z <= .2)
-                            : f == 2
-                                    ? (par5Entity.posZ - z >= .8)
-                                    : f == 5 ? (par5Entity.posX - x <= .2) : (par5Entity.posX - x >= .8);
+                        x + fd.offsetX,
+                        y + (tile.transportUp ? 1 : tile.transportDown ? -1 : 0),
+                        z + fd.offsetZ);
+                    contact = f == 3 ? (par5Entity.posZ - z <= .2)
+                        : f == 2 ? (par5Entity.posZ - z >= .8)
+                            : f == 5 ? (par5Entity.posX - x <= .2) : (par5Entity.posX - x >= .8);
                 }
                 if (!contact) ((EntityItem) par5Entity).age = 0;
-                if (!world.isRemote)
-                    if (contact && te instanceof IInventory) {
-                        IInventory inv = (IInventory) te;
-                        if (!(inv instanceof TileEntityConveyorBelt)) {
-                            ItemStack stack = ((EntityItem) par5Entity).getEntityItem();
-                            if (stack != null) {
-                                ItemStack ret = Utils.insertStackIntoInventory(
-                                        inv, stack.copy(), fd.getOpposite().ordinal());
-                                if (ret == null) par5Entity.setDead();
-                                else if (ret.stackSize < stack.stackSize)
-                                    ((EntityItem) par5Entity).setEntityItemStack(ret);
-                            }
+                if (!world.isRemote) if (contact && te instanceof IInventory) {
+                    IInventory inv = (IInventory) te;
+                    if (!(inv instanceof TileEntityConveyorBelt)) {
+                        ItemStack stack = ((EntityItem) par5Entity).getEntityItem();
+                        if (stack != null) {
+                            ItemStack ret = Utils.insertStackIntoInventory(
+                                inv,
+                                stack.copy(),
+                                fd.getOpposite()
+                                    .ordinal());
+                            if (ret == null) par5Entity.setDead();
+                            else if (ret.stackSize < stack.stackSize) ((EntityItem) par5Entity).setEntityItemStack(ret);
                         }
                     }
+                }
 
-                if (dropping
-                        && contact
-                        && !(te instanceof IInventory)
-                        && world.isAirBlock(x, y - 1, z)
-                        && !world.isRemote) {
+                if (dropping && contact
+                    && !(te instanceof IInventory)
+                    && world.isAirBlock(x, y - 1, z)
+                    && !world.isRemote) {
                     par5Entity.motionX = 0;
                     par5Entity.motionZ = 0;
                     par5Entity.setPosition(x + .5, y - .5, z + .5);

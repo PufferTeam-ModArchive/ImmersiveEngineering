@@ -1,7 +1,5 @@
 package blusunrize.immersiveengineering.common.entities;
 
-import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
-import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,7 +12,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
+import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
+import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect;
+
 public class EntityChemthrowerShot extends EntityIEProjectile {
+
     private Fluid fluid;
     static final int dataMarker_fluid = 13;
 
@@ -22,8 +24,8 @@ public class EntityChemthrowerShot extends EntityIEProjectile {
         super(world);
     }
 
-    public EntityChemthrowerShot(
-            World world, double x, double y, double z, double ax, double ay, double az, Fluid fluid) {
+    public EntityChemthrowerShot(World world, double x, double y, double z, double ax, double ay, double az,
+        Fluid fluid) {
         super(world, x, y, z, ax, ay, az);
         this.fluid = fluid;
         this.setFluidSynced();
@@ -108,18 +110,18 @@ public class EntityChemthrowerShot extends EntityIEProjectile {
         }
     }
 
-    //	@Override
-    //	protected void writeEntityToNBT(NBTTagCompound nbt)
-    //	{
-    //		super.writeEntityToNBT(nbt);
-    //		if(this.fluid!=null)
-    //			nbt.setString("fluid", this.fluid.getName());
-    //	}
+    // @Override
+    // protected void writeEntityToNBT(NBTTagCompound nbt)
+    // {
+    // super.writeEntityToNBT(nbt);
+    // if(this.fluid!=null)
+    // nbt.setString("fluid", this.fluid.getName());
+    // }
     //
-    //	@Override
-    //	protected void readEntityFromNBT(NBTTagCompound nbt)
-    //	{
-    //		super.readEntityFromNBT(nbt);
-    //		this.fluid = FluidRegistry.getFluid(nbt.getString("fluid"));
-    //	}
+    // @Override
+    // protected void readEntityFromNBT(NBTTagCompound nbt)
+    // {
+    // super.readEntityFromNBT(nbt);
+    // this.fluid = FluidRegistry.getFluid(nbt.getString("fluid"));
+    // }
 }

@@ -1,13 +1,15 @@
 package blusunrize.immersiveengineering.common.util.compat;
 
-import blusunrize.immersiveengineering.common.IERecipes;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import blusunrize.immersiveengineering.common.IERecipes;
+import cpw.mods.fml.common.registry.GameRegistry;
+
 public class AppliedEnergisticsHelper extends IECompatModule {
+
     @Override
     public void preInit() {}
 

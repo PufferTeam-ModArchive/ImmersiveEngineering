@@ -1,37 +1,35 @@
 package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 
-import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import java.util.List;
+
+import net.minecraft.item.ItemStack;
+
+import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
 import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
-import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersiveengineering.Crusher")
 public class Crusher {
+
     @ZenMethod
-    public static void addRecipe(
-            IItemStack output,
-            IIngredient input,
-            int energy,
-            @Optional IItemStack secondaryOutput,
-            @Optional double secondaryChance) {
+    public static void addRecipe(IItemStack output, IIngredient input, int energy, @Optional IItemStack secondaryOutput,
+        @Optional double secondaryChance) {
         Object oInput = MTHelper.toObject(input);
         if (oInput == null) {
             MineTweakerAPI.getLogger()
-                    .logError("Did not add crusher recipe for " + output.getDisplayName() + ", input was null");
+                .logError("Did not add crusher recipe for " + output.getDisplayName() + ", input was null");
             return;
         }
 
         CrusherRecipe r = new CrusherRecipe(MTHelper.toStack(output), oInput, energy);
         if (r.input == null) {
             MineTweakerAPI.getLogger()
-                    .logError(
-                            "Did not add crusher recipe for " + output.getDisplayName() + ", converted input was null");
+                .logError("Did not add crusher recipe for " + output.getDisplayName() + ", converted input was null");
             return;
         }
         if (secondaryOutput != null) r.addToSecondaryOutput(MTHelper.toStack(secondaryOutput), (float) secondaryChance);
@@ -39,6 +37,7 @@ public class Crusher {
     }
 
     private static class Add implements IUndoableAction {
+
         private final CrusherRecipe recipe;
 
         public Add(CrusherRecipe recipe) {
@@ -82,6 +81,7 @@ public class Crusher {
     }
 
     private static class Remove implements IUndoableAction {
+
         private final ItemStack output;
         List<CrusherRecipe> removedRecipes;
 

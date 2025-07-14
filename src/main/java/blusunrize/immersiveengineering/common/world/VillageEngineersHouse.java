@@ -1,14 +1,9 @@
 package blusunrize.immersiveengineering.common.world;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDecoration;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityLantern;
-import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenCrate;
-import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
@@ -26,14 +21,22 @@ import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Start;
 import net.minecraftforge.common.ChestGenHooks;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDecoration;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityLantern;
+import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenCrate;
+import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
+
 public class VillageEngineersHouse extends StructureVillagePieces.Village {
+
     public static ChestGenHooks crateContents;
     public static final String crate = "ieVillageCrates";
 
     public VillageEngineersHouse() {}
 
-    public VillageEngineersHouse(
-            Start villagePiece, int par2, Random par3Random, StructureBoundingBox par4StructureBoundingBox, int par5) {
+    public VillageEngineersHouse(Start villagePiece, int par2, Random par3Random,
+        StructureBoundingBox par4StructureBoundingBox, int par5) {
         super(villagePiece, par2);
         this.coordBaseMode = par5;
         this.boundingBox = par4StructureBoundingBox;
@@ -61,19 +64,89 @@ public class VillageEngineersHouse extends StructureVillagePieces.Village {
 
         // Pillars
         this.fillWithBlocks(
-                world, box, 1, 1, 3, 1, 4, 3, IEContent.blockTreatedWood, IEContent.blockTreatedWood, false);
+            world,
+            box,
+            1,
+            1,
+            3,
+            1,
+            4,
+            3,
+            IEContent.blockTreatedWood,
+            IEContent.blockTreatedWood,
+            false);
         this.fillWithBlocks(
-                world, box, 1, 1, 8, 1, 6, 8, IEContent.blockTreatedWood, IEContent.blockTreatedWood, false);
+            world,
+            box,
+            1,
+            1,
+            8,
+            1,
+            6,
+            8,
+            IEContent.blockTreatedWood,
+            IEContent.blockTreatedWood,
+            false);
         this.fillWithBlocks(
-                world, box, 9, 1, 3, 9, 6, 3, IEContent.blockTreatedWood, IEContent.blockTreatedWood, false);
+            world,
+            box,
+            9,
+            1,
+            3,
+            9,
+            6,
+            3,
+            IEContent.blockTreatedWood,
+            IEContent.blockTreatedWood,
+            false);
         this.fillWithBlocks(
-                world, box, 9, 1, 8, 9, 6, 8, IEContent.blockTreatedWood, IEContent.blockTreatedWood, false);
+            world,
+            box,
+            9,
+            1,
+            8,
+            9,
+            6,
+            8,
+            IEContent.blockTreatedWood,
+            IEContent.blockTreatedWood,
+            false);
         this.fillWithBlocks(
-                world, box, 1, 4, 3, 9, 4, 8, IEContent.blockTreatedWood, IEContent.blockTreatedWood, false);
+            world,
+            box,
+            1,
+            4,
+            3,
+            9,
+            4,
+            8,
+            IEContent.blockTreatedWood,
+            IEContent.blockTreatedWood,
+            false);
         this.fillWithBlocks(
-                world, box, 6, 5, 3, 6, 7, 3, IEContent.blockTreatedWood, IEContent.blockTreatedWood, false);
+            world,
+            box,
+            6,
+            5,
+            3,
+            6,
+            7,
+            3,
+            IEContent.blockTreatedWood,
+            IEContent.blockTreatedWood,
+            false);
         this.fillWithBlocks(
-                world, box, 1, 5, 5, 1, 6, 5, IEContent.blockTreatedWood, IEContent.blockTreatedWood, false);
+            world,
+            box,
+            1,
+            5,
+            5,
+            1,
+            6,
+            5,
+            IEContent.blockTreatedWood,
+            IEContent.blockTreatedWood,
+            false);
 
         this.fillWithBlocks(world, box, 2, 4, 5, 8, 4, 7, Blocks.air, Blocks.air, false);
 
@@ -125,89 +198,89 @@ public class VillageEngineersHouse extends StructureVillagePieces.Village {
 
         // Fences
         this.fillWithMetadataBlocks(
-                world,
-                box,
-                1,
-                1,
-                1,
-                1,
-                1,
-                2,
-                IEContent.blockWoodenDecoration,
-                1,
-                IEContent.blockWoodenDecoration,
-                1,
-                false);
+            world,
+            box,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            IEContent.blockWoodenDecoration,
+            1,
+            IEContent.blockWoodenDecoration,
+            1,
+            false);
         this.fillWithMetadataBlocks(
-                world,
-                box,
-                2,
-                1,
-                1,
-                3,
-                1,
-                1,
-                IEContent.blockWoodenDecoration,
-                1,
-                IEContent.blockWoodenDecoration,
-                1,
-                false);
+            world,
+            box,
+            2,
+            1,
+            1,
+            3,
+            1,
+            1,
+            IEContent.blockWoodenDecoration,
+            1,
+            IEContent.blockWoodenDecoration,
+            1,
+            false);
         this.fillWithMetadataBlocks(
-                world,
-                box,
-                5,
-                1,
-                1,
-                5,
-                1,
-                2,
-                IEContent.blockWoodenDecoration,
-                1,
-                IEContent.blockWoodenDecoration,
-                1,
-                false);
+            world,
+            box,
+            5,
+            1,
+            1,
+            5,
+            1,
+            2,
+            IEContent.blockWoodenDecoration,
+            1,
+            IEContent.blockWoodenDecoration,
+            1,
+            false);
         this.fillWithMetadataBlocks(
-                world,
-                box,
-                1,
-                5,
-                3,
-                1,
-                5,
-                4,
-                IEContent.blockWoodenDecoration,
-                1,
-                IEContent.blockWoodenDecoration,
-                1,
-                false);
+            world,
+            box,
+            1,
+            5,
+            3,
+            1,
+            5,
+            4,
+            IEContent.blockWoodenDecoration,
+            1,
+            IEContent.blockWoodenDecoration,
+            1,
+            false);
         this.fillWithMetadataBlocks(
-                world,
-                box,
-                2,
-                5,
-                3,
-                5,
-                5,
-                3,
-                IEContent.blockWoodenDecoration,
-                1,
-                IEContent.blockWoodenDecoration,
-                1,
-                false);
+            world,
+            box,
+            2,
+            5,
+            3,
+            5,
+            5,
+            3,
+            IEContent.blockWoodenDecoration,
+            1,
+            IEContent.blockWoodenDecoration,
+            1,
+            false);
         this.fillWithMetadataBlocks(
-                world,
-                box,
-                7,
-                1,
-                6,
-                7,
-                5,
-                6,
-                IEContent.blockWoodenDecoration,
-                1,
-                IEContent.blockWoodenDecoration,
-                1,
-                false);
+            world,
+            box,
+            7,
+            1,
+            6,
+            7,
+            5,
+            6,
+            IEContent.blockWoodenDecoration,
+            1,
+            IEContent.blockWoodenDecoration,
+            1,
+            false);
 
         // Doors
         int doorMeta = coordBaseMode == 0 ? 1 : coordBaseMode == 1 ? 2 : coordBaseMode == 2 ? 3 : 0;
@@ -240,18 +313,78 @@ public class VillageEngineersHouse extends StructureVillagePieces.Village {
         this.fillWithMetadataBlocks(world, box, 7, 8, 2, 7, 8, 8, Blocks.stone_slab, 4, Blocks.stone_slab, 4, false);
         this.fillWithMetadataBlocks(world, box, 9, 7, 2, 9, 7, 8, Blocks.stone_slab, 4, Blocks.stone_slab, 4, false);
         this.fillWithMetadataBlocks(
-                world, box, 10, 6, 2, 10, 6, 8, Blocks.stone_slab, 12, Blocks.stone_slab, 12, false);
+            world,
+            box,
+            10,
+            6,
+            2,
+            10,
+            6,
+            8,
+            Blocks.stone_slab,
+            12,
+            Blocks.stone_slab,
+            12,
+            false);
 
         stairMeta = this.getMetadataWithOffset(Blocks.oak_stairs, 0);
         this.fillWithMetadataBlocks(
-                world, box, 2, 7, 4, 2, 7, 8, Blocks.brick_stairs, stairMeta, Blocks.brick_stairs, stairMeta, false);
+            world,
+            box,
+            2,
+            7,
+            4,
+            2,
+            7,
+            8,
+            Blocks.brick_stairs,
+            stairMeta,
+            Blocks.brick_stairs,
+            stairMeta,
+            false);
         this.fillWithMetadataBlocks(
-                world, box, 4, 8, 4, 4, 8, 8, Blocks.brick_stairs, stairMeta, Blocks.brick_stairs, stairMeta, false);
+            world,
+            box,
+            4,
+            8,
+            4,
+            4,
+            8,
+            8,
+            Blocks.brick_stairs,
+            stairMeta,
+            Blocks.brick_stairs,
+            stairMeta,
+            false);
         stairMeta = this.getMetadataWithOffset(Blocks.oak_stairs, 1);
         this.fillWithMetadataBlocks(
-                world, box, 6, 8, 2, 6, 8, 8, Blocks.brick_stairs, stairMeta, Blocks.brick_stairs, stairMeta, false);
+            world,
+            box,
+            6,
+            8,
+            2,
+            6,
+            8,
+            8,
+            Blocks.brick_stairs,
+            stairMeta,
+            Blocks.brick_stairs,
+            stairMeta,
+            false);
         this.fillWithMetadataBlocks(
-                world, box, 8, 7, 2, 8, 7, 8, Blocks.brick_stairs, stairMeta, Blocks.brick_stairs, stairMeta, false);
+            world,
+            box,
+            8,
+            7,
+            2,
+            8,
+            7,
+            8,
+            Blocks.brick_stairs,
+            stairMeta,
+            Blocks.brick_stairs,
+            stairMeta,
+            false);
 
         this.fillWithBlocks(world, box, 2, 7, 5, 2, 8, 5, Blocks.brick_block, Blocks.brick_block, false);
         this.fillWithBlocks(world, box, 7, 8, 4, 7, 9, 4, Blocks.brick_block, Blocks.brick_block, false);
@@ -271,27 +404,18 @@ public class VillageEngineersHouse extends StructureVillagePieces.Village {
         return true;
     }
 
-    protected boolean placeCrate(
-            World world,
-            StructureBoundingBox box,
-            Random rand,
-            int x,
-            int y,
-            int z,
-            WeightedRandomChestContent[] contents,
-            int amount) {
+    protected boolean placeCrate(World world, StructureBoundingBox box, Random rand, int x, int y, int z,
+        WeightedRandomChestContent[] contents, int amount) {
         int i1 = this.getXWithOffset(x, z);
         int j1 = this.getYWithOffset(y);
         int k1 = this.getZWithOffset(x, z);
 
         if (box.isVecInside(i1, j1, k1)
-                && (world.getBlock(i1, j1, k1) != IEContent.blockWoodenDevice
-                        || world.getBlockMetadata(i1, j1, k1) != 4)) {
+            && (world.getBlock(i1, j1, k1) != IEContent.blockWoodenDevice || world.getBlockMetadata(i1, j1, k1) != 4)) {
             world.setBlock(i1, j1, k1, IEContent.blockWoodenDevice, 4, 2);
             TileEntity tile = world.getTileEntity(i1, j1, k1);
-            if (tile instanceof TileEntityWoodenCrate)
-                WeightedRandomChestContent.generateChestContents(
-                        rand, contents, ((TileEntityWoodenCrate) tile), amount);
+            if (tile instanceof TileEntityWoodenCrate) WeightedRandomChestContent
+                .generateChestContents(rand, contents, ((TileEntityWoodenCrate) tile), amount);
             return true;
         } else return false;
     }
@@ -316,11 +440,11 @@ public class VillageEngineersHouse extends StructureVillagePieces.Village {
 
         EntityItemFrame e = new EntityItemFrame(world, i1, j1, k1, side);
         e.setDisplayedItem(stack);
-        if (e.onValidSurface()
-                && world.getEntitiesWithinAABB(
-                                EntityHanging.class,
-                                AxisAlignedBB.getBoundingBox(i1 - .125, j1, k1 - .125, i1 + 1.125, j1 + 1, k1 + 1.125))
-                        .isEmpty()) if (!world.isRemote) world.spawnEntityInWorld(e);
+        if (e.onValidSurface() && world
+            .getEntitiesWithinAABB(
+                EntityHanging.class,
+                AxisAlignedBB.getBoundingBox(i1 - .125, j1, k1 - .125, i1 + 1.125, j1 + 1, k1 + 1.125))
+            .isEmpty()) if (!world.isRemote) world.spawnEntityInWorld(e);
     }
 
     @Override
@@ -329,28 +453,23 @@ public class VillageEngineersHouse extends StructureVillagePieces.Village {
     }
 
     public static class VillageManager implements IVillageCreationHandler {
+
         @Override
-        public Object buildComponent(
-                StructureVillagePieces.PieceWeight villagePiece,
-                StructureVillagePieces.Start startPiece,
-                List pieces,
-                Random random,
-                int p1,
-                int p2,
-                int p3,
-                int p4,
-                int p5) {
-            StructureBoundingBox box =
-                    StructureBoundingBox.getComponentToAddBoundingBox(p1, p2, p3, 0, 0, 0, 11, 10, 9, p4);
-            return (!canVillageGoDeeper(box)) || (StructureComponent.findIntersecting(pieces, box) != null)
-                    ? null
-                    : new VillageEngineersHouse(startPiece, p5, random, box, p4);
+        public Object buildComponent(StructureVillagePieces.PieceWeight villagePiece,
+            StructureVillagePieces.Start startPiece, List pieces, Random random, int p1, int p2, int p3, int p4,
+            int p5) {
+            StructureBoundingBox box = StructureBoundingBox
+                .getComponentToAddBoundingBox(p1, p2, p3, 0, 0, 0, 11, 10, 9, p4);
+            return (!canVillageGoDeeper(box)) || (StructureComponent.findIntersecting(pieces, box) != null) ? null
+                : new VillageEngineersHouse(startPiece, p5, random, box, p4);
         }
 
         @Override
         public PieceWeight getVillagePieceWeight(Random random, int i) {
             return new StructureVillagePieces.PieceWeight(
-                    VillageEngineersHouse.class, 15, MathHelper.getRandomIntegerInRange(random, 0 + i, 1 + i));
+                VillageEngineersHouse.class,
+                15,
+                MathHelper.getRandomIntegerInRange(random, 0 + i, 1 + i));
         }
 
         @Override

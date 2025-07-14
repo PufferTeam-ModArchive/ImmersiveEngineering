@@ -4,7 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 /**
- * Implement this interface on Item classes which may be "Empowered" - what that means is completely up to you. This just provides a uniform way of dealing with
+ * Implement this interface on Item classes which may be "Empowered" - what that means is completely up to you. This
+ * just provides a uniform way of dealing with
  * them.
  *
  * @author King Lemming
@@ -21,9 +22,9 @@ public interface IMultiModeItem {
      * Attempt to set the empowered state of the item.
      *
      * @param stack
-     *            ItemStack to set the mode on.
+     *              ItemStack to set the mode on.
      * @param mode
-     *            Desired mode.
+     *              Desired mode.
      * @return TRUE if the operation was successful, FALSE if it was not.
      */
     boolean setMode(ItemStack stack, int mode);
@@ -47,9 +48,9 @@ public interface IMultiModeItem {
      * Callback method for reacting to a state change. Useful in KeyBinding handlers.
      *
      * @param player
-     *            Player holding the item, if applicable.
+     *               Player holding the item, if applicable.
      * @param stack
-     *            The item being held.
+     *               The item being held.
      */
     void onModeChange(EntityPlayer player, ItemStack stack);
 }

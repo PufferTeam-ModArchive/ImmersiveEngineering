@@ -1,9 +1,11 @@
 package blusunrize.immersiveengineering.common.util.compat;
 
-import cpw.mods.fml.common.Loader;
 import java.lang.reflect.Method;
 
+import cpw.mods.fml.common.Loader;
+
 public class NetherOresHelper {
+
     static Class c_Ores;
     static Method m_getMaceCount;
 
@@ -16,8 +18,7 @@ public class NetherOresHelper {
                 Enum e = Enum.valueOf(c_Ores, ore);
                 if (e != null) return (int) m_getMaceCount.invoke(e);
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
         return 4;
     }
 }

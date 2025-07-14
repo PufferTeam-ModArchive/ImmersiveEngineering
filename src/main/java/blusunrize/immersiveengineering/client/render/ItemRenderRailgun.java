@@ -1,17 +1,9 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.api.shader.IShaderItem;
-import blusunrize.immersiveengineering.api.shader.ShaderCase;
-import blusunrize.immersiveengineering.api.tool.RailgunHandler;
-import blusunrize.immersiveengineering.api.tool.ZoomHandler;
-import blusunrize.immersiveengineering.client.ClientProxy;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.items.ItemRailgun;
-import blusunrize.immersiveengineering.common.util.Lib;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -23,9 +15,21 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.model.obj.GroupObject;
 import net.minecraftforge.client.model.obj.WavefrontObject;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.api.shader.IShaderItem;
+import blusunrize.immersiveengineering.api.shader.ShaderCase;
+import blusunrize.immersiveengineering.api.tool.RailgunHandler;
+import blusunrize.immersiveengineering.api.tool.ZoomHandler;
+import blusunrize.immersiveengineering.client.ClientProxy;
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.items.ItemRailgun;
+import blusunrize.immersiveengineering.common.util.Lib;
+
 public class ItemRenderRailgun implements IItemRenderer {
+
     static WavefrontObject modelobj = ClientUtils.getModel("immersiveengineering:models/railgun.obj");
 
     @Override
@@ -48,7 +52,7 @@ public class ItemRenderRailgun implements IItemRenderer {
             if (user instanceof EntityPlayer && ((EntityPlayer) user).getItemInUseCount() > 0) {
                 float partial = ClientUtils.timer().renderPartialTicks;
                 float f10 = (float) item.getMaxItemUseDuration()
-                        - ((float) ((EntityPlayer) user).getItemInUseCount() - partial + 1.0F);
+                    - ((float) ((EntityPlayer) user).getItemInUseCount() - partial + 1.0F);
                 float f11 = f10 / 20.0F;
                 f11 = (f11 * f11 + f11 * 2.0F) / 3.0F;
                 if (f11 > 1.0F) f11 = 1.0F;
@@ -76,8 +80,7 @@ public class ItemRenderRailgun implements IItemRenderer {
             if (ZoomHandler.isZooming) {
                 GL11.glRotatef(3, 0, 1, 0);
                 GL11.glTranslatef(-1.6f, .5f, -.9375f);
-            } else if (user instanceof EntityPlayer && ((EntityPlayer) user).getItemInUseCount() > 0) {
-            }
+            } else if (user instanceof EntityPlayer && ((EntityPlayer) user).getItemInUseCount() > 0) {}
             GL11.glScalef(.25f, scale, scale);
         } else if (type == ItemRenderType.EQUIPPED) {
             float scale = .4375f;
@@ -108,7 +111,7 @@ public class ItemRenderRailgun implements IItemRenderer {
             GL11.glScalef(.25f, .375f, .375f);
         }
 
-        //		ClientUtils.mc().renderEngine.bindTexture(ClientProxy.revolverTextureResource);
+        // ClientUtils.mc().renderEngine.bindTexture(ClientProxy.revolverTextureResource);
         GL11.glColor4f(1, 1, 1, 1);
         GL11.glEnable(3042);
         OpenGlHelper.glBlendFunc(770, 771, 0, 1);
@@ -117,29 +120,31 @@ public class ItemRenderRailgun implements IItemRenderer {
         String[] parts = ((ItemRailgun) item.getItem()).compileRender(item);
         ItemStack shader = ((ItemRailgun) item.getItem()).getShaderItem(item);
         ShaderCase sCase = (shader != null && shader.getItem() instanceof IShaderItem)
-                ? ((IShaderItem) shader.getItem()).getShaderCase(shader, item, "railgun")
-                : null;
+            ? ((IShaderItem) shader.getItem()).getShaderCase(shader, item, "railgun")
+            : null;
 
         if (sCase == null) ClientUtils.renderWavefrontWithIconUVs(modelobj, icon, parts);
         else {
             boolean inventory = type == ItemRenderType.INVENTORY;
             List<String> renderParts = new ArrayList(Arrays.asList(parts));
-            for (GroupObject obj : modelobj.groupObjects)
-                if (renderParts.contains(obj.name)) {
-                    for (int pass = 0; pass < sCase.getPasses(shader, item, obj.name); pass++) {
-                        IIcon ic = sCase.getReplacementIcon(shader, item, obj.name, pass);
-                        if (ic == null) ic = icon;
-                        int[] col = sCase.getRGBAColourModifier(shader, item, obj.name, pass);
-                        if (col == null || col.length < 4) col = new int[] {255, 255, 255, 255};
+            for (GroupObject obj : modelobj.groupObjects) if (renderParts.contains(obj.name)) {
+                for (int pass = 0; pass < sCase.getPasses(shader, item, obj.name); pass++) {
+                    IIcon ic = sCase.getReplacementIcon(shader, item, obj.name, pass);
+                    if (ic == null) ic = icon;
+                    int[] col = sCase.getRGBAColourModifier(shader, item, obj.name, pass);
+                    if (col == null || col.length < 4) col = new int[] { 255, 255, 255, 255 };
 
-                        sCase.modifyRender(shader, item, obj.name, pass, true, inventory);
-                        ClientUtils.tes().startDrawing(obj.glDrawingMode);
-                        ClientUtils.tes().setColorRGBA(col[0], col[1], col[2], col[3]);
-                        ClientUtils.tessellateWavefrontGroupObjectWithIconUVs(obj, ic);
-                        ClientUtils.tes().draw();
-                        sCase.modifyRender(shader, item, obj.name, pass, false, inventory);
-                    }
+                    sCase.modifyRender(shader, item, obj.name, pass, true, inventory);
+                    ClientUtils.tes()
+                        .startDrawing(obj.glDrawingMode);
+                    ClientUtils.tes()
+                        .setColorRGBA(col[0], col[1], col[2], col[3]);
+                    ClientUtils.tessellateWavefrontGroupObjectWithIconUVs(obj, ic);
+                    ClientUtils.tes()
+                        .draw();
+                    sCase.modifyRender(shader, item, obj.name, pass, false, inventory);
                 }
+            }
         }
 
         int chargeLevel = 0;
@@ -150,7 +155,7 @@ public class ItemRenderRailgun implements IItemRenderer {
             if (duration > 0) {
                 ItemStack ammo = ItemRailgun.findAmmo((EntityPlayer) user);
 
-                int[][] colourMap = {{0x777777, 0xa4a4a4}};
+                int[][] colourMap = { { 0x777777, 0xa4a4a4 } };
                 if (ammo != null) {
                     RailgunHandler.RailgunProjectileProperties prop = RailgunHandler.getProjectileProperties(ammo);
                     colourMap = prop != null ? prop.colourMap : colourMap;
@@ -162,7 +167,7 @@ public class ItemRenderRailgun implements IItemRenderer {
                 OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 
                 if (colourMap.length == 1) {
-                    colourMap = new int[][] {colourMap[0], colourMap[0]};
+                    colourMap = new int[][] { colourMap[0], colourMap[0] };
                 }
                 float height = .1875f;
                 float halfWidth = height / 2;
@@ -210,21 +215,20 @@ public class ItemRenderRailgun implements IItemRenderer {
                     tes.addVertex(lengthStep * (i + 1), height, halfWidth);
                 }
                 // Top&Bottom
-                for (int i = 0; i < colLength; i++)
-                    for (int j = 0; j < colWidth; j++) {
-                        tes.setNormal(0, 1, 0);
-                        tes.setColorOpaque_I(colourMap[i][j]);
-                        tes.addVertex(lengthStep * (i + 1), height, -halfWidth + widthStep * j);
-                        tes.addVertex(lengthStep * i, height, -halfWidth + widthStep * j);
-                        tes.addVertex(lengthStep * i, height, -halfWidth + widthStep * (j + 1));
-                        tes.addVertex(lengthStep * (i + 1), height, -halfWidth + widthStep * (j + 1));
+                for (int i = 0; i < colLength; i++) for (int j = 0; j < colWidth; j++) {
+                    tes.setNormal(0, 1, 0);
+                    tes.setColorOpaque_I(colourMap[i][j]);
+                    tes.addVertex(lengthStep * (i + 1), height, -halfWidth + widthStep * j);
+                    tes.addVertex(lengthStep * i, height, -halfWidth + widthStep * j);
+                    tes.addVertex(lengthStep * i, height, -halfWidth + widthStep * (j + 1));
+                    tes.addVertex(lengthStep * (i + 1), height, -halfWidth + widthStep * (j + 1));
 
-                        tes.setNormal(0, -1, 0);
-                        tes.addVertex(lengthStep * i, 0, -halfWidth + widthStep * j);
-                        tes.addVertex(lengthStep * (i + 1), 0, -halfWidth + widthStep * j);
-                        tes.addVertex(lengthStep * (i + 1), 0, -halfWidth + widthStep * (j + 1));
-                        tes.addVertex(lengthStep * i, 0, -halfWidth + widthStep * (j + 1));
-                    }
+                    tes.setNormal(0, -1, 0);
+                    tes.addVertex(lengthStep * i, 0, -halfWidth + widthStep * j);
+                    tes.addVertex(lengthStep * (i + 1), 0, -halfWidth + widthStep * j);
+                    tes.addVertex(lengthStep * (i + 1), 0, -halfWidth + widthStep * (j + 1));
+                    tes.addVertex(lengthStep * i, 0, -halfWidth + widthStep * (j + 1));
+                }
                 tes.draw();
 
                 GL11.glShadeModel(GL11.GL_FLAT);
@@ -234,7 +238,7 @@ public class ItemRenderRailgun implements IItemRenderer {
                 GL11.glPopMatrix();
             }
         }
-        //		chargeLevel = 69;
+        // chargeLevel = 69;
         GL11.glPushMatrix();
         GL11.glTranslatef(-2.5f, .7f, .03f);
         GL11.glRotatef(90, 0, 1, 0);

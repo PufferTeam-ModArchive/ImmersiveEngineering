@@ -1,12 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +16,16 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implements IFluidHandler, IBlockOverlayText {
+
     public FluidTank tank = new FluidTank(512000);
     private int[] oldComps = new int[4];
     private int masterCompOld;
@@ -42,7 +44,7 @@ public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implement
             String s = null;
             if (fs != null) s = fs.getLocalizedName() + ": " + fs.amount + "mB";
             else s = StatCollector.translateToLocal(Lib.GUI + "empty");
-            return new String[] {s};
+            return new String[] { s };
         }
         return null;
     }
@@ -60,30 +62,32 @@ public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implement
     @Override
     public void updateEntity() {
         if (pos == 4 && !worldObj.isRemote && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
-            for (int i = 0; i < 6; i++)
-                if (i != 1 && tank.getFluidAmount() > 0) {
-                    ForgeDirection f = ForgeDirection.getOrientation(i);
-                    int out = Math.min(144, tank.getFluidAmount());
-                    TileEntity te = this.worldObj.getTileEntity(
-                            xCoord + (i == 4 ? -1 : i == 5 ? 1 : 0),
-                            yCoord + (i == 0 ? -1 : 0),
-                            zCoord + (i == 2 ? -1 : i == 3 ? 1 : 0));
-                    if (te != null
-                            && te instanceof IFluidHandler
-                            && ((IFluidHandler) te)
-                                    .canFill(f.getOpposite(), tank.getFluid().getFluid())) {
-                        updateComparatorValuesPart1();
-                        int accepted = ((IFluidHandler) te)
-                                .fill(
-                                        f.getOpposite(),
-                                        new FluidStack(tank.getFluid().getFluid(), out),
-                                        false);
-                        FluidStack drained = this.tank.drain(accepted, true);
-                        ((IFluidHandler) te).fill(f.getOpposite(), drained, true);
-                        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-                        updateComparatorValuesPart2();
-                    }
+            for (int i = 0; i < 6; i++) if (i != 1 && tank.getFluidAmount() > 0) {
+                ForgeDirection f = ForgeDirection.getOrientation(i);
+                int out = Math.min(144, tank.getFluidAmount());
+                TileEntity te = this.worldObj.getTileEntity(
+                    xCoord + (i == 4 ? -1 : i == 5 ? 1 : 0),
+                    yCoord + (i == 0 ? -1 : 0),
+                    zCoord + (i == 2 ? -1 : i == 3 ? 1 : 0));
+                if (te != null && te instanceof IFluidHandler
+                    && ((IFluidHandler) te).canFill(
+                        f.getOpposite(),
+                        tank.getFluid()
+                            .getFluid())) {
+                    updateComparatorValuesPart1();
+                    int accepted = ((IFluidHandler) te).fill(
+                        f.getOpposite(),
+                        new FluidStack(
+                            tank.getFluid()
+                                .getFluid(),
+                            out),
+                        false);
+                    FluidStack drained = this.tank.drain(accepted, true);
+                    ((IFluidHandler) te).fill(f.getOpposite(), drained, true);
+                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                    updateComparatorValuesPart2();
                 }
+            }
     }
 
     @Override
@@ -101,15 +105,14 @@ public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implement
 
     @Override
     public float[] getBlockBounds() {
-        if (pos == 0 || pos == 2 || pos == 6 || pos == 8) return new float[] {.375f, 0, .375f, .625f, 1, .625f};
-        return new float[] {0, 0, 0, 1, 1, 1};
+        if (pos == 0 || pos == 2 || pos == 6 || pos == 8) return new float[] { .375f, 0, .375f, .625f, 1, .625f };
+        return new float[] { 0, 0, 0, 1, 1, 1 };
     }
 
     @Override
     public ItemStack getOriginalBlock() {
-        return pos == 0 || pos == 2 || pos == 6 || pos == 8
-                ? new ItemStack(IEContent.blockWoodenDecoration, 1, 1)
-                : new ItemStack(IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_sheetMetal);
+        return pos == 0 || pos == 2 || pos == 6 || pos == 8 ? new ItemStack(IEContent.blockWoodenDecoration, 1, 1)
+            : new ItemStack(IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_sheetMetal);
     }
 
     @Override
@@ -120,36 +123,33 @@ public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implement
             int startY = yCoord - offset[1];
             int startZ = zCoord - offset[2];
             if (!(offset[0] == 0 && offset[1] == 0 && offset[2] == 0)
-                    && !(worldObj.getTileEntity(startX, startY, startZ) instanceof TileEntitySheetmetalTank)) return;
+                && !(worldObj.getTileEntity(startX, startY, startZ) instanceof TileEntitySheetmetalTank)) return;
 
-            for (int yy = 0; yy <= 4; yy++)
-                for (int xx = -1; xx <= 1; xx++)
-                    for (int zz = -1; zz <= 1; zz++) {
-                        ItemStack s = null;
-                        TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (te instanceof TileEntitySheetmetalTank) {
-                            s = ((TileEntitySheetmetalTank) te).getOriginalBlock();
-                            ((TileEntitySheetmetalTank) te).formed = false;
-                        }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
-                        }
+            for (int yy = 0; yy <= 4; yy++) for (int xx = -1; xx <= 1; xx++) for (int zz = -1; zz <= 1; zz++) {
+                ItemStack s = null;
+                TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                if (te instanceof TileEntitySheetmetalTank) {
+                    s = ((TileEntitySheetmetalTank) te).getOriginalBlock();
+                    ((TileEntitySheetmetalTank) te).formed = false;
+                }
+                if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                    s = this.getOriginalBlock();
+                if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                    else {
+                        if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                            worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                        worldObj.setBlock(
+                            startX + xx,
+                            startY + yy,
+                            startZ + zz,
+                            Block.getBlockFromItem(s.getItem()),
+                            s.getItemDamage(),
+                            0x3);
                     }
+                }
+            }
         }
     }
 
@@ -209,7 +209,7 @@ public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implement
             if (!formed) return new FluidTankInfo[] {};
             TileEntitySheetmetalTank master = master();
             if (master != null) return master.getTankInfo(from);
-            return new FluidTankInfo[] {tank.getInfo()};
+            return new FluidTankInfo[] { tank.getInfo() };
         } else {
             return new FluidTankInfo[0];
         }
@@ -221,11 +221,9 @@ public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implement
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            if (pos == 4)
-                renderAABB = AxisAlignedBB.getBoundingBox(
-                        xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 5, zCoord + 2);
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (pos == 4) renderAABB = AxisAlignedBB
+            .getBoundingBox(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 5, zCoord + 2);
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 
@@ -252,7 +250,7 @@ public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implement
     }
 
     private void updateComparatorValuesPart1() {
-        //		oldComps = new int[4];
+        // oldComps = new int[4];
         int vol = tank.getCapacity() / 4;
         for (int i = 0; i < 4; i++) {
             int filled = tank.getFluidAmount() - i * vol;
@@ -270,15 +268,13 @@ public class TileEntitySheetmetalTank extends TileEntityMultiblockPart implement
             int now = Math.min(15, Math.max((15 * filled) / vol, 0));
             if (now != oldComps[i]) {
                 int y = yCoord - offset[1] + i + 1;
-                for (int x = -1; x < 2; x++)
-                    for (int z = -1; z < 2; z++)
-                        worldObj.func_147453_f(
-                                xCoord - offset[0] + x,
-                                y,
-                                zCoord - offset[2] + z,
-                                worldObj.getBlock(xCoord - offset[0] + x, y, zCoord - offset[2] + z));
+                for (int x = -1; x < 2; x++) for (int z = -1; z < 2; z++) worldObj.func_147453_f(
+                    xCoord - offset[0] + x,
+                    y,
+                    zCoord - offset[2] + z,
+                    worldObj.getBlock(xCoord - offset[0] + x, y, zCoord - offset[2] + z));
             }
         }
-        //		oldComps = null;
+        // oldComps = null;
     }
 }

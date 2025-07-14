@@ -1,14 +1,16 @@
 package blusunrize.immersiveengineering.common.gui;
 
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
-import blusunrize.immersiveengineering.common.blocks.stone.TileEntityCokeOven;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
+import blusunrize.immersiveengineering.common.blocks.stone.TileEntityCokeOven;
+
 public class ContainerCokeOven extends Container {
+
     TileEntityCokeOven tile;
     int slotCount;
 
@@ -16,6 +18,7 @@ public class ContainerCokeOven extends Container {
         this.tile = tile;
 
         this.addSlotToContainer(new IESlot(this, tile, 0, 30, 35) {
+
             @Override
             public boolean isItemValid(ItemStack itemStack) {
                 return CokeOvenRecipe.findRecipe(itemStack) != null;
@@ -26,9 +29,8 @@ public class ContainerCokeOven extends Container {
         this.addSlotToContainer(new IESlot.Output(this, tile, 3, 152, 53));
         slotCount = 4;
 
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 9; j++)
-                addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++)
+            addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
         for (int i = 0; i < 9; i++) addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
     }
 
@@ -49,9 +51,8 @@ public class ContainerCokeOven extends Container {
             if (slot < slotCount) {
                 if (!this.mergeItemStack(stackInSlot, slotCount, (slotCount + 36), true)) return null;
             } else {
-                for (int i = 0; i < slotCount; i++)
-                    if (this.getSlot(i).isItemValid(stackInSlot))
-                        if (!this.mergeItemStack(stackInSlot, i, i + 1, false)) return null;
+                for (int i = 0; i < slotCount; i++) if (this.getSlot(i)
+                    .isItemValid(stackInSlot)) if (!this.mergeItemStack(stackInSlot, i, i + 1, false)) return null;
             }
 
             if (stackInSlot.stackSize == 0) slotObject.putStack(null);

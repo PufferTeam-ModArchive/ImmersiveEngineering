@@ -3,6 +3,9 @@ package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 import static minetweaker.api.minecraft.MineTweakerMC.getItemStack;
 import static minetweaker.api.minecraft.MineTweakerMC.getLiquidStack;
 
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.tool.ExcavatorHandler;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
@@ -19,10 +22,9 @@ import minetweaker.api.item.IngredientStack;
 import minetweaker.api.liquid.ILiquidStack;
 import minetweaker.api.oredict.IOreDictEntry;
 import minetweaker.util.IEventHandler;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 public class MTHelper extends IECompatModule {
+
     @Override
     public void preInit() {}
 
@@ -64,8 +66,8 @@ public class MTHelper extends IECompatModule {
             if (iStack instanceof IOreDictEntry) return ((IOreDictEntry) iStack).getName();
             else if (iStack instanceof IItemStack) return getItemStack((IItemStack) iStack);
             else if (iStack instanceof IngredientStack) {
-                IIngredient ingr =
-                        ReflectionHelper.getPrivateValue(IngredientStack.class, (IngredientStack) iStack, "ingredient");
+                IIngredient ingr = ReflectionHelper
+                    .getPrivateValue(IngredientStack.class, (IngredientStack) iStack, "ingredient");
                 return toObject(ingr);
             } else return null;
         }
@@ -82,6 +84,7 @@ public class MTHelper extends IECompatModule {
     }
 
     public static class ExcavatorEventHandler implements IEventHandler<ReloadEvent> {
+
         @Override
         public void handle(ReloadEvent event) {
             ExcavatorHandler.recalculateChances(false);

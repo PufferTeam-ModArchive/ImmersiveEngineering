@@ -1,15 +1,17 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.api.energy.WireType;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityConnectorStructural extends TileEntityConnectorLV {
+
     public float rotation = 0;
 
     @Override
@@ -37,18 +39,19 @@ public class TileEntityConnectorStructural extends TileEntityConnectorLV {
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         rotation = nbt.getFloat("rotation");
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && worldObj != null)
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.CLIENT && worldObj != null) worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
     public Vec3 getConnectionOffset(Connection con) {
-        ForgeDirection fd = ForgeDirection.getOrientation(facing).getOpposite();
+        ForgeDirection fd = ForgeDirection.getOrientation(facing)
+            .getOpposite();
         double conRadius = .03125;
         return Vec3.createVectorHelper(
-                .5 + fd.offsetX * (-.125 - conRadius),
-                .5 + fd.offsetY * (-.125 - conRadius),
-                .5 + fd.offsetZ * (-.125 - conRadius));
+            .5 + fd.offsetX * (-.125 - conRadius),
+            .5 + fd.offsetY * (-.125 - conRadius),
+            .5 + fd.offsetZ * (-.125 - conRadius));
     }
 
     @Override

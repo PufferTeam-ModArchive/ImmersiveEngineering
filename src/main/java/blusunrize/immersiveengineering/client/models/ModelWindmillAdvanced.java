@@ -3,6 +3,7 @@ package blusunrize.immersiveengineering.client.models;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -10,6 +11,7 @@ import org.lwjgl.opengl.GL11;
  * Created using Tabula 4.1.1
  */
 public class ModelWindmillAdvanced extends ModelBase {
+
     public ModelRenderer axel;
     public ModelRenderer rod3;
     public ModelRenderer rod2;

@@ -1,10 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,9 +11,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
+
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedInventory, IDeepStorageUnit {
+
     public ItemStack identStack;
     public int storageAmount = 0;
     static int maxStorage = 41472;
@@ -43,33 +45,27 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
         if (pos == 4 && !worldObj.isRemote && this.outputStack == null && storageAmount > 0 && identStack != null)
             this.markDirty();
 
-        if (pos == 4
-                && !worldObj.isRemote
-                && this.outputStack != null
-                && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)
-                && worldObj.getTotalWorldTime() % 8 == 0) {
+        if (pos == 4 && !worldObj.isRemote
+            && this.outputStack != null
+            && worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)
+            && worldObj.getTotalWorldTime() % 8 == 0) {
             updateComparatorValuesPart1();
-            for (int i = 0; i < 6; i++)
-                if (i != 1) {
-                    TileEntity inventory = this.worldObj.getTileEntity(
-                            xCoord + (i == 4 ? -1 : i == 5 ? 1 : 0),
-                            yCoord + (i == 0 ? -1 : 0),
-                            zCoord + (i == 2 ? -1 : i == 3 ? 1 : 0));
-                    ItemStack stack = Utils.copyStackWithAmount(identStack, 1);
-                    if ((inventory instanceof ISidedInventory
-                                    && ((ISidedInventory) inventory)
-                                                    .getAccessibleSlotsFromSide(ForgeDirection.OPPOSITES[i])
-                                                    .length
-                                            > 0)
-                            || (inventory instanceof IInventory && ((IInventory) inventory).getSizeInventory() > 0))
-                        stack = Utils.insertStackIntoInventory(
-                                (IInventory) inventory, stack, ForgeDirection.OPPOSITES[i]);
-                    if (stack == null) {
-                        outputStack.stackSize--;
-                        this.markDirty();
-                        if (outputStack == null) break;
-                    }
+            for (int i = 0; i < 6; i++) if (i != 1) {
+                TileEntity inventory = this.worldObj.getTileEntity(
+                    xCoord + (i == 4 ? -1 : i == 5 ? 1 : 0),
+                    yCoord + (i == 0 ? -1 : 0),
+                    zCoord + (i == 2 ? -1 : i == 3 ? 1 : 0));
+                ItemStack stack = Utils.copyStackWithAmount(identStack, 1);
+                if ((inventory instanceof ISidedInventory
+                    && ((ISidedInventory) inventory).getAccessibleSlotsFromSide(ForgeDirection.OPPOSITES[i]).length > 0)
+                    || (inventory instanceof IInventory && ((IInventory) inventory).getSizeInventory() > 0))
+                    stack = Utils.insertStackIntoInventory((IInventory) inventory, stack, ForgeDirection.OPPOSITES[i]);
+                if (stack == null) {
+                    outputStack.stackSize--;
+                    this.markDirty();
+                    if (outputStack == null) break;
                 }
+            }
             updateComparatorValuesPart2();
         }
     }
@@ -98,23 +94,15 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
 
     @Override
     public float[] getBlockBounds() {
-        if (pos == 0 || pos == 2 || pos == 6 || pos == 8)
-            return new float[] {
-                pos < 6 ? 0 : .75f,
-                0,
-                pos == 0 || pos == 6 ? 0 : .75f,
-                pos > 2 ? 1 : .25f,
-                1,
-                pos == 2 || pos == 8 ? 1f : .25f
-            };
-        return new float[] {0, 0, 0, 1, 1, 1};
+        if (pos == 0 || pos == 2 || pos == 6 || pos == 8) return new float[] { pos < 6 ? 0 : .75f, 0,
+            pos == 0 || pos == 6 ? 0 : .75f, pos > 2 ? 1 : .25f, 1, pos == 2 || pos == 8 ? 1f : .25f };
+        return new float[] { 0, 0, 0, 1, 1, 1 };
     }
 
     @Override
     public ItemStack getOriginalBlock() {
-        return pos == 0 || pos == 2 || pos == 6 || pos == 8
-                ? new ItemStack(IEContent.blockWoodenDecoration, 1, 1)
-                : new ItemStack(IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_sheetMetal);
+        return pos == 0 || pos == 2 || pos == 6 || pos == 8 ? new ItemStack(IEContent.blockWoodenDecoration, 1, 1)
+            : new ItemStack(IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_sheetMetal);
     }
 
     @Override
@@ -125,36 +113,33 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
             int startY = yCoord - offset[1];
             int startZ = zCoord - offset[2];
             if (!(offset[0] == 0 && offset[1] == 0 && offset[2] == 0)
-                    && !(worldObj.getTileEntity(startX, startY, startZ) instanceof TileEntitySilo)) return;
+                && !(worldObj.getTileEntity(startX, startY, startZ) instanceof TileEntitySilo)) return;
 
-            for (int yy = 0; yy <= 6; yy++)
-                for (int xx = -1; xx <= 1; xx++)
-                    for (int zz = -1; zz <= 1; zz++) {
-                        ItemStack s = null;
-                        TileEntity tileEntity = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (tileEntity instanceof TileEntitySilo) {
-                            s = ((TileEntitySilo) tileEntity).getOriginalBlock();
-                            ((TileEntitySilo) tileEntity).formed = false;
-                        }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
-                        }
+            for (int yy = 0; yy <= 6; yy++) for (int xx = -1; xx <= 1; xx++) for (int zz = -1; zz <= 1; zz++) {
+                ItemStack s = null;
+                TileEntity tileEntity = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                if (tileEntity instanceof TileEntitySilo) {
+                    s = ((TileEntitySilo) tileEntity).getOriginalBlock();
+                    ((TileEntitySilo) tileEntity).formed = false;
+                }
+                if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                    s = this.getOriginalBlock();
+                if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                    else {
+                        if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                            worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                        worldObj.setBlock(
+                            startX + xx,
+                            startY + yy,
+                            startZ + zz,
+                            Block.getBlockFromItem(s.getItem()),
+                            s.getItemDamage(),
+                            0x3);
                     }
+                }
+            }
         }
     }
 
@@ -240,14 +225,13 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
         TileEntitySilo master = master();
         if (master != null) return master.isItemValidForSlot(slot, stack);
-        return this.identStack == null
-                || (OreDictionary.itemMatches(identStack, stack, true)
-                        && ItemStack.areItemStackTagsEqual(stack, identStack));
+        return this.identStack == null || (OreDictionary.itemMatches(identStack, stack, true)
+            && ItemStack.areItemStackTagsEqual(stack, identStack));
     }
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        if (pos == 4 || pos == 58) return new int[] {0, 1};
+        if (pos == 4 || pos == 58) return new int[] { 0, 1 };
         return new int[0];
     }
 
@@ -256,10 +240,9 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
         if (!formed || pos != 58 || slot != 0 || stack == null) return false;
         TileEntitySilo master = master();
         if (master != null)
-            return master.identStack == null
-                    || (OreDictionary.itemMatches(master.identStack, stack, true)
-                            && ItemStack.areItemStackTagsEqual(stack, master.identStack)
-                            && master.storageAmount < maxStorage);
+            return master.identStack == null || (OreDictionary.itemMatches(master.identStack, stack, true)
+                && ItemStack.areItemStackTagsEqual(stack, master.identStack)
+                && master.storageAmount < maxStorage);
         return false;
     }
 
@@ -268,13 +251,10 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
         if (!formed || pos != 4 || slot != 1 || stack == null) return false;
         TileEntitySilo master = master();
         if (master != null)
-            return master.outputStack != null
-                    && OreDictionary.itemMatches(master.identStack, stack, true)
-                    && ItemStack.areItemStackTagsEqual(stack, master.identStack);
-        else
-            return this.outputStack != null
-                    && OreDictionary.itemMatches(identStack, stack, true)
-                    && ItemStack.areItemStackTagsEqual(stack, identStack);
+            return master.outputStack != null && OreDictionary.itemMatches(master.identStack, stack, true)
+                && ItemStack.areItemStackTagsEqual(stack, master.identStack);
+        else return this.outputStack != null && OreDictionary.itemMatches(identStack, stack, true)
+            && ItemStack.areItemStackTagsEqual(stack, identStack);
     }
 
     @Override
@@ -287,7 +267,7 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
 
             if ((maxStorage - storageAmount) > 0) {
                 if (prevInputStack == null) // inputStack is new
-                storageAmount += inputStack.stackSize;
+                    storageAmount += inputStack.stackSize;
                 else storageAmount += inputStack.stackSize - prevInputStack.stackSize;
 
                 if (storageAmount > maxStorage) storageAmount = maxStorage;
@@ -297,8 +277,8 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
                 inputStack = null;
                 prevInputStack = null;
             } else {
-                inputStack = Utils.copyStackWithAmount(
-                        identStack, identStack.getMaxStackSize() - (maxStorage - storageAmount));
+                inputStack = Utils
+                    .copyStackWithAmount(identStack, identStack.getMaxStackSize() - (maxStorage - storageAmount));
                 prevInputStack = inputStack.copy();
             }
         }
@@ -306,7 +286,7 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
         if (prevOutputStack != null) // Had fake output
         {
             if (outputStack == null) // fully depleted
-            storageAmount -= prevOutputStack.stackSize;
+                storageAmount -= prevOutputStack.stackSize;
             else storageAmount -= (prevOutputStack.stackSize - outputStack.stackSize);
 
             if (storageAmount < 0) storageAmount = 0;
@@ -335,11 +315,9 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            if (pos == 4)
-                renderAABB = AxisAlignedBB.getBoundingBox(
-                        xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 7, zCoord + 2);
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (pos == 4) renderAABB = AxisAlignedBB
+            .getBoundingBox(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 7, zCoord + 2);
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 
@@ -410,7 +388,7 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
     }
 
     private void updateComparatorValuesPart1() {
-        //		oldComps = new int[6];
+        // oldComps = new int[6];
         int vol = maxStorage / 6;
         for (int i = 0; i < 6; i++) {
             int filled = storageAmount - i * vol;
@@ -428,15 +406,13 @@ public class TileEntitySilo extends TileEntityMultiblockPart implements ISidedIn
             int now = Math.min(15, Math.max((15 * filled) / vol, 0));
             if (now != oldComps[i]) {
                 int y = yCoord - offset[1] + i + 1;
-                for (int x = -1; x < 2; x++)
-                    for (int z = -1; z < 2; z++)
-                        worldObj.func_147453_f(
-                                xCoord - offset[0] + x,
-                                y,
-                                zCoord - offset[2] + z,
-                                worldObj.getBlock(xCoord - offset[0] + x, y, zCoord - offset[2] + z));
+                for (int x = -1; x < 2; x++) for (int z = -1; z < 2; z++) worldObj.func_147453_f(
+                    xCoord - offset[0] + x,
+                    y,
+                    zCoord - offset[2] + z,
+                    worldObj.getBlock(xCoord - offset[0] + x, y, zCoord - offset[2] + z));
             }
         }
-        //		oldComps = null;
+        // oldComps = null;
     }
 }

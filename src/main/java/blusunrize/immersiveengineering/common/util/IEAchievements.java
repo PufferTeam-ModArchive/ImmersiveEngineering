@@ -1,14 +1,8 @@
 package blusunrize.immersiveengineering.common.util;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalMultiblocks;
-import blusunrize.immersiveengineering.common.items.ItemDrill;
-import blusunrize.immersiveengineering.common.items.ItemRevolver;
-import cpw.mods.fml.common.Loader;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
@@ -19,7 +13,16 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.AchievementPage;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalMultiblocks;
+import blusunrize.immersiveengineering.common.items.ItemDrill;
+import blusunrize.immersiveengineering.common.items.ItemRevolver;
+import cpw.mods.fml.common.Loader;
+
 public class IEAchievements {
+
     public static AchievementPage ieAchievementPage;
 
     public static Achievement openManual; // 0,0
@@ -61,74 +64,91 @@ public class IEAchievements {
         openManual = new AchievementIE("openManual", 0, 0, new ItemStack(IEContent.itemTool, 1, 3), null);
         craftHammer = new AchievementIE("craftHammer", 3, 1, IEContent.itemTool, openManual).setNormalCrafting();
         connectWire = new AchievementIE("connectWire", 0, -2, IEContent.itemWireCoil, openManual);
-        blastfurnace =
-                new AchievementIE("blastfurnace", 2, 0, new ItemStack(IEContent.blockStoneDevice, 1, 2), craftHammer);
+        blastfurnace = new AchievementIE(
+            "blastfurnace",
+            2,
+            0,
+            new ItemStack(IEContent.blockStoneDevice, 1, 2),
+            craftHammer);
         makeSteel = new AchievementIE("makeSteel", 2, -2, new ItemStack(IEContent.itemMetal, 1, 7), blastfurnace);
 
         placeConveyor = new AchievementIE(
-                        "placeConveyor", 1, 2, new ItemStack(IEContent.blockMetalDevice, 1, 11), openManual)
-                .setPlacement(
-                        new ItemStack(IEContent.blockMetalDevice, 1, 11),
-                        new ItemStack(IEContent.blockMetalDevice, 1, 15));
+            "placeConveyor",
+            1,
+            2,
+            new ItemStack(IEContent.blockMetalDevice, 1, 11),
+            openManual).setPlacement(
+                new ItemStack(IEContent.blockMetalDevice, 1, 11),
+                new ItemStack(IEContent.blockMetalDevice, 1, 15));
         placeWindmill = new AchievementIE(
-                        "placeWindmill", -1, 2, new ItemStack(IEContent.blockWoodenDevice, 1, 2), openManual)
-                .setPlacement(
-                        new ItemStack(IEContent.blockWoodenDevice, 1, 2),
-                        new ItemStack(IEContent.blockWoodenDevice, 1, 3));
+            "placeWindmill",
+            -1,
+            2,
+            new ItemStack(IEContent.blockWoodenDevice, 1, 2),
+            openManual).setPlacement(
+                new ItemStack(IEContent.blockWoodenDevice, 1, 2),
+                new ItemStack(IEContent.blockWoodenDevice, 1, 3));
         craftHeater = new AchievementIE(
-                        "craftHeater", -2, 3, new ItemStack(IEContent.blockMetalDevice, 1, 12), openManual)
-                .setNormalCrafting();
+            "craftHeater",
+            -2,
+            3,
+            new ItemStack(IEContent.blockMetalDevice, 1, 12),
+            openManual).setNormalCrafting();
         craftPump = new AchievementIE("craftPump", 2, 3, new ItemStack(IEContent.blockMetalDevice2, 1, 6), openManual)
-                .setNormalCrafting();
+            .setNormalCrafting();
         placeFloodlight = new AchievementIE(
-                        "placeFloodlight", -2, 4, new ItemStack(IEContent.blockMetalDevice2, 1, 4), openManual)
-                .setPlacement();
+            "placeFloodlight",
+            -2,
+            4,
+            new ItemStack(IEContent.blockMetalDevice2, 1, 4),
+            openManual).setPlacement();
 
         mbImprovedBlastFurnace = new AchievementIE(
-                        "mbImprovedBlastFurnace", 6, -4, new ItemStack(IEContent.blockStoneDevice, 1, 5), makeSteel)
-                .setSpecial();
+            "mbImprovedBlastFurnace",
+            6,
+            -4,
+            new ItemStack(IEContent.blockStoneDevice, 1, 5),
+            makeSteel).setSpecial();
         mbSilo = new AchievementIE(
-                        "mbSilo",
-                        6,
-                        -3,
-                        new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_silo),
-                        craftHammer)
-                .setSpecial();
+            "mbSilo",
+            6,
+            -3,
+            new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_silo),
+            craftHammer).setSpecial();
         mbCrusher = new AchievementIE(
-                        "mbCrusher",
-                        6,
-                        -2,
-                        new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_crusher),
-                        craftHammer)
-                .setSpecial();
+            "mbCrusher",
+            6,
+            -2,
+            new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_crusher),
+            craftHammer).setSpecial();
         mbDieselGen = new AchievementIE(
-                        "mbDieselGen",
-                        6,
-                        -1,
-                        new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_dieselGenerator),
-                        craftHammer)
-                .setSpecial();
+            "mbDieselGen",
+            6,
+            -1,
+            new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_dieselGenerator),
+            craftHammer).setSpecial();
         mbExcavator = new AchievementIE(
-                        "mbExcavator",
-                        6,
-                        0,
-                        new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_excavator),
-                        craftHammer)
-                .setSpecial();
+            "mbExcavator",
+            6,
+            0,
+            new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_excavator),
+            craftHammer).setSpecial();
         mbArcFurnace = new AchievementIE(
-                        "mbArcFurnace",
-                        6,
-                        1,
-                        new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_arcFurnace),
-                        craftHammer)
-                .setSpecial();
+            "mbArcFurnace",
+            6,
+            1,
+            new ItemStack(IEContent.blockMetalMultiblocks, 1, BlockMetalMultiblocks.META_arcFurnace),
+            craftHammer).setSpecial();
 
         craftWorkbench = new AchievementIE(
-                        "craftWorkbench", 2, -4, new ItemStack(IEContent.blockWoodenDevice, 1, 5), makeSteel)
-                .setNormalCrafting();
+            "craftWorkbench",
+            2,
+            -4,
+            new ItemStack(IEContent.blockWoodenDevice, 1, 5),
+            makeSteel).setNormalCrafting();
 
-        craftRevolver =
-                new AchievementIE("craftRevolver", 3, -7, IEContent.itemRevolver, craftWorkbench).setNormalCrafting();
+        craftRevolver = new AchievementIE("craftRevolver", 3, -7, IEContent.itemRevolver, craftWorkbench)
+            .setNormalCrafting();
         ItemStack[] upgrades = new ItemStack[20];
         upgrades[18] = new ItemStack(IEContent.itemToolUpgrades, 1, 5);
         upgrades[19] = new ItemStack(IEContent.itemToolUpgrades, 1, 6);
@@ -136,11 +156,13 @@ public class IEAchievements {
         ((ItemRevolver) IEContent.itemRevolver).setContainedItems(revolver, upgrades);
         ((ItemRevolver) IEContent.itemRevolver).recalculateUpgrades(revolver);
         upgradeRevolver = new AchievementIE("upgradeRevolver", 4, -6, revolver, craftRevolver);
-        if (Loader.isModLoaded("Botania") && Config.getBoolean("compat_Botania"))
-            craftWolfPack = new AchievementIE(
-                            "craftWolfPack", 6, -7, new ItemStack(IEContent.itemBullet, 1, 8), craftRevolver)
-                    .setNormalCrafting()
-                    .setSpecial();
+        if (Loader.isModLoaded("Botania") && Config.getBoolean("compat_Botania")) craftWolfPack = new AchievementIE(
+            "craftWolfPack",
+            6,
+            -7,
+            new ItemStack(IEContent.itemBullet, 1, 8),
+            craftRevolver).setNormalCrafting()
+                .setSpecial();
 
         ItemStack drill = new ItemStack(IEContent.itemDrill);
         ((ItemDrill) IEContent.itemDrill).setHead(drill, new ItemStack(IEContent.itemDrillhead));
@@ -155,44 +177,53 @@ public class IEAchievements {
         ((ItemDrill) IEContent.itemDrill).recalculateUpgrades(drill2);
         upgradeDrill = new AchievementIE("upgradeDrill", 0, -7, drill2, craftDrill);
 
-        craftSkyhook =
-                new AchievementIE("craftSkyhook", 1, -6, IEContent.itemSkyhook, craftWorkbench).setNormalCrafting();
+        craftSkyhook = new AchievementIE("craftSkyhook", 1, -6, IEContent.itemSkyhook, craftWorkbench)
+            .setNormalCrafting();
         ItemStack hook = new ItemStack(IEContent.itemSkyhook);
         hook.addEnchantment(Enchantment.unbreaking, 1);
         skyhookPro = new AchievementIE("skyhookPro", 0, -6, hook, craftSkyhook);
 
         craftChemthrower = new AchievementIE("craftChemthrower", 3, -5, IEContent.itemChemthrower, craftWorkbench)
-                .setNormalCrafting();
+            .setNormalCrafting();
 
-        craftRailgun =
-                new AchievementIE("craftRailgun", 1, -5, IEContent.itemRailgun, craftWorkbench).setNormalCrafting();
+        craftRailgun = new AchievementIE("craftRailgun", 1, -5, IEContent.itemRailgun, craftWorkbench)
+            .setNormalCrafting();
 
         secret_birthdayParty = new AchievementIE(
-                        "secret_birthdayParty", -4, -2, new ItemStack(IEContent.itemFakeIcons, 1, 0), null)
-                .setSpecial();
+            "secret_birthdayParty",
+            -4,
+            -2,
+            new ItemStack(IEContent.itemFakeIcons, 1, 0),
+            null).setSpecial();
         secret_luckOfTheDraw = new AchievementIE(
-                        "secret_luckOfTheDraw", -4, 0, new ItemStack(IEContent.itemFakeIcons, 1, 1), null)
-                .setSpecial();
+            "secret_luckOfTheDraw",
+            -4,
+            0,
+            new ItemStack(IEContent.itemFakeIcons, 1, 1),
+            null).setSpecial();
 
         ieAchievementPage = new AchievementPage(
-                ImmersiveEngineering.MODNAME,
-                AchievementIE.achievements.toArray(new Achievement[AchievementIE.achievements.size()]));
+            ImmersiveEngineering.MODNAME,
+            AchievementIE.achievements.toArray(new Achievement[AchievementIE.achievements.size()]));
         AchievementPage.registerAchievementPage(ieAchievementPage);
 
         statDistanceSkyhook = new StatBase(
-                "stat.skyhookOneCm",
-                new ChatComponentTranslation("stat.skyhookOneCm", new Object[0]),
-                StatBase.distanceStatType) {
+            "stat.skyhookOneCm",
+            new ChatComponentTranslation("stat.skyhookOneCm", new Object[0]),
+            StatBase.distanceStatType) {
+
             @Override
             public StatBase registerStat() {
                 super.registerStat();
                 StatList.generalStats.add(12, this);
                 return this;
             }
-        }.initIndependentStat().registerStat();
+        }.initIndependentStat()
+            .registerStat();
     }
 
     public static class AchievementIE extends Achievement {
+
         public static List<Achievement> achievements = new ArrayList();
 
         public AchievementIE(String name, int x, int y, ItemStack icon, Achievement parent) {

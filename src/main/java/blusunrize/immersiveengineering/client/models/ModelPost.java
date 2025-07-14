@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 4.1.1
  */
 public class ModelPost extends ModelBase {
+
     public ModelRenderer Base;
     public ModelRenderer Pole;
     public ModelRenderer Top_mid;

@@ -1,7 +1,7 @@
 package blusunrize.immersiveengineering.common.blocks;
 
-import blusunrize.immersiveengineering.common.util.Lib;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,7 +10,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
+import blusunrize.immersiveengineering.common.util.Lib;
+
 public class ItemBlockIEBase extends ItemBlock {
+
     public ItemBlockIEBase(Block b) {
         super(b);
         if (((BlockIEBase) b).subNames.length > 1) setHasSubtypes(true);
@@ -30,18 +33,18 @@ public class ItemBlockIEBase extends ItemBlock {
     public String getUnlocalizedName(ItemStack itemstack) {
         if (((BlockIEBase) field_150939_a).subNames != null && ((BlockIEBase) field_150939_a).subNames.length > 0)
             return getUnlocalizedName() + "."
-                    + ((BlockIEBase) field_150939_a)
-                            .subNames[
-                            Math.min(((BlockIEBase) field_150939_a).subNames.length - 1, itemstack.getItemDamage())];
+                + ((BlockIEBase) field_150939_a).subNames[Math
+                    .min(((BlockIEBase) field_150939_a).subNames.length - 1, itemstack.getItemDamage())];
         return super.getUnlocalizedName(itemstack);
     }
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advInfo) {
-        if (((BlockIEBase) field_150939_a).hasFlavour)
-            list.add(StatCollector.translateToLocal(Lib.DESC_FLAVOUR + ((BlockIEBase) field_150939_a).name + "."
-                    + ((BlockIEBase) field_150939_a)
-                            .subNames[
-                            Math.min(((BlockIEBase) field_150939_a).subNames.length - 1, stack.getItemDamage())]));
+        if (((BlockIEBase) field_150939_a).hasFlavour) list.add(
+            StatCollector.translateToLocal(
+                Lib.DESC_FLAVOUR + ((BlockIEBase) field_150939_a).name
+                    + "."
+                    + ((BlockIEBase) field_150939_a).subNames[Math
+                        .min(((BlockIEBase) field_150939_a).subNames.length - 1, stack.getItemDamage())]));
     }
 }

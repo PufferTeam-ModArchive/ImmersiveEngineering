@@ -3,6 +3,7 @@ package blusunrize.immersiveengineering.client.fx;
 import net.minecraft.world.World;
 
 public class EntityFXVanilla extends EntityFXIEBase {
+
     String tag = "";
 
     public EntityFXVanilla(World world, String tag, double x, double y, double z, double mx, double my, double mz) {

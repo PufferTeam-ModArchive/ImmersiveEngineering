@@ -3,25 +3,20 @@ package blusunrize.immersiveengineering.common.util.compat.computercraft;
 import static blusunrize.immersiveengineering.common.util.Utils.saveFluidTank;
 import static blusunrize.immersiveengineering.common.util.Utils.saveStack;
 
+import java.util.Map;
+
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBottlingMachine;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import java.util.Map;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class PeripheralBottlingMachine extends IEPeripheral {
-    public static final String[] cmds = {
-        "getFluid",
-        "getEmptyCannister",
-        "getEmptyCannisterCount",
-        "getFilledCannister",
-        "getFilledCannisterCount",
-        "getEnergyStored",
-        "getMaxEnergyStored",
-        "setEnabled"
-    };
+
+    public static final String[] cmds = { "getFluid", "getEmptyCannister", "getEmptyCannisterCount",
+        "getFilledCannister", "getFilledCannisterCount", "getEnergyStored", "getMaxEnergyStored", "setEnabled" };
 
     public PeripheralBottlingMachine(World w, int _x, int _y, int _z) {
         super(w, _x, _y, _z);
@@ -39,12 +34,12 @@ public class PeripheralBottlingMachine extends IEPeripheral {
 
     @Override
     public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments)
-            throws LuaException, InterruptedException {
+        throws LuaException, InterruptedException {
         TileEntityBottlingMachine te = (TileEntityBottlingMachine) getTileEntity(TileEntityBottlingMachine.class);
         if (te == null) throw new LuaException("The bottling machine was removed");
         switch (method) {
             case 0: // tank
-                return new Object[] {saveFluidTank(te.tank)};
+                return new Object[] { saveFluidTank(te.tank) };
             case 1: // get empty cannister
                 if (arguments.length != 1 || !(arguments[0] instanceof Double))
                     throw new LuaException("Wrong amount of arguments, needs one integer");
@@ -58,9 +53,9 @@ public class PeripheralBottlingMachine extends IEPeripheral {
                 }
                 Map<String, Object> map = saveStack(te.inventory[id]);
                 map.put("process", te.process[id]);
-                return new Object[] {map};
+                return new Object[] { map };
             case 2: // empty count
-                return new Object[] {te.getEmptyCount()};
+                return new Object[] { te.getEmptyCount() };
             case 3: // get filled cannister
                 if (arguments.length != 1 || !(arguments[0] instanceof Double))
                     throw new LuaException("Wrong amount of arguments, needs one integer");
@@ -73,13 +68,13 @@ public class PeripheralBottlingMachine extends IEPeripheral {
                 }
                 map = saveStack(te.inventory[id]);
                 map.put("process", te.process[id]);
-                return new Object[] {map};
+                return new Object[] { map };
             case 4: // filled count
-                return new Object[] {te.getFilledCount()};
+                return new Object[] { te.getFilledCount() };
             case 5: // energy stored
-                return new Object[] {te.energyStorage.getEnergyStored()};
+                return new Object[] { te.energyStorage.getEnergyStored() };
             case 6: // max energy stored
-                return new Object[] {te.energyStorage.getMaxEnergyStored()};
+                return new Object[] { te.energyStorage.getMaxEnergyStored() };
             case 7: // set active
                 if (arguments.length != 1 || !(arguments[0] instanceof Boolean))
                     throw new LuaException("Wrong amount of arguments, needs one boolean");

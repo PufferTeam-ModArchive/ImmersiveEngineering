@@ -1,5 +1,9 @@
 package blusunrize.immersiveengineering.common.util.compat.opencomputers;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCapacitorCreative;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCapacitorHV;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCapacitorLV;
@@ -10,9 +14,6 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.prefab.DriverTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class CapacitorDriver extends DriverTileEntity {
 
@@ -36,6 +37,7 @@ public class CapacitorDriver extends DriverTileEntity {
     }
 
     public class CapacitorEnvironment extends ManagedEnvironmentIE<TileEntityCapacitorLV> {
+
         String prefix;
 
         public CapacitorEnvironment(World w, int x, int y, int z, String name) {
@@ -61,12 +63,12 @@ public class CapacitorDriver extends DriverTileEntity {
 
         @Callback(doc = "function():int -- returns the amount of energy that can be stored")
         public Object[] getMaxEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().getMaxEnergyStored(ForgeDirection.UP)};
+            return new Object[] { getTileEntity().getMaxEnergyStored(ForgeDirection.UP) };
         }
 
         @Callback(doc = "function():int -- returns the amount of energy that can be stored")
         public Object[] getEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().getEnergyStored(ForgeDirection.DOWN)};
+            return new Object[] { getTileEntity().getEnergyStored(ForgeDirection.DOWN) };
         }
     }
 }

@@ -1,16 +1,5 @@
 package blusunrize.immersiveengineering.common.entities;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.common.items.ItemSkyhook;
-import blusunrize.immersiveengineering.common.util.IEAchievements;
-import blusunrize.immersiveengineering.common.util.IELogger;
-import blusunrize.immersiveengineering.common.util.SkylineHelper;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.network.MessageSkyhookSync;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,7 +14,20 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.common.items.ItemSkyhook;
+import blusunrize.immersiveengineering.common.util.IEAchievements;
+import blusunrize.immersiveengineering.common.util.IELogger;
+import blusunrize.immersiveengineering.common.util.SkylineHelper;
+import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.network.MessageSkyhookSync;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class EntitySkylineHook extends Entity {
+
     public Connection connection;
     public ChunkCoordinates target;
     public Vec3[] subPoints;
@@ -34,19 +36,13 @@ public class EntitySkylineHook extends Entity {
     public EntitySkylineHook(World world) {
         super(world);
         this.setSize(.125f, .125f);
-        //		this.noClip=true;
+        // this.noClip=true;
     }
 
-    public EntitySkylineHook(
-            World world,
-            double x,
-            double y,
-            double z,
-            Connection connection,
-            ChunkCoordinates target,
-            Vec3[] subPoints) {
+    public EntitySkylineHook(World world, double x, double y, double z, Connection connection, ChunkCoordinates target,
+        Vec3[] subPoints) {
         super(world);
-        //		this.noClip=true;
+        // this.noClip=true;
         this.setSize(0.125F, 0.125F);
         this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
         this.setPosition(x, y, z);
@@ -57,10 +53,8 @@ public class EntitySkylineHook extends Entity {
         float f1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
         this.rotationYaw = (float) (Math.atan2(this.motionZ, this.motionX) * 180.0D / Math.PI) + 90.0F;
 
-        for (this.rotationPitch = (float) (Math.atan2((double) f1, this.motionY) * 180.0D / Math.PI) - 90.0F;
-                this.rotationPitch - this.prevRotationPitch < -180.0F;
-                this.prevRotationPitch -= 360.0F)
-            ;
+        for (this.rotationPitch = (float) (Math.atan2((double) f1, this.motionY) * 180.0D / Math.PI)
+            - 90.0F; this.rotationPitch - this.prevRotationPitch < -180.0F; this.prevRotationPitch -= 360.0F);
 
         while (this.rotationPitch - this.prevRotationPitch >= 180.0F) this.prevRotationPitch += 360.0F;
         while (this.rotationYaw - this.prevRotationYaw < -180.0F) this.prevRotationYaw -= 360.0F;
@@ -88,10 +82,10 @@ public class EntitySkylineHook extends Entity {
         }
         super.onUpdate();
         if (worldObj.getTotalWorldTime() % 3 == 0) {
-            //		if(this.ticksExisted>40)
-            //			this.setDead();
-            //		if(worldObj.isRemote)
-            //			return;
+            // if(this.ticksExisted>40)
+            // this.setDead();
+            // if(worldObj.isRemote)
+            // return;
             // check whether ground is near
             boolean upper = !isAir(worldObj, (int) posX, (int) posY - 1, (int) posZ);
             boolean lower = !isAir(worldObj, (int) posX, (int) posY - 2, (int) posZ);
@@ -119,13 +113,13 @@ public class EntitySkylineHook extends Entity {
                 return;
             }
             float speed = 2f;
-            if (player != null
-                    && player.getCurrentEquippedItem() != null
-                    && player.getCurrentEquippedItem().getItem() instanceof ItemSkyhook)
-                speed = ((ItemSkyhook) player.getCurrentEquippedItem().getItem())
-                        .getSkylineSpeed(player.getCurrentEquippedItem());
-            Vec3 moveVec = SkylineHelper.getSubMovementVector(
-                    Vec3.createVectorHelper(posX, posY, posZ), subPoints[targetPoint], speed);
+            if (player != null && player.getCurrentEquippedItem() != null
+                && player.getCurrentEquippedItem()
+                    .getItem() instanceof ItemSkyhook)
+                speed = ((ItemSkyhook) player.getCurrentEquippedItem()
+                    .getItem()).getSkylineSpeed(player.getCurrentEquippedItem());
+            Vec3 moveVec = SkylineHelper
+                .getSubMovementVector(Vec3.createVectorHelper(posX, posY, posZ), subPoints[targetPoint], speed);
             motionX = moveVec.xCoord; // *speed;
             motionY = moveVec.yCoord; // *speed;
             motionZ = moveVec.zCoord; // *speed;
@@ -157,10 +151,8 @@ public class EntitySkylineHook extends Entity {
         float f1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
         this.rotationYaw = (float) (Math.atan2(this.motionZ, this.motionX) * 180.0D / Math.PI) + 90.0F;
 
-        for (this.rotationPitch = (float) (Math.atan2((double) f1, this.motionY) * 180.0D / Math.PI) - 90.0F;
-                this.rotationPitch - this.prevRotationPitch < -180.0F;
-                this.prevRotationPitch -= 360.0F)
-            ;
+        for (this.rotationPitch = (float) (Math.atan2((double) f1, this.motionY) * 180.0D / Math.PI)
+            - 90.0F; this.rotationPitch - this.prevRotationPitch < -180.0F; this.prevRotationPitch -= 360.0F);
 
         while (this.rotationPitch - this.prevRotationPitch >= 180.0F) this.prevRotationPitch += 360.0F;
         while (this.rotationYaw - this.prevRotationYaw < -180.0F) this.prevRotationYaw -= 360.0F;
@@ -173,13 +165,13 @@ public class EntitySkylineHook extends Entity {
             for (int j = 0; j < 4; ++j) {
                 float f3 = 0.25F;
                 this.worldObj.spawnParticle(
-                        "bubble",
-                        this.posX - this.motionX * (double) f3,
-                        this.posY - this.motionY * (double) f3,
-                        this.posZ - this.motionZ * (double) f3,
-                        this.motionX,
-                        this.motionY,
-                        this.motionZ);
+                    "bubble",
+                    this.posX - this.motionX * (double) f3,
+                    this.posY - this.motionY * (double) f3,
+                    this.posZ - this.motionZ * (double) f3,
+                    this.motionX,
+                    this.motionY,
+                    this.motionZ);
             }
         }
 
@@ -189,9 +181,9 @@ public class EntitySkylineHook extends Entity {
             double dz = this.posZ - this.prevPosZ;
             int distTrvl = Math.round(MathHelper.sqrt_double(dx * dx + dy * dy + dz * dz) * 100.0F);
             if (distTrvl > 0) player.addStat(IEAchievements.statDistanceSkyhook, distTrvl);
-            if (player instanceof EntityPlayerMP)
-                if (((EntityPlayerMP) player).func_147099_x().writeStat(IEAchievements.statDistanceSkyhook) > 100000)
-                    player.triggerAchievement(IEAchievements.skyhookPro);
+            if (player instanceof EntityPlayerMP) if (((EntityPlayerMP) player).func_147099_x()
+                .writeStat(IEAchievements.statDistanceSkyhook) > 100000)
+                player.triggerAchievement(IEAchievements.skyhookPro);
         }
 
         this.setPosition(this.posX, this.posY, this.posZ);
@@ -204,33 +196,43 @@ public class EntitySkylineHook extends Entity {
         ItemStack hook = ((EntityPlayer) this.riddenByEntity).getCurrentEquippedItem();
         if (hook == null || !(hook.getItem() instanceof ItemSkyhook)) return;
         Connection line = SkylineHelper.getTargetConnection(
-                worldObj, target.posX, target.posY, target.posZ, (EntityLivingBase) this.riddenByEntity, connection);
+            worldObj,
+            target.posX,
+            target.posY,
+            target.posZ,
+            (EntityLivingBase) this.riddenByEntity,
+            connection);
 
         if (line != null) {
-            ((EntityPlayer) this.riddenByEntity)
-                    .setItemInUse(hook, hook.getItem().getMaxItemUseDuration(hook));
+            ((EntityPlayer) this.riddenByEntity).setItemInUse(
+                hook,
+                hook.getItem()
+                    .getMaxItemUseDuration(hook));
             SkylineHelper.spawnHook((EntityPlayer) this.riddenByEntity, end, line);
-            //					ChunkCoordinates cc0 = line.end==target?line.start:line.end;
-            //					ChunkCoordinates cc1 = line.end==target?line.end:line.start;
-            //					double dx = cc0.posX-cc1.posX;
-            //					double dy = cc0.posY-cc1.posY;
-            //					double dz = cc0.posZ-cc1.posZ;
+            // ChunkCoordinates cc0 = line.end==target?line.start:line.end;
+            // ChunkCoordinates cc1 = line.end==target?line.end:line.start;
+            // double dx = cc0.posX-cc1.posX;
+            // double dy = cc0.posY-cc1.posY;
+            // double dz = cc0.posZ-cc1.posZ;
             //
-            //					EntityZiplineHook zip = new EntityZiplineHook(worldObj, target.posX+.5,target.posY+.5,target.posZ+.5,
+            // EntityZiplineHook zip = new EntityZiplineHook(worldObj, target.posX+.5,target.posY+.5,target.posZ+.5,
             // line, cc0);
-            //					zip.motionX = dx*.05f;
-            //					zip.motionY = dy*.05f;
-            //					zip.motionZ = dz*.05f;
-            //					if(!worldObj.isRemote)
-            //						worldObj.spawnEntityInWorld(zip);
-            //					ItemSkyHook.existingHooks.put(this.riddenByEntity.getCommandSenderName(), zip);
-            //					this.riddenByEntity.mountEntity(zip);
+            // zip.motionX = dx*.05f;
+            // zip.motionY = dy*.05f;
+            // zip.motionZ = dz*.05f;
+            // if(!worldObj.isRemote)
+            // worldObj.spawnEntityInWorld(zip);
+            // ItemSkyHook.existingHooks.put(this.riddenByEntity.getCommandSenderName(), zip);
+            // this.riddenByEntity.mountEntity(zip);
         } else {
             ((EntityPlayer) this.riddenByEntity).motionX = motionX;
             ((EntityPlayer) this.riddenByEntity).motionY = motionY;
             ((EntityPlayer) this.riddenByEntity).motionZ = motionZ;
-            IELogger.debug("player motion: " + ((EntityPlayer) this.riddenByEntity).motionX + ","
-                    + ((EntityPlayer) this.riddenByEntity).motionY + ","
+            IELogger.debug(
+                "player motion: " + ((EntityPlayer) this.riddenByEntity).motionX
+                    + ","
+                    + ((EntityPlayer) this.riddenByEntity).motionY
+                    + ","
                     + ((EntityPlayer) this.riddenByEntity).motionZ);
         }
     }
@@ -242,24 +244,24 @@ public class EntitySkylineHook extends Entity {
         float f3;
         float f4;
 
-        //		if (1 == 1.0F)
-        //		{
+        // if (1 == 1.0F)
+        // {
         f1 = MathHelper.cos(-this.rotationYaw * 0.017453292F - (float) Math.PI);
         f2 = MathHelper.sin(-this.rotationYaw * 0.017453292F - (float) Math.PI);
         f3 = -MathHelper.cos(-this.rotationPitch * 0.017453292F);
         f4 = MathHelper.sin(-this.rotationPitch * 0.017453292F);
         return Vec3.createVectorHelper((double) (f2 * f3), (double) f4, (double) (f1 * f3));
-        //		}
-        //		else
-        //		{
-        //			f1 = this.prevRotationPitch + (this.rotationPitch - this.prevRotationPitch) * 1;
-        //			f2 = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * 1;
-        //			f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
-        //			f4 = MathHelper.sin(-f2 * 0.017453292F - (float)Math.PI);
-        //			float f5 = -MathHelper.cos(-f1 * 0.017453292F);
-        //			float f6 = MathHelper.sin(-f1 * 0.017453292F);
-        //			return Vec3.createVectorHelper((double)(f4 * f5), (double)f6, (double)(f3 * f5));
-        //		}
+        // }
+        // else
+        // {
+        // f1 = this.prevRotationPitch + (this.rotationPitch - this.prevRotationPitch) * 1;
+        // f2 = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * 1;
+        // f3 = MathHelper.cos(-f2 * 0.017453292F - (float)Math.PI);
+        // f4 = MathHelper.sin(-f2 * 0.017453292F - (float)Math.PI);
+        // float f5 = -MathHelper.cos(-f1 * 0.017453292F);
+        // float f6 = MathHelper.sin(-f1 * 0.017453292F);
+        // return Vec3.createVectorHelper((double)(f4 * f5), (double)f6, (double)(f3 * f5));
+        // }
     }
 
     @Override
@@ -324,18 +326,19 @@ public class EntitySkylineHook extends Entity {
     public boolean attackEntityFrom(DamageSource p_70097_1_, float p_70097_2_) {
         this.setDead();
         return true;
-        //		return false;
+        // return false;
     }
-    //	@Override
-    //	protected void readEntityFromNBT(NBTTagCompound p_70037_1_) {
-    //		// TODO Auto-generated method stub
+
+    // @Override
+    // protected void readEntityFromNBT(NBTTagCompound p_70037_1_) {
+    // // TODO Auto-generated method stub
     //
-    //	}
-    //	@Override
-    //	protected void writeEntityToNBT(NBTTagCompound p_70014_1_) {
-    //		// TODO Auto-generated method stub
+    // }
+    // @Override
+    // protected void writeEntityToNBT(NBTTagCompound p_70014_1_) {
+    // // TODO Auto-generated method stub
     //
-    //	}
+    // }
     public boolean isAir(World w, int x, int y, int z) {
         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
         if (connection != null && (pos.equals(connection.start) || pos.equals(connection.end))) return true;

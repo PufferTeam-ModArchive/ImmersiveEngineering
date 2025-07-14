@@ -1,9 +1,8 @@
 package blusunrize.immersiveengineering.common.util;
 
-import blusunrize.immersiveengineering.api.IEApi;
-import blusunrize.immersiveengineering.common.Config;
 import java.lang.reflect.Field;
 import java.util.UUID;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -11,7 +10,11 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 
+import blusunrize.immersiveengineering.api.IEApi;
+import blusunrize.immersiveengineering.common.Config;
+
 public class IEPotions {
+
     public static Potion flammable;
     public static Potion slippery;
     public static Potion conductive;
@@ -24,26 +27,25 @@ public class IEPotions {
 
         int potionID = Config.getPotionID(24, "Flammable");
         flammable = new IEPotion(potionID, true, 0x8f3f1f, 0, false, 0)
-                .setPotionName("immersiveengineering.potion.flammable");
+            .setPotionName("immersiveengineering.potion.flammable");
 
         potionID = Config.getPotionID(potionID, "Slippery");
         slippery = new IEPotion(potionID, true, 0x171003, 0, false, 1)
-                .setPotionName("immersiveengineering.potion.slippery");
+            .setPotionName("immersiveengineering.potion.slippery");
 
         potionID = Config.getPotionID(potionID, "Conductive");
         conductive = new IEPotion(potionID, true, 0x690000, 0, false, 2)
-                .setPotionName("immersiveengineering.potion.conductive");
+            .setPotionName("immersiveengineering.potion.conductive");
 
         potionID = Config.getPotionID(potionID, "Sticky");
-        sticky = new IEPotion(potionID, true, 0x9c6800, 0, false, 3)
-                .setPotionName("immersiveengineering.potion.sticky")
-                .func_111184_a(
-                        SharedMonsterAttributes.movementSpeed,
-                        new UUID(potionUUIDBase, 01L).toString(),
-                        -0.50000000298023224D,
-                        2);
+        sticky = new IEPotion(potionID, true, 0x9c6800, 0, false, 3).setPotionName("immersiveengineering.potion.sticky")
+            .func_111184_a(
+                SharedMonsterAttributes.movementSpeed,
+                new UUID(potionUUIDBase, 01L).toString(),
+                -0.50000000298023224D,
+                2);
 
-        IEApi.potions = new Potion[] {flammable, slippery, conductive, sticky};
+        IEApi.potions = new Potion[] { flammable, slippery, conductive, sticky };
     }
 
     public static void extendPotionArray(int extendBy) {
@@ -53,8 +55,9 @@ public class IEPotions {
         try {
             Field field = null;
             Field[] fields = Potion.class.getDeclaredFields();
-            for (Field f : fields)
-                if (f.getType().toString().equals("class [Lnet.minecraft.potion.Potion;")) {
+            for (Field f : fields) if (f.getType()
+                .toString()
+                .equals("class [Lnet.minecraft.potion.Potion;")) {
                     field = f;
                     break;
                 }
@@ -64,8 +67,8 @@ public class IEPotions {
             modifiersField.setAccessible(true);
             modifiersField.setInt(field, field.getModifiers() & 0xFFFFFFEF);
             field.set(null, potions);
-            //			IELogger.info("Variable "+Potion.potionTypes.length);
-            //			IELogger.info("Reflection "+((Potion[])Potion.class.getFields()[0].get(null)).length);
+            // IELogger.info("Variable "+Potion.potionTypes.length);
+            // IELogger.info("Reflection "+((Potion[])Potion.class.getFields()[0].get(null)).length);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -82,6 +85,7 @@ public class IEPotions {
     }
 
     public static class IEPotion extends Potion {
+
         static ResourceLocation tex = new ResourceLocation("immersiveengineering", "textures/gui/potioneffects.png");
         final int tickrate;
         final boolean halfTickRateWIthAmplifier;
@@ -95,7 +99,9 @@ public class IEPotions {
 
         @Override
         public int getStatusIconIndex() {
-            Minecraft.getMinecraft().getTextureManager().bindTexture(tex);
+            Minecraft.getMinecraft()
+                .getTextureManager()
+                .bindTexture(tex);
             return super.getStatusIconIndex();
         }
 
@@ -110,11 +116,12 @@ public class IEPotions {
         public void performEffect(EntityLivingBase living, int amplifier) {
             if (this == IEPotions.slippery) {
                 if (living.onGround) living.moveFlying(0, 1, 0.005F);
-                if (!living.worldObj.isRemote
-                        && living.getRNG().nextInt(300) == 0
-                        && living.getEquipmentInSlot(0) != null) {
-                    EntityItem dropped =
-                            living.entityDropItem(living.getEquipmentInSlot(0).copy(), 1);
+                if (!living.worldObj.isRemote && living.getRNG()
+                    .nextInt(300) == 0 && living.getEquipmentInSlot(0) != null) {
+                    EntityItem dropped = living.entityDropItem(
+                        living.getEquipmentInSlot(0)
+                            .copy(),
+                        1);
                     dropped.delayBeforeCanPickup = 20;
                     living.setCurrentItemOrArmor(0, null);
                 }

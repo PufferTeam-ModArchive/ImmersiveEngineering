@@ -1,12 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.Lib;
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -14,8 +7,17 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.util.Lib;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
+
 public class TileEntityCapacitorLV extends TileEntityIEBase implements IEnergyHandler, IBlockOverlayText {
-    public int[] sideConfig = {-1, 0, -1, -1, -1, -1};
+
+    public int[] sideConfig = { -1, 0, -1, -1, -1, -1 };
     EnergyStorage energyStorage = new EnergyStorage(getMaxStorage(), getMaxInput(), getMaxOutput());
 
     public int comparatorOutput = 0;
@@ -43,35 +45,36 @@ public class TileEntityCapacitorLV extends TileEntityIEBase implements IEnergyHa
         if (this.sideConfig[side] != 1) return;
         ForgeDirection fd = ForgeDirection.VALID_DIRECTIONS[side];
         TileEntity tileEntity = worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
-        if (tileEntity instanceof IEnergyReceiver)
-            this.energyStorage.modifyEnergyStored(-((IEnergyReceiver) tileEntity)
-                    .receiveEnergy(
-                            fd.getOpposite(), Math.min(getMaxOutput(), this.energyStorage.getEnergyStored()), false));
-        //		else if(worldObj.getTileEntity(xCoord+fd.offsetX,yCoord+fd.offsetY,zCoord+fd.offsetZ) instanceof
+        if (tileEntity instanceof IEnergyReceiver) this.energyStorage.modifyEnergyStored(
+            -((IEnergyReceiver) tileEntity).receiveEnergy(
+                fd.getOpposite(),
+                Math.min(getMaxOutput(), this.energyStorage.getEnergyStored()),
+                false));
+        // else if(worldObj.getTileEntity(xCoord+fd.offsetX,yCoord+fd.offsetY,zCoord+fd.offsetZ) instanceof
         // TileEntityConnectorLV)
-        //		{
-        //			IImmersiveConnectable node = (IImmersiveConnectable)
+        // {
+        // IImmersiveConnectable node = (IImmersiveConnectable)
         // worldObj.getTileEntity(xCoord+fd.offsetX,yCoord+fd.offsetY,zCoord+fd.offsetZ);
-        //			if(!node.isEnergyOutput())
-        //				return;
-        //			List<AbstractConnection> outputs =
+        // if(!node.isEnergyOutput())
+        // return;
+        // List<AbstractConnection> outputs =
         // ImmersiveNetHandler.INSTANCE.getIndirectEnergyConnections(Utils.toCC(node), worldObj);
-        //			int received = 0;
-        //			int powerLeft = Math.min(getMaxOutput(), this.energyStorage.getEnergyStored());
-        //			for(AbstractConnection con : outputs)
-        //				if(con!=null && toIIC(con.end, worldObj)!=null)
-        //				{
-        //					int tempR = toIIC(con.end,worldObj).outputEnergy(Math.min(powerLeft,con.cableType.getTransferRate()),
+        // int received = 0;
+        // int powerLeft = Math.min(getMaxOutput(), this.energyStorage.getEnergyStored());
+        // for(AbstractConnection con : outputs)
+        // if(con!=null && toIIC(con.end, worldObj)!=null)
+        // {
+        // int tempR = toIIC(con.end,worldObj).outputEnergy(Math.min(powerLeft,con.cableType.getTransferRate()),
         // true, 0);
-        //					tempR -= (int) Math.floor(tempR*con.getAverageLossRate());
-        //					int r = toIIC(con.end, worldObj).outputEnergy(tempR, false, 0);
-        //					received += r;
-        //					powerLeft -= r;
-        //					if(powerLeft<=0)
-        //						break;
-        //				}
-        //			this.energyStorage.modifyEnergyStored(-received);
-        //		}
+        // tempR -= (int) Math.floor(tempR*con.getAverageLossRate());
+        // int r = toIIC(con.end, worldObj).outputEnergy(tempR, false, 0);
+        // received += r;
+        // powerLeft -= r;
+        // if(powerLeft<=0)
+        // break;
+        // }
+        // this.energyStorage.modifyEnergyStored(-received);
+        // }
     }
 
     public void toggleSide(int side) {
@@ -151,10 +154,9 @@ public class TileEntityCapacitorLV extends TileEntityIEBase implements IEnergyHa
             int j = sideConfig[Math.min(sideConfig.length - 1, ForgeDirection.OPPOSITES[mop.sideHit])];
             return new String[] {
                 StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.facing") + ": "
-                        + StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.connectEnergy." + i),
+                    + StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.connectEnergy." + i),
                 StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.opposite") + ": "
-                        + StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.connectEnergy." + j)
-            };
+                    + StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.connectEnergy." + j) };
         }
         return null;
     }

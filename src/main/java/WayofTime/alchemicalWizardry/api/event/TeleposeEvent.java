@@ -1,13 +1,16 @@
 package WayofTime.alchemicalWizardry.api.event;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-/** Fired when a teleposer attempts to transpose two blocks. Use this to perform special cleanup or compensation,
- * or cancel it entirely to prevent the transposition. */
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
+
+/**
+ * Fired when a teleposer attempts to transpose two blocks. Use this to perform special cleanup or compensation,
+ * or cancel it entirely to prevent the transposition.
+ */
 @Cancelable
 public class TeleposeEvent extends Event {
 
@@ -27,8 +30,8 @@ public class TeleposeEvent extends Event {
     public final Block finalBlock;
     public final int finalMetadata;
 
-    public TeleposeEvent(
-            World wi, int xi, int yi, int zi, Block bi, int mi, World wf, int xf, int yf, int zf, Block bf, int mf) {
+    public TeleposeEvent(World wi, int xi, int yi, int zi, Block bi, int mi, World wf, int xf, int yf, int zf, Block bf,
+        int mf) {
         initialWorld = wi;
         initialX = xi;
         initialY = yi;

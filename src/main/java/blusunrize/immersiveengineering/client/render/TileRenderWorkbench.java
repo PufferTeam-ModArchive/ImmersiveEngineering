@@ -1,10 +1,5 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.models.ModelIEObj;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityModWorkbench;
-import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -13,10 +8,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.model.obj.Vertex;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.models.ModelIEObj;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityModWorkbench;
+import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
+
 public class TileRenderWorkbench extends TileRenderIE {
+
     static ModelIEObj model = new ModelIEObj("immersiveengineering:models/workbench.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockWoodenDevice.getIcon(0, 5);
@@ -34,22 +38,22 @@ public class TileRenderWorkbench extends TileRenderIE {
         int facing = bench.facing;
         int off = bench.dummyOffset;
 
-        boolean mirror =
-                facing == 2 ? off > 0 : facing == 3 ? off < 0 : facing == 4 ? off < 0 : facing == 5 ? off > 0 : false;
+        boolean mirror = facing == 2 ? off > 0
+            : facing == 3 ? off < 0 : facing == 4 ? off < 0 : facing == 5 ? off > 0 : false;
         float angle = facing == 2 ? 180 : facing == 4 ? -90 : facing == 5 ? 90 : 0;
 
         GL11.glPushMatrix();
         GL11.glTranslated(
-                facing > 3 ? .5 : facing == 2 && mirror ? 1 : facing == 3 && !mirror ? 1 : 0,
-                0,
-                facing < 4 ? .5 : facing == 5 && mirror ? 1 : facing == 4 && !mirror ? 1 : 0);
+            facing > 3 ? .5 : facing == 2 && mirror ? 1 : facing == 3 && !mirror ? 1 : 0,
+            0,
+            facing < 4 ? .5 : facing == 5 && mirror ? 1 : facing == 4 && !mirror ? 1 : 0);
         GL11.glRotatef(angle, 0, 1, 0);
         if (mirror) {
             GL11.glScaled(-1, 1, 1);
             GL11.glDisable(GL11.GL_CULL_FACE);
         }
         ClientUtils.bindAtlas(0);
-        //		model.model.renderAll();
+        // model.model.renderAll();
         if (mirror) {
             GL11.glScaled(-1, 1, 1);
             GL11.glEnable(GL11.GL_CULL_FACE);
@@ -66,7 +70,8 @@ public class TileRenderWorkbench extends TileRenderIE {
         if (bench.getStackInSlot(0) != null) {
             try {
 
-                ItemStack is = bench.getStackInSlot(0).copy();
+                ItemStack is = bench.getStackInSlot(0)
+                    .copy();
                 is.stackSize = 1;
                 EntityItem entityitem = new EntityItem(tile.getWorldObj(), 0.0D, 0.0D, 0.0D, is);
                 entityitem.hoverStart = 0.0F;

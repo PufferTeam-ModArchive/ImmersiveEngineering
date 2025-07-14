@@ -1,15 +1,18 @@
 package blusunrize.immersiveengineering.common.blocks.cloth;
 
-import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+
 public class ItemBlockClothDevices extends ItemBlockIEBase {
+
     public ItemBlockClothDevices(Block b) {
         super(b);
     }
@@ -25,17 +28,8 @@ public class ItemBlockClothDevices extends ItemBlockIEBase {
     }
 
     @Override
-    public boolean onItemUseFirst(
-            ItemStack stack,
-            EntityPlayer player,
-            World world,
-            int x,
-            int y,
-            int z,
-            int side,
-            float hitX,
-            float hitY,
-            float hitZ) {
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+        float hitX, float hitY, float hitZ) {
         if (!world.isRemote && player.isSneaking()) {
             int offset = ItemNBTHelper.getInt(stack, "offset");
             offset++;
@@ -73,18 +67,8 @@ public class ItemBlockClothDevices extends ItemBlockIEBase {
     }
 
     @Override
-    public boolean placeBlockAt(
-            ItemStack stack,
-            EntityPlayer player,
-            World world,
-            int x,
-            int y,
-            int z,
-            int side,
-            float hitX,
-            float hitY,
-            float hitZ,
-            int meta) {
+    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+        float hitX, float hitY, float hitZ, int meta) {
         if (player.isSneaking()) return false;
         y += ItemNBTHelper.getInt(stack, "offset");
         if (!world.isAirBlock(x, y, z)) return false;

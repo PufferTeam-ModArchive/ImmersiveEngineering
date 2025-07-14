@@ -1,36 +1,42 @@
 package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 
-import blusunrize.immersiveengineering.api.energy.DieselHandler;
-import blusunrize.immersiveengineering.api.energy.DieselHandler.FermenterRecipe;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
+
+import blusunrize.immersiveengineering.api.energy.DieselHandler;
+import blusunrize.immersiveengineering.api.energy.DieselHandler.FermenterRecipe;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
 import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
 import minetweaker.api.liquid.ILiquidStack;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.oredict.OreDictionary;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersiveengineering.Fermenter")
 public class Fermenter {
+
     @ZenMethod
     public static void addRecipe(IItemStack output, ILiquidStack fluid, IIngredient input, int time) {
         if (MTHelper.toObject(input) == null) return;
         // Either output or fluid must not be null.
-        if (MTHelper.toStack(output) == null
-                && (MTHelper.toFluidStack(fluid) == null
-                        || MTHelper.toFluidStack(fluid).getFluid() == null)) return;
+        if (MTHelper.toStack(output) == null && (MTHelper.toFluidStack(fluid) == null || MTHelper.toFluidStack(fluid)
+            .getFluid() == null)) return;
 
         FermenterRecipe r = new FermenterRecipe(
-                MTHelper.toObject(input), time, MTHelper.toFluidStack(fluid), MTHelper.toStack(output));
+            MTHelper.toObject(input),
+            time,
+            MTHelper.toFluidStack(fluid),
+            MTHelper.toStack(output));
         MineTweakerAPI.apply(new Add(r));
     }
 
     private static class Add implements IUndoableAction {
+
         private final FermenterRecipe recipe;
 
         public Add(FermenterRecipe recipe) {
@@ -78,6 +84,7 @@ public class Fermenter {
     }
 
     private static class RemoveFluid implements IUndoableAction {
+
         private final FluidStack output;
         ArrayList<FermenterRecipe> removedRecipes = new ArrayList<FermenterRecipe>();
 
@@ -99,9 +106,8 @@ public class Fermenter {
 
         @Override
         public void undo() {
-            if (removedRecipes != null)
-                for (FermenterRecipe recipe : removedRecipes)
-                    if (recipe != null) DieselHandler.fermenterList.add(recipe);
+            if (removedRecipes != null) for (FermenterRecipe recipe : removedRecipes)
+                if (recipe != null) DieselHandler.fermenterList.add(recipe);
         }
 
         @Override
@@ -131,6 +137,7 @@ public class Fermenter {
     }
 
     private static class RemoveStack implements IUndoableAction {
+
         private final ItemStack output;
         ArrayList<FermenterRecipe> removedRecipes = new ArrayList<FermenterRecipe>();
 
@@ -152,9 +159,8 @@ public class Fermenter {
 
         @Override
         public void undo() {
-            if (removedRecipes != null)
-                for (FermenterRecipe recipe : removedRecipes)
-                    if (recipe != null) DieselHandler.fermenterList.add(recipe);
+            if (removedRecipes != null) for (FermenterRecipe recipe : removedRecipes)
+                if (recipe != null) DieselHandler.fermenterList.add(recipe);
         }
 
         @Override

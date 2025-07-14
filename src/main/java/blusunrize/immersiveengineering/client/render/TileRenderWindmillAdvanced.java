@@ -1,14 +1,17 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.models.ModelWindmillAdvanced;
-import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWindmillAdvanced;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.tileentity.TileEntity;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.models.ModelWindmillAdvanced;
+import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWindmillAdvanced;
+
 public class TileRenderWindmillAdvanced extends TileEntitySpecialRenderer {
+
     static ModelWindmillAdvanced model = new ModelWindmillAdvanced();
 
     @Override

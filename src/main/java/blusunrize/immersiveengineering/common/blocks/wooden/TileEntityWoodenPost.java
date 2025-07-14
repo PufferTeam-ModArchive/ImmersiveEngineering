@@ -1,12 +1,14 @@
 package blusunrize.immersiveengineering.common.blocks.wooden;
 
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class TileEntityWoodenPost extends TileEntityIEBase {
+
     public byte type;
 
     @Override
@@ -34,11 +36,9 @@ public class TileEntityWoodenPost extends TileEntityIEBase {
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            if (type == 0)
-                renderAABB = AxisAlignedBB.getBoundingBox(
-                        xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 4, zCoord + 2);
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (type == 0) renderAABB = AxisAlignedBB
+            .getBoundingBox(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 4, zCoord + 2);
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 }

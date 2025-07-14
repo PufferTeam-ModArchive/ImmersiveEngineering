@@ -1,13 +1,8 @@
 package blusunrize.immersiveengineering.common;
 
-import blusunrize.immersiveengineering.api.crafting.BlueprintCraftingRecipe;
-import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.common.registry.VillagerRegistry.IVillageTradeHandler;
 import java.util.ArrayList;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.init.Items;
@@ -17,7 +12,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 
+import blusunrize.immersiveengineering.api.crafting.BlueprintCraftingRecipe;
+import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.registry.VillagerRegistry.IVillageTradeHandler;
+
 public class IEVillagerTradeHandler implements IVillageTradeHandler {
+
     float baseChance;
     ArrayList<MerchantDeal> dealList = new ArrayList<MerchantDeal>();
     public static IEVillagerTradeHandler instance;
@@ -73,8 +76,8 @@ public class IEVillagerTradeHandler implements IVillageTradeHandler {
     public void addShaderTrades() {
         if (!doneShaderTrades) {
             doneShaderTrades = true;
-            int highestRarityWeight = ShaderRegistry.rarityWeightMap.get(
-                    ShaderRegistry.sortedRarityMap.get(ShaderRegistry.sortedRarityMap.size() - 1));
+            int highestRarityWeight = ShaderRegistry.rarityWeightMap
+                .get(ShaderRegistry.sortedRarityMap.get(ShaderRegistry.sortedRarityMap.size() - 1));
             for (EnumRarity rarity : ShaderRegistry.sortedRarityMap)
                 if (ShaderRegistry.totalWeight.containsKey(rarity) && ShaderRegistry.totalWeight.get(rarity) > 0) {
                     int w = ShaderRegistry.rarityWeightMap.get(rarity);
@@ -95,28 +98,27 @@ public class IEVillagerTradeHandler implements IVillageTradeHandler {
         Object tempItem = null;
         int val0 = 1;
         int val1 = 1;
-        for (Object o : objects)
-            if (o != null) {
-                if (o instanceof Integer) {
-                    if (lastType == 0) val0 = ((Integer) o).intValue();
-                    else if (lastType == 1) val1 = ((Integer) o).intValue();
-                    lastType++;
-                } else if (o instanceof Item || o instanceof Block || o instanceof ItemStack) {
-                    if (tempItem != null) items[currentObject++] = new MerchantItem(tempItem, val0, val1);
-                    tempItem = o;
-                    lastType = 0;
-                    val0 = 1;
-                    val1 = 1;
-                } else if (o instanceof MerchantItem) {
-                    if (tempItem != null) {
-                        items[currentObject++] = new MerchantItem(tempItem, val0, val1);
-                        tempItem = null;
-                    }
-                    if (currentObject >= items.length) break;
-                    items[currentObject++] = (MerchantItem) o;
+        for (Object o : objects) if (o != null) {
+            if (o instanceof Integer) {
+                if (lastType == 0) val0 = ((Integer) o).intValue();
+                else if (lastType == 1) val1 = ((Integer) o).intValue();
+                lastType++;
+            } else if (o instanceof Item || o instanceof Block || o instanceof ItemStack) {
+                if (tempItem != null) items[currentObject++] = new MerchantItem(tempItem, val0, val1);
+                tempItem = o;
+                lastType = 0;
+                val0 = 1;
+                val1 = 1;
+            } else if (o instanceof MerchantItem) {
+                if (tempItem != null) {
+                    items[currentObject++] = new MerchantItem(tempItem, val0, val1);
+                    tempItem = null;
                 }
                 if (currentObject >= items.length) break;
+                items[currentObject++] = (MerchantItem) o;
             }
+            if (currentObject >= items.length) break;
+        }
         if (tempItem != null) items[currentObject++] = new MerchantItem(tempItem, val0, val1);
 
         if (items[0] != null && items[1] != null)
@@ -126,13 +128,13 @@ public class IEVillagerTradeHandler implements IVillageTradeHandler {
 
     @Override
     public void manipulateTradesForVillager(EntityVillager villager, MerchantRecipeList recipeList, Random random) {
-        baseChance = ((Float) ObfuscationReflectionHelper.getPrivateValue(
-                        EntityVillager.class, villager, new String[] {"field_82191_bN"}))
-                .floatValue();
+        baseChance = ((Float) ObfuscationReflectionHelper
+            .getPrivateValue(EntityVillager.class, villager, new String[] { "field_82191_bN" })).floatValue();
         for (MerchantDeal deal : dealList) deal.addToList(recipeList, random);
     }
 
     class MerchantDeal {
+
         float chance;
         MerchantItem input0;
         MerchantItem input1;
@@ -146,14 +148,14 @@ public class IEVillagerTradeHandler implements IVillageTradeHandler {
         }
 
         public void addToList(MerchantRecipeList recipeList, Random rand) {
-            if (rand.nextFloat() < adjustProbability(chance))
-                if (input1 != null)
-                    recipeList.add(new MerchantRecipe(input0.getItem(rand), input1.getItem(rand), sale.getItem(rand)));
-                else recipeList.add(new MerchantRecipe(input0.getItem(rand), sale.getItem(rand)));
+            if (rand.nextFloat() < adjustProbability(chance)) if (input1 != null)
+                recipeList.add(new MerchantRecipe(input0.getItem(rand), input1.getItem(rand), sale.getItem(rand)));
+            else recipeList.add(new MerchantRecipe(input0.getItem(rand), sale.getItem(rand)));
         }
     }
 
     public static class MerchantItem {
+
         protected final ItemStack item;
         protected final int minAmount;
         protected final int maxAmount;

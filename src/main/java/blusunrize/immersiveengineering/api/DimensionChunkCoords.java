@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.ChunkCoordIntPair;
 
 public class DimensionChunkCoords extends ChunkCoordIntPair {
+
     public int dimension;
 
     public DimensionChunkCoords(int dimension, int x, int z) {
@@ -17,9 +18,8 @@ public class DimensionChunkCoords extends ChunkCoordIntPair {
         else if (!(o instanceof DimensionChunkCoords)) return false;
         else {
             DimensionChunkCoords coordPair = (DimensionChunkCoords) o;
-            return this.dimension == coordPair.dimension
-                    && this.chunkXPos == coordPair.chunkXPos
-                    && this.chunkZPos == coordPair.chunkZPos;
+            return this.dimension == coordPair.dimension && this.chunkXPos == coordPair.chunkXPos
+                && this.chunkZPos == coordPair.chunkZPos;
         }
     }
 

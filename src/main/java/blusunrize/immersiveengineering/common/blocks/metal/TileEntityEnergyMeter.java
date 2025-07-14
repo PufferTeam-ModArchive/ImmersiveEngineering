@@ -1,5 +1,12 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
+import java.util.ArrayList;
+import java.util.Set;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
+
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
@@ -7,13 +14,9 @@ import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection
 import blusunrize.immersiveengineering.api.energy.WireType;
 import blusunrize.immersiveengineering.common.blocks.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.common.util.Utils;
-import java.util.ArrayList;
-import java.util.Set;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Vec3;
 
 public class TileEntityEnergyMeter extends TileEntityImmersiveConnectable {
+
     public int facing = 3;
     public double lastEnergyPassed = 0;
     public ArrayList<Double> lastPackets = new ArrayList<Double>(25);
@@ -135,16 +138,12 @@ public class TileEntityEnergyMeter extends TileEntityImmersiveConnectable {
 
     @Override
     public Vec3 getConnectionOffset(Connection con) {
-        int xDif = (con == null || con.start == null || con.end == null)
-                ? 0
-                : (con.start.equals(Utils.toCC(this)) && con.end != null)
-                        ? con.end.posX - xCoord
-                        : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posX - xCoord : 0;
-        int zDif = (con == null || con.start == null || con.end == null)
-                ? 0
-                : (con.start.equals(Utils.toCC(this)) && con.end != null)
-                        ? con.end.posZ - zCoord
-                        : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posZ - zCoord : 0;
+        int xDif = (con == null || con.start == null || con.end == null) ? 0
+            : (con.start.equals(Utils.toCC(this)) && con.end != null) ? con.end.posX - xCoord
+                : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posX - xCoord : 0;
+        int zDif = (con == null || con.start == null || con.end == null) ? 0
+            : (con.start.equals(Utils.toCC(this)) && con.end != null) ? con.end.posZ - zCoord
+                : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posZ - zCoord : 0;
         if (facing > 3) return Vec3.createVectorHelper(.5, .4375, zDif > 0 ? .8125 : .1875);
         else return Vec3.createVectorHelper(xDif > 0 ? .8125 : .1875, .4375, .5);
     }

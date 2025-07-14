@@ -1,14 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks.stone;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.client.render.BlockRenderStoneDevices;
-import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockPart;
-import blusunrize.immersiveengineering.common.util.Lib;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -27,22 +21,31 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.client.render.BlockRenderStoneDevices;
+import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockPart;
+import blusunrize.immersiveengineering.common.util.Lib;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class BlockStoneDevices extends BlockIEBase {
+
     IIcon[] iconsCokeOven = new IIcon[10];
     IIcon[] iconsBlastFurnace = new IIcon[2];
 
     public BlockStoneDevices() {
         super(
-                "stoneDevice",
-                Material.rock,
-                1,
-                ItemBlockStoneDevices.class,
-                "hempcrete",
-                "cokeOven",
-                "blastFurnace",
-                "coalCoke",
-                "insulatorGlass",
-                "blastFurnaceAdvanced");
+            "stoneDevice",
+            Material.rock,
+            1,
+            ItemBlockStoneDevices.class,
+            "hempcrete",
+            "cokeOven",
+            "blastFurnace",
+            "coalCoke",
+            "insulatorGlass",
+            "blastFurnaceAdvanced");
         setHardness(2.0F);
         setResistance(20f);
     }
@@ -128,9 +131,8 @@ public class BlockStoneDevices extends BlockIEBase {
     public void registerBlockIcons(IIconRegister iconRegister) {
         for (int i = 0; i < icons.length; i++)
             icons[i][0] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i]);
-        for (int i = 0; i < 9; i++)
-            iconsCokeOven[i] =
-                    iconRegister.registerIcon("immersiveengineering:" + name + "_cokeOven" + i + (i == 4 ? "off" : ""));
+        for (int i = 0; i < 9; i++) iconsCokeOven[i] = iconRegister
+            .registerIcon("immersiveengineering:" + name + "_cokeOven" + i + (i == 4 ? "off" : ""));
         iconsCokeOven[9] = iconRegister.registerIcon("immersiveengineering:" + name + "_cokeOven4on");
         iconsBlastFurnace[0] = iconRegister.registerIcon("immersiveengineering:" + name + "_blastFurnace_off");
         iconsBlastFurnace[1] = iconRegister.registerIcon("immersiveengineering:" + name + "_blastFurnace_on");
@@ -145,10 +147,8 @@ public class BlockStoneDevices extends BlockIEBase {
             if (teco.master() == null) return iconsCokeOven[teco.active ? 9 : 4];
             if (side != teco.facing) return super.getIcon(world, x, y, z, side);
             int[] off = teco.offset;
-            int pos = (1 - off[1]) * 3
-                    + (teco.facing == 2
-                            ? (1 - off[0])
-                            : teco.facing == 3 ? (off[0] + 1) : teco.facing == 5 ? (1 - off[2]) : (off[2] + 1));
+            int pos = (1 - off[1]) * 3 + (teco.facing == 2 ? (1 - off[0])
+                : teco.facing == 3 ? (off[0] + 1) : teco.facing == 5 ? (1 - off[2]) : (off[2] + 1));
             return iconsCokeOven[pos];
         }
         if (te instanceof TileEntityBlastFurnace && ((TileEntityBlastFurnace) te).formed) {
@@ -162,16 +162,15 @@ public class BlockStoneDevices extends BlockIEBase {
     }
 
     @Override
-    public boolean onBlockActivated(
-            World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
+        float hitY, float hitZ) {
         TileEntity curr = world.getTileEntity(x, y, z);
         if (curr instanceof TileEntityCokeOven) {
             if (!player.isSneaking() && ((TileEntityCokeOven) curr).formed) {
                 TileEntityCokeOven te = ((TileEntityCokeOven) curr).master();
                 if (te == null) te = ((TileEntityCokeOven) curr);
-                if (!world.isRemote)
-                    player.openGui(
-                            ImmersiveEngineering.instance, Lib.GUIID_CokeOven, world, te.xCoord, te.yCoord, te.zCoord);
+                if (!world.isRemote) player
+                    .openGui(ImmersiveEngineering.instance, Lib.GUIID_CokeOven, world, te.xCoord, te.yCoord, te.zCoord);
                 return true;
             }
         }
@@ -179,14 +178,13 @@ public class BlockStoneDevices extends BlockIEBase {
             if (!player.isSneaking() && ((TileEntityBlastFurnace) curr).formed) {
                 TileEntityBlastFurnace te = ((TileEntityBlastFurnace) curr).master();
                 if (te == null) te = ((TileEntityBlastFurnace) curr);
-                if (!world.isRemote)
-                    player.openGui(
-                            ImmersiveEngineering.instance,
-                            Lib.GUIID_BlastFurnace,
-                            world,
-                            te.xCoord,
-                            te.yCoord,
-                            te.zCoord);
+                if (!world.isRemote) player.openGui(
+                    ImmersiveEngineering.instance,
+                    Lib.GUIID_BlastFurnace,
+                    world,
+                    te.xCoord,
+                    te.yCoord,
+                    te.zCoord);
                 return true;
             }
         }
@@ -196,9 +194,9 @@ public class BlockStoneDevices extends BlockIEBase {
     @Override
     public void breakBlock(World world, int x, int y, int z, Block par5, int par6) {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity instanceof TileEntityMultiblockPart
-                && tileEntity instanceof IInventory
-                && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+        if (tileEntity instanceof TileEntityMultiblockPart && tileEntity instanceof IInventory
+            && world.getGameRules()
+                .getGameRuleBooleanValue("doTileDrops")) {
             if (!world.isRemote && ((TileEntityMultiblockPart) tileEntity).formed) {
                 TileEntity master = ((TileEntityMultiblockPart) tileEntity).master();
                 if (master == null) master = tileEntity;
@@ -212,9 +210,10 @@ public class BlockStoneDevices extends BlockIEBase {
                         entityitem.motionX = world.rand.nextGaussian() * .05;
                         entityitem.motionY = world.rand.nextGaussian() * .05 + .2;
                         entityitem.motionZ = world.rand.nextGaussian() * .05;
-                        if (stack.hasTagCompound())
-                            entityitem.getEntityItem().setTagCompound((NBTTagCompound)
-                                    stack.getTagCompound().copy());
+                        if (stack.hasTagCompound()) entityitem.getEntityItem()
+                            .setTagCompound(
+                                (NBTTagCompound) stack.getTagCompound()
+                                    .copy());
                         world.spawnEntityInWorld(entityitem);
                     }
                 }

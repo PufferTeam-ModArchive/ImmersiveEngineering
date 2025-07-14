@@ -8,6 +8,7 @@ import blusunrize.lib.manual.ManualInstance;
  *
  */
 public class ManualHelper {
+
     public static String CAT_GENERAL = "general";
     public static String CAT_CONSTRUCTION = "construction";
     public static String CAT_ENERGY = "energy";
@@ -20,6 +21,7 @@ public class ManualHelper {
     public static ManualInstance getManual() {
         return ieManualInstance;
     }
+
     /**
      * Adds a new entry to the manual. if the Category is new, it will be added to the list of categories automatically
      */

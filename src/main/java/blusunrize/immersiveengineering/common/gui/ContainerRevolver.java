@@ -1,6 +1,5 @@
 package blusunrize.immersiveengineering.common.gui;
 
-import blusunrize.immersiveengineering.common.items.ItemRevolver;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -9,7 +8,10 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.common.items.ItemRevolver;
+
 public class ContainerRevolver extends Container {
+
     private World worldObj;
     private int blockedSlot;
     public IInventory input;
@@ -17,36 +19,10 @@ public class ContainerRevolver extends Container {
     EntityPlayer player = null;
     public final int revolverSlots;
 
-    public static int[][][] slotPositions = {
-        {
-            {48, 11},
-            {56, 30}
-        },
-        {
-            {48, 11},
-            {68, 3},
-            {78, 22},
-            {88, 3},
-            {98, 22},
-            {108, 3},
-            {118, 22},
-            {56, 30}
-        },
-        {
-            {48, 3},
-            {67, 3},
-            {86, 3},
-            {105, 3},
-            {124, 11},
-            {132, 30},
-            {124, 49},
-            {105, 57},
-            {86, 49},
-            {86, 30},
-            {67, 30},
-            {48, 30},
-        }
-    };
+    public static int[][][] slotPositions = { { { 48, 11 }, { 56, 30 } },
+        { { 48, 11 }, { 68, 3 }, { 78, 22 }, { 88, 3 }, { 98, 22 }, { 108, 3 }, { 118, 22 }, { 56, 30 } },
+        { { 48, 3 }, { 67, 3 }, { 86, 3 }, { 105, 3 }, { 124, 11 }, { 132, 30 }, { 124, 49 }, { 105, 57 }, { 86, 49 },
+            { 86, 30 }, { 67, 30 }, { 48, 30 }, } };
 
     public ContainerRevolver(InventoryPlayer iinventory, World world) {
         this.worldObj = world;
@@ -74,20 +50,18 @@ public class ContainerRevolver extends Container {
 
         bindPlayerInventory(iinventory);
 
-        if (!world.isRemote)
-            try {
-                ((InventoryStorageItem) this.input).stackList =
-                        ((ItemRevolver) this.revolver.getItem()).getContainedItems(this.revolver);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (!world.isRemote) try {
+            ((InventoryStorageItem) this.input).stackList = ((ItemRevolver) this.revolver.getItem())
+                .getContainedItems(this.revolver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.onCraftMatrixChanged(this.input);
     }
 
     protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 9; j++)
-                this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++)
+            this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
 
         for (int i = 0; i < 9; i++) this.addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143));
     }
@@ -104,17 +78,17 @@ public class ContainerRevolver extends Container {
             if (slot < revolverSlots) {
                 if (!this.mergeItemStack(stackInSlot, revolverSlots, this.inventorySlots.size(), true)) return null;
             } else {
-                //				boolean b = true;
-                //				for(int i=0;i<revolverSlots;i++)
-                //					if(this.getSlot(i).isItemValid(stackInSlot))
-                //						if(this.mergeItemStack(Utils.copyStackWithAmount(stackInSlot,1), i,i+1, false))
-                //						{
-                //							stackInSlot.stackSize--;
-                //							stack.stackSize--;
-                //							b=false;
-                //							break;
-                //						}
-                //				if(b)
+                // boolean b = true;
+                // for(int i=0;i<revolverSlots;i++)
+                // if(this.getSlot(i).isItemValid(stackInSlot))
+                // if(this.mergeItemStack(Utils.copyStackWithAmount(stackInSlot,1), i,i+1, false))
+                // {
+                // stackInSlot.stackSize--;
+                // stack.stackSize--;
+                // b=false;
+                // break;
+                // }
+                // if(b)
                 return null;
             }
 
@@ -139,7 +113,7 @@ public class ContainerRevolver extends Container {
     public ItemStack slotClick(int par1, int par2, int par3, EntityPlayer par4EntityPlayer) {
         if (par1 == this.blockedSlot || (par3 == 2 && par2 == par4EntityPlayer.inventory.currentItem)) return null;
         ((ItemRevolver) this.revolver.getItem())
-                .setBullets(this.revolver, ((InventoryStorageItem) this.input).stackList);
+            .setBullets(this.revolver, ((InventoryStorageItem) this.input).stackList);
 
         return super.slotClick(par1, par2, par3, par4EntityPlayer);
     }
@@ -149,7 +123,7 @@ public class ContainerRevolver extends Container {
         super.onContainerClosed(par1EntityPlayer);
         if (!this.worldObj.isRemote) {
             ((ItemRevolver) this.revolver.getItem())
-                    .setBullets(this.revolver, ((InventoryStorageItem) this.input).stackList);
+                .setBullets(this.revolver, ((InventoryStorageItem) this.input).stackList);
             ItemStack hand = this.player.getCurrentEquippedItem();
             if (hand != null && !hand.equals(this.revolver)) this.player.setCurrentItemOrArmor(0, this.revolver);
             this.player.inventory.markDirty();

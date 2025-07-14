@@ -1,19 +1,22 @@
 package blusunrize.immersiveengineering.api.crafting;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.IEApi;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import blusunrize.immersiveengineering.api.ApiUtils;
+import blusunrize.immersiveengineering.api.IEApi;
 
 /**
  * @author BluSunrize - 01.05.2015
  *
- * The recipe for the crusher
+ *         The recipe for the crusher
  */
 public class CrusherRecipe {
+
     public final String oreInputString;
     public final Object input;
     public final ItemStack output;
@@ -27,30 +30,29 @@ public class CrusherRecipe {
         this.oreInputString = input instanceof String ? (String) input : null;
         this.energy = energy;
     }
+
     /**
-     * Adds secondary outputs to the recipe. Should the recipe have secondary outputs, these will be added /in addition/<br>
+     * Adds secondary outputs to the recipe. Should the recipe have secondary outputs, these will be added /in
+     * addition/<br>
      * The array should be alternating between Item/Block/ItemStack/ArrayList and a float for the chance
      */
     public CrusherRecipe addToSecondaryOutput(Object... outputs) {
         if (outputs.length % 2 != 0) return this;
         ArrayList<ItemStack> newSecondaryOutput = new ArrayList<ItemStack>();
         ArrayList<Float> newSecondaryChance = new ArrayList<Float>();
-        if (secondaryOutput != null)
-            for (int i = 0; i < secondaryOutput.length; i++) {
-                newSecondaryOutput.add(secondaryOutput[i]);
-                newSecondaryChance.add(secondaryChance[i]);
+        if (secondaryOutput != null) for (int i = 0; i < secondaryOutput.length; i++) {
+            newSecondaryOutput.add(secondaryOutput[i]);
+            newSecondaryChance.add(secondaryChance[i]);
+        }
+        for (int i = 0; i < (outputs.length / 2); i++) if (outputs[i * 2] != null) {
+            Object o = ApiUtils.convertToValidRecipeInput(outputs[i * 2]);
+            ItemStack ss = o instanceof ItemStack ? (ItemStack) o
+                : o instanceof ArrayList ? IEApi.getPreferredStackbyMod((ArrayList<ItemStack>) o) : null;
+            if (ss != null) {
+                newSecondaryOutput.add(ss);
+                newSecondaryChance.add((Float) outputs[i * 2 + 1]);
             }
-        for (int i = 0; i < (outputs.length / 2); i++)
-            if (outputs[i * 2] != null) {
-                Object o = ApiUtils.convertToValidRecipeInput(outputs[i * 2]);
-                ItemStack ss = o instanceof ItemStack
-                        ? (ItemStack) o
-                        : o instanceof ArrayList ? IEApi.getPreferredStackbyMod((ArrayList<ItemStack>) o) : null;
-                if (ss != null) {
-                    newSecondaryOutput.add(ss);
-                    newSecondaryChance.add((Float) outputs[i * 2 + 1]);
-                }
-            }
+        }
         secondaryOutput = newSecondaryOutput.toArray(new ItemStack[newSecondaryOutput.size()]);
         secondaryChance = new float[newSecondaryChance.size()];
         int i = 0;

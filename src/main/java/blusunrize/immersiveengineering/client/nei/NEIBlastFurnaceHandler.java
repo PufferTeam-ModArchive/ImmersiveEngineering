@@ -3,24 +3,29 @@ package blusunrize.immersiveengineering.client.nei;
 import static codechicken.lib.gui.GuiDraw.changeTexture;
 import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
+import net.minecraftforge.oredict.OreDictionary;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.api.crafting.BlastFurnaceRecipe;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.oredict.OreDictionary;
-import org.lwjgl.opengl.GL11;
 
 public class NEIBlastFurnaceHandler extends TemplateRecipeHandler {
+
     public class CachedBlastFurnaceRecipe extends CachedRecipe {
+
         PositionedStack input;
         PositionedStack output;
         PositionedStack slag;
@@ -91,10 +96,9 @@ public class NEIBlastFurnaceHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result != null)
-            for (BlastFurnaceRecipe r : BlastFurnaceRecipe.recipeList)
-                if (r != null && Utils.stackMatchesObject(result, r.output))
-                    this.arecipes.add(new CachedBlastFurnaceRecipe(r));
+        if (result != null) for (BlastFurnaceRecipe r : BlastFurnaceRecipe.recipeList)
+            if (r != null && Utils.stackMatchesObject(result, r.output))
+                this.arecipes.add(new CachedBlastFurnaceRecipe(r));
     }
 
     @Override
@@ -111,11 +115,10 @@ public class NEIBlastFurnaceHandler extends TemplateRecipeHandler {
 
     @Override
     public List<String> handleItemTooltip(GuiRecipe gui, ItemStack stack, List<String> currenttip, int recipe) {
-        if (recipe % 2 == 0 && BlastFurnaceRecipe.isValidBlastFuel(stack))
-            currenttip.add(EnumChatFormatting.GRAY
-                    + StatCollector.translateToLocalFormatted(
-                            "desc.ImmersiveEngineering.info.blastFuelTime",
-                            BlastFurnaceRecipe.getBlastFuelTime(stack)));
+        if (recipe % 2 == 0 && BlastFurnaceRecipe.isValidBlastFuel(stack)) currenttip.add(
+            EnumChatFormatting.GRAY + StatCollector.translateToLocalFormatted(
+                "desc.ImmersiveEngineering.info.blastFuelTime",
+                BlastFurnaceRecipe.getBlastFuelTime(stack)));
         return currenttip;
     }
 
@@ -127,7 +130,14 @@ public class NEIBlastFurnaceHandler extends TemplateRecipeHandler {
         CachedBlastFurnaceRecipe r = (CachedBlastFurnaceRecipe) this.arecipes.get(recipe % arecipes.size());
         if (r != null) {
             String s = r.time + " Ticks";
-            ClientUtils.font().drawString(s, 120 - ClientUtils.font().getStringWidth(s) / 2, 32, 0xffffff, true);
+            ClientUtils.font()
+                .drawString(
+                    s,
+                    120 - ClientUtils.font()
+                        .getStringWidth(s) / 2,
+                    32,
+                    0xffffff,
+                    true);
         }
     }
 }

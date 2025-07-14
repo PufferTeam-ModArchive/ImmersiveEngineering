@@ -1,23 +1,25 @@
 package blusunrize.immersiveengineering.client.gui;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.gui.ContainerRevolver;
-import blusunrize.immersiveengineering.common.items.ItemRevolver;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.world.World;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.gui.ContainerRevolver;
+import blusunrize.immersiveengineering.common.items.ItemRevolver;
+
 public class GuiRevolver extends GuiContainer {
+
     int bullets = 0;
 
     public GuiRevolver(InventoryPlayer inventoryPlayer, World world) {
         super(new ContainerRevolver(inventoryPlayer, world));
-        if (inventoryPlayer.player.getCurrentEquippedItem() != null
-                && inventoryPlayer.player.getCurrentEquippedItem().getItem() instanceof ItemRevolver)
-            bullets = ((ItemRevolver)
-                            inventoryPlayer.player.getCurrentEquippedItem().getItem())
-                    .getBulletSlotAmount(inventoryPlayer.player.getCurrentEquippedItem());
+        if (inventoryPlayer.player.getCurrentEquippedItem() != null && inventoryPlayer.player.getCurrentEquippedItem()
+            .getItem() instanceof ItemRevolver)
+            bullets = ((ItemRevolver) inventoryPlayer.player.getCurrentEquippedItem()
+                .getItem()).getBulletSlotAmount(inventoryPlayer.player.getCurrentEquippedItem());
     }
 
     @Override

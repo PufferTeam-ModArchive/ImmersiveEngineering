@@ -4,6 +4,17 @@ import static codechicken.lib.gui.GuiDraw.changeTexture;
 import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 import static codechicken.lib.gui.GuiDraw.getMousePosition;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
@@ -12,17 +23,11 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.Arrays;
-import java.util.List;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
-import org.lwjgl.opengl.GL11;
 
 public class NEICrusherHandler extends TemplateRecipeHandler {
+
     public class CachedCrusherRecipe extends CachedRecipe {
+
         PositionedStack input;
         PositionedStack output;
         PositionedStack[] secondary;
@@ -95,12 +100,10 @@ public class NEICrusherHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result != null)
-            for (CrusherRecipe r : CrusherRecipe.recipeList)
-                if (r != null
-                        && (Utils.stackMatchesObject(result, r.output)
-                                || (r.secondaryOutput != null && Utils.stackMatchesObject(result, r.secondaryOutput))))
-                    this.arecipes.add(new CachedCrusherRecipe(r));
+        if (result != null) for (CrusherRecipe r : CrusherRecipe.recipeList)
+            if (r != null && (Utils.stackMatchesObject(result, r.output)
+                || (r.secondaryOutput != null && Utils.stackMatchesObject(result, r.secondaryOutput))))
+                this.arecipes.add(new CachedCrusherRecipe(r));
     }
 
     @Override
@@ -124,7 +127,14 @@ public class NEICrusherHandler extends TemplateRecipeHandler {
                 for (PositionedStack ps : r.secondary) ClientUtils.drawSlot(ps.relx, ps.rely, 16, 16);
 
             String s = r.energy + " RF";
-            ClientUtils.font().drawString(s, 120 - ClientUtils.font().getStringWidth(s) / 2, 20, 0x777777, false);
+            ClientUtils.font()
+                .drawString(
+                    s,
+                    120 - ClientUtils.font()
+                        .getStringWidth(s) / 2,
+                    20,
+                    0x777777,
+                    false);
             GL11.glColor4f(1, 1, 1, 1);
             changeTexture("textures/gui/container/furnace.png");
             GL11.glRotatef(90, 0, 0, 1);
@@ -140,9 +150,11 @@ public class NEICrusherHandler extends TemplateRecipeHandler {
             gen.pos = 17;
             gen.formed = true;
             ClientUtils.bindAtlas(0);
-            ClientUtils.tes().startDrawingQuads();
+            ClientUtils.tes()
+                .startDrawingQuads();
             ClientUtils.handleStaticTileRenderer(gen, false);
-            ClientUtils.tes().draw();
+            ClientUtils.tes()
+                .draw();
             TileEntityRendererDispatcher.instance.renderTileEntityAt(gen, 0.0D, 0.0D, 0.0D, 0.0F);
         }
         GL11.glPopMatrix();
@@ -152,17 +164,19 @@ public class NEICrusherHandler extends TemplateRecipeHandler {
     public List<String> handleItemTooltip(GuiRecipe gui, ItemStack stack, List<String> currenttip, int recipe) {
         Point mouse = getMousePosition();
         Point offset = gui.getRecipePosition(recipe);
-        Point relMouse =
-                new Point(mouse.x - (gui.width - 176) / 2 - offset.x, mouse.y - (gui.height - 166) / 2 - offset.y);
+        Point relMouse = new Point(
+            mouse.x - (gui.width - 176) / 2 - offset.x,
+            mouse.y - (gui.height - 166) / 2 - offset.y);
         CachedCrusherRecipe r = (CachedCrusherRecipe) this.arecipes.get(recipe % arecipes.size());
         if (r != null) {
-            if (r.secondary != null)
-                for (int i = 0; i < r.secondary.length; i++)
-                    if (new Rectangle(r.secondary[i].relx - 1, r.secondary[i].rely - 1, 18, 18).contains(relMouse)
-                            && r.secondary[i].contains(stack))
-                        currenttip.add(String.format(
-                                "%s %.0f%%",
-                                StatCollector.translateToLocal(Lib.DESC_INFO + "chance"), r.secondaryChance[i] * 100));
+            if (r.secondary != null) for (int i = 0; i < r.secondary.length; i++)
+                if (new Rectangle(r.secondary[i].relx - 1, r.secondary[i].rely - 1, 18, 18).contains(relMouse)
+                    && r.secondary[i].contains(stack))
+                    currenttip.add(
+                        String.format(
+                            "%s %.0f%%",
+                            StatCollector.translateToLocal(Lib.DESC_INFO + "chance"),
+                            r.secondaryChance[i] * 100));
         }
         return currenttip;
     }

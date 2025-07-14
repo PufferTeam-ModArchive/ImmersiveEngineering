@@ -1,13 +1,15 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
+import net.minecraft.util.Vec3;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.api.energy.WireType;
-import net.minecraft.util.Vec3;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityRelayHV extends TileEntityConnectorHV {
+
     @Override
     public Vec3 getConnectionOffset(Connection con) {
         double conRadius = con.cableType.getRenderDiameter() / 2;
@@ -22,7 +24,8 @@ public class TileEntityRelayHV extends TileEntityConnectorHV {
 
     @Override
     public Vec3 getRaytraceOffset(IImmersiveConnectable link) {
-        ForgeDirection fd = ForgeDirection.getOrientation(facing).getOpposite();
+        ForgeDirection fd = ForgeDirection.getOrientation(facing)
+            .getOpposite();
         return Vec3.createVectorHelper(.5 + fd.offsetX * .4375, .5 + fd.offsetY * .4375, .5 + fd.offsetZ * .4375);
     }
 

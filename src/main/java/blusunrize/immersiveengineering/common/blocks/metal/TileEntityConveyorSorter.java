@@ -1,8 +1,7 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.Utils;
 import java.util.ArrayList;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -14,9 +13,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class TileEntityConveyorSorter extends TileEntityIEBase implements ISidedInventory {
+
     public SorterInventory filter;
-    public int[] sideFilter = {0, 0, 0, 0, 0, 0}; // OreDict,nbt,fuzzy
+    public int[] sideFilter = { 0, 0, 0, 0, 0, 0 }; // OreDict,nbt,fuzzy
     public static final int filterSlotsPerSide = 8;
     private boolean isRouting = false;
 
@@ -32,27 +35,24 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
     public void routeItem(int inputSide, ItemStack stack) {
         if (!worldObj.isRemote) {
             Integer[][] validOutputs = getValidOutputs(inputSide, stack, true, false);
-            outputting:
-            {
+            outputting: {
                 if (validOutputs[0].length > 0) {
                     int rand = worldObj.rand.nextInt(validOutputs[0].length);
                     stack = this.outputItemToInv(stack, validOutputs[0][rand]);
-                    if (stack != null)
-                        for (int i = 0; i < validOutputs[0].length; i++)
-                            if (i != rand) {
-                                stack = this.outputItemToInv(stack, validOutputs[0][i]);
-                                if (stack == null) break outputting;
-                            }
+                    if (stack != null) for (int i = 0; i < validOutputs[0].length; i++) if (i != rand) {
+                        stack = this.outputItemToInv(stack, validOutputs[0][i]);
+                        if (stack == null) break outputting;
+                    }
                 }
                 if (stack != null && validOutputs[1].length > 0) {
                     int rand = worldObj.rand.nextInt(validOutputs[1].length);
                     ForgeDirection fd = ForgeDirection.getOrientation(validOutputs[1][rand]);
                     EntityItem ei = new EntityItem(
-                            worldObj,
-                            xCoord + .5 + fd.offsetX,
-                            yCoord + .5 + fd.offsetY,
-                            zCoord + .5 + fd.offsetZ,
-                            stack.copy());
+                        worldObj,
+                        xCoord + .5 + fd.offsetX,
+                        yCoord + .5 + fd.offsetY,
+                        zCoord + .5 + fd.offsetZ,
+                        stack.copy());
                     ei.motionX = (0.075F * fd.offsetX);
                     ei.motionY = 0.025000000372529D;
                     ei.motionZ = (0.075F * fd.offsetZ);
@@ -62,22 +62,20 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
                 if (validOutputs[2].length > 0) {
                     int rand = worldObj.rand.nextInt(validOutputs[2].length);
                     stack = this.outputItemToInv(stack, validOutputs[2][rand]);
-                    if (stack != null)
-                        for (int i = 0; i < validOutputs[2].length; i++)
-                            if (i != rand) {
-                                stack = this.outputItemToInv(stack, validOutputs[2][rand]);
-                                if (stack == null) break outputting;
-                            }
+                    if (stack != null) for (int i = 0; i < validOutputs[2].length; i++) if (i != rand) {
+                        stack = this.outputItemToInv(stack, validOutputs[2][rand]);
+                        if (stack == null) break outputting;
+                    }
                 }
                 if (stack != null && validOutputs[3].length > 0) {
                     int rand = worldObj.rand.nextInt(validOutputs[3].length);
                     ForgeDirection fd = ForgeDirection.getOrientation(validOutputs[1][rand]);
                     EntityItem ei = new EntityItem(
-                            worldObj,
-                            xCoord + .5 + fd.offsetX,
-                            yCoord + .5 + fd.offsetY,
-                            zCoord + .5 + fd.offsetZ,
-                            stack.copy());
+                        worldObj,
+                        xCoord + .5 + fd.offsetX,
+                        yCoord + .5 + fd.offsetY,
+                        zCoord + .5 + fd.offsetZ,
+                        stack.copy());
                     ei.motionX = (0.075F * fd.offsetX);
                     ei.motionY = 0.025000000372529D;
                     ei.motionZ = (0.075F * fd.offsetZ);
@@ -109,85 +107,77 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
     }
 
     public Integer[][] getValidOutputs(int inputSide, ItemStack stack, boolean allowUnmapped, boolean allowThrowing) {
-        if (isRouting || stack == null) return new Integer[][] {{}, {}, {}, {}};
+        if (isRouting || stack == null) return new Integer[][] { {}, {}, {}, {} };
         this.isRouting = true;
         ArrayList<Integer> validFilteredInvOuts = new ArrayList<Integer>(6);
         ArrayList<Integer> validFilteredEntityOuts = new ArrayList<Integer>(6);
         ArrayList<Integer> validUnfilteredInvOuts = new ArrayList<Integer>(6);
         ArrayList<Integer> validUnfilteredEntityOuts = new ArrayList<Integer>(6);
-        for (int side = 0; side < 6; side++)
-            if (side != inputSide) {
-                boolean unmapped = true;
-                boolean allowed = false;
-                filterIteration:
-                {
-                    for (ItemStack filterStack : filter.filters[side])
-                        if (filterStack != null) {
-                            unmapped = false;
+        for (int side = 0; side < 6; side++) if (side != inputSide) {
+            boolean unmapped = true;
+            boolean allowed = false;
+            filterIteration: {
+                for (ItemStack filterStack : filter.filters[side]) if (filterStack != null) {
+                    unmapped = false;
 
-                            boolean b = OreDictionary.itemMatches(filterStack, stack, true);
+                    boolean b = OreDictionary.itemMatches(filterStack, stack, true);
 
-                            if (!b && doFuzzy(side)) b = filterStack.getItem().equals(stack.getItem());
+                    if (!b && doFuzzy(side)) b = filterStack.getItem()
+                        .equals(stack.getItem());
 
-                            if (!b && doOredict(side))
-                                for (String name : OreDictionary.getOreNames())
-                                    if (Utils.compareToOreName(stack, name)
-                                            && Utils.compareToOreName(filterStack, name)) {
-                                        b = true;
-                                        break;
-                                    }
-
-                            if (doNBT(side)) b &= ItemStack.areItemStackTagsEqual(filterStack, stack);
-                            if (b) {
-                                allowed = true;
-                                break filterIteration;
-                            }
+                    if (!b && doOredict(side)) for (String name : OreDictionary.getOreNames())
+                        if (Utils.compareToOreName(stack, name) && Utils.compareToOreName(filterStack, name)) {
+                            b = true;
+                            break;
                         }
-                }
-                if (allowed) {
-                    ForgeDirection fd = ForgeDirection.getOrientation(side);
-                    TileEntity inventory =
-                            this.worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
-                    if (isInventory(inventory, ForgeDirection.OPPOSITES[side])
-                            && Utils.canInsertStackIntoInventory(
-                                    (IInventory) inventory, stack, ForgeDirection.OPPOSITES[side]))
-                        validFilteredInvOuts.add(side);
-                    else if (allowThrowing) validFilteredEntityOuts.add(side);
-                } else if (allowUnmapped && unmapped) {
-                    ForgeDirection fd = ForgeDirection.getOrientation(side);
-                    TileEntity inventory =
-                            this.worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
-                    if (isInventory(inventory, ForgeDirection.OPPOSITES[side])
-                            && Utils.canInsertStackIntoInventory(
-                                    (IInventory) inventory, stack, ForgeDirection.OPPOSITES[side]))
-                        validUnfilteredInvOuts.add(side);
-                    else if (allowThrowing) validUnfilteredEntityOuts.add(side);
+
+                    if (doNBT(side)) b &= ItemStack.areItemStackTagsEqual(filterStack, stack);
+                    if (b) {
+                        allowed = true;
+                        break filterIteration;
+                    }
                 }
             }
+            if (allowed) {
+                ForgeDirection fd = ForgeDirection.getOrientation(side);
+                TileEntity inventory = this.worldObj
+                    .getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
+                if (isInventory(inventory, ForgeDirection.OPPOSITES[side])
+                    && Utils.canInsertStackIntoInventory((IInventory) inventory, stack, ForgeDirection.OPPOSITES[side]))
+                    validFilteredInvOuts.add(side);
+                else if (allowThrowing) validFilteredEntityOuts.add(side);
+            } else if (allowUnmapped && unmapped) {
+                ForgeDirection fd = ForgeDirection.getOrientation(side);
+                TileEntity inventory = this.worldObj
+                    .getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
+                if (isInventory(inventory, ForgeDirection.OPPOSITES[side])
+                    && Utils.canInsertStackIntoInventory((IInventory) inventory, stack, ForgeDirection.OPPOSITES[side]))
+                    validUnfilteredInvOuts.add(side);
+                else if (allowThrowing) validUnfilteredEntityOuts.add(side);
+            }
+        }
         this.isRouting = false;
-        return new Integer[][] {
-            validFilteredInvOuts.toArray(new Integer[validFilteredInvOuts.size()]),
+        return new Integer[][] { validFilteredInvOuts.toArray(new Integer[validFilteredInvOuts.size()]),
             validFilteredEntityOuts.toArray(new Integer[validFilteredEntityOuts.size()]),
             validUnfilteredInvOuts.toArray(new Integer[validUnfilteredInvOuts.size()]),
-            validUnfilteredEntityOuts.toArray(new Integer[validUnfilteredEntityOuts.size()])
-        };
+            validUnfilteredEntityOuts.toArray(new Integer[validUnfilteredEntityOuts.size()]) };
     }
 
     public void outputItem(ItemStack stack, int side) {
         ForgeDirection fd = ForgeDirection.getOrientation(side);
-        TileEntity inventory =
-                this.worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
+        TileEntity inventory = this.worldObj
+            .getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
         if (isInventory(inventory, ForgeDirection.OPPOSITES[side])
-                && Utils.canInsertStackIntoInventory((IInventory) inventory, stack, ForgeDirection.OPPOSITES[side]))
+            && Utils.canInsertStackIntoInventory((IInventory) inventory, stack, ForgeDirection.OPPOSITES[side]))
             stack = Utils.insertStackIntoInventory((IInventory) inventory, stack, ForgeDirection.OPPOSITES[side]);
 
         if (stack != null) {
             EntityItem ei = new EntityItem(
-                    worldObj,
-                    xCoord + .5 + fd.offsetX,
-                    yCoord + .5 + fd.offsetY,
-                    zCoord + .5 + fd.offsetZ,
-                    stack.copy());
+                worldObj,
+                xCoord + .5 + fd.offsetX,
+                yCoord + .5 + fd.offsetY,
+                zCoord + .5 + fd.offsetZ,
+                stack.copy());
             ei.motionX = (0.075F * fd.offsetX);
             ei.motionY = 0.025000000372529D;
             ei.motionZ = (0.075F * fd.offsetZ);
@@ -197,8 +187,8 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
 
     public ItemStack outputItemToInv(ItemStack stack, int side) {
         ForgeDirection fd = ForgeDirection.getOrientation(side);
-        TileEntity inventory =
-                this.worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
+        TileEntity inventory = this.worldObj
+            .getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
         if (isInventory(inventory, ForgeDirection.OPPOSITES[side])) {
             stack = Utils.insertStackIntoInventory((IInventory) inventory, stack, ForgeDirection.OPPOSITES[side]);
         }
@@ -235,7 +225,7 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
         this.routeItem(slot, stack);
-        //			master().addStackToInputs(stack);
+        // master().addStackToInputs(stack);
     }
 
     @Override
@@ -255,9 +245,8 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this
-                ? false
-                : player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
+        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false
+            : player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
     }
 
     @Override
@@ -277,7 +266,7 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return new int[] {side};
+        return new int[] { side };
     }
 
     @Override
@@ -311,6 +300,7 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
     }
 
     public static class SorterInventory implements IInventory {
+
         public ItemStack[][] filters = new ItemStack[6][filterSlotsPerSide];
         final TileEntityConveyorSorter tile;
 
@@ -331,12 +321,11 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
         @Override
         public ItemStack decrStackSize(int slot, int amount) {
             ItemStack stack = getStackInSlot(slot);
-            if (stack != null)
-                if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-                else {
-                    stack = stack.splitStack(amount);
-                    if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-                }
+            if (stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+            else {
+                stack = stack.splitStack(amount);
+                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+            }
             return stack;
         }
 
@@ -391,13 +380,12 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
 
         public void writeToNBT(NBTTagList list) {
             for (int i = 0; i < this.filters.length; i++)
-                for (int j = 0; j < this.filters[i].length; j++)
-                    if (this.filters[i][j] != null) {
-                        NBTTagCompound itemTag = new NBTTagCompound();
-                        itemTag.setByte("Slot", (byte) (i * filterSlotsPerSide + j));
-                        this.filters[i][j].writeToNBT(itemTag);
-                        list.appendTag(itemTag);
-                    }
+                for (int j = 0; j < this.filters[i].length; j++) if (this.filters[i][j] != null) {
+                    NBTTagCompound itemTag = new NBTTagCompound();
+                    itemTag.setByte("Slot", (byte) (i * filterSlotsPerSide + j));
+                    this.filters[i][j].writeToNBT(itemTag);
+                    list.appendTag(itemTag);
+                }
         }
 
         public void readFromNBT(NBTTagList list) {
@@ -405,8 +393,8 @@ public class TileEntityConveyorSorter extends TileEntityIEBase implements ISided
                 NBTTagCompound itemTag = list.getCompoundTagAt(i);
                 int slot = itemTag.getByte("Slot") & 255;
                 if (slot >= 0 && slot < getSizeInventory())
-                    this.filters[slot / filterSlotsPerSide][slot % filterSlotsPerSide] =
-                            ItemStack.loadItemStackFromNBT(itemTag);
+                    this.filters[slot / filterSlotsPerSide][slot % filterSlotsPerSide] = ItemStack
+                        .loadItemStackFromNBT(itemTag);
             }
         }
     }

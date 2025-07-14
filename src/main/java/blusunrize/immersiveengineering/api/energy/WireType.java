@@ -1,18 +1,21 @@
 package blusunrize.immersiveengineering.api.energy;
 
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
 import java.util.LinkedHashSet;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+
 /**
  * @author BluSunrize - 08.03.2015<br>
- * Rewritten: 26.06.2015
- * <br>
- * The WireTypes of IE. Extend this to make your own
+ *         Rewritten: 26.06.2015
+ *         <br>
+ *         The WireTypes of IE. Extend this to make your own
  */
 public abstract class WireType {
+
     private static LinkedHashSet<WireType> values = new LinkedHashSet<WireType>();
 
     public static LinkedHashSet<WireType> getValues() {
@@ -20,7 +23,8 @@ public abstract class WireType {
     }
 
     public static WireType getValue(String name) {
-        for (WireType type : values) if (type != null && type.getUniqueName().equals(name)) return type;
+        for (WireType type : values) if (type != null && type.getUniqueName()
+            .equals(name)) return type;
         return COPPER;
     }
 
@@ -33,9 +37,11 @@ public abstract class WireType {
     public abstract double getLossRatio();
 
     public abstract int getTransferRate();
-    /**Try not to get to complex with determining colour here*/
+
+    /** Try not to get to complex with determining colour here */
     public abstract int getColour(Connection connection);
-    /**Determines how saggy the wire is*/
+
+    /** Determines how saggy the wire is */
     public abstract double getSlack();
 
     public abstract IIcon getIcon(Connection connection);
@@ -49,13 +55,13 @@ public abstract class WireType {
     public abstract boolean isEnergyWire();
 
     // THESE VALUES ARE FOR IE's OWN CABLES!
-    public static String[] uniqueNames = {"COPPER", "ELECTRUM", "STEEL", "STRUCTURE_ROPE", "STRUCTURE_STEEL"};
+    public static String[] uniqueNames = { "COPPER", "ELECTRUM", "STEEL", "STRUCTURE_ROPE", "STRUCTURE_STEEL" };
     public static double[] cableLossRatio;
     public static int[] cableTransferRate;
     public static int[] cableColouration;
     public static int[] cableLength;
     public static Item ieWireCoil;
-    public static double[] renderDiameter = {.03125, .03125, .0625, .0625, .0625};
+    public static double[] renderDiameter = { .03125, .03125, .0625, .0625, .0625 };
     public static IIcon iconDefaultWire;
 
     public static WireType COPPER = new WireType.IEBASE(0);
@@ -70,6 +76,7 @@ public abstract class WireType {
      * DO NOT SUBCLASS THIS.
      */
     private static class IEBASE extends WireType {
+
         final int ordinal;
 
         public IEBASE(int ordinal) {

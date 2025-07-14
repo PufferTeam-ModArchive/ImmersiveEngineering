@@ -3,13 +3,9 @@ package blusunrize.immersiveengineering.common.blocks.wooden;
 import static net.minecraftforge.common.util.ForgeDirection.DOWN;
 import static net.minecraftforge.common.util.ForgeDirection.UP;
 
-import blusunrize.immersiveengineering.client.render.BlockRenderWoodenDecoration;
-import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -25,22 +21,29 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.client.render.BlockRenderWoodenDecoration;
+import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 // @Optional.Interface(iface = "blusunrize.aquatweaks.api.IAquaConnectable", modid = "AquaTweaks")
 public class BlockWoodenDecoration extends BlockIEBase // implements blusunrize.aquatweaks.api.IAquaConnectable
 {
+
     public BlockWoodenDecoration() {
         super(
-                "woodenDecoration",
-                Material.wood,
-                2,
-                ItemBlockWoodenDecoration.class,
-                "treatedWood",
-                "fence",
-                "slab0",
-                "slab1",
-                "doubleSlab",
-                "scaffolding",
-                "wallMount");
+            "woodenDecoration",
+            Material.wood,
+            2,
+            ItemBlockWoodenDecoration.class,
+            "treatedWood",
+            "fence",
+            "slab0",
+            "slab1",
+            "doubleSlab",
+            "scaffolding",
+            "wallMount");
         this.setHardness(2.0F);
         this.setResistance(5.0F);
     }
@@ -91,9 +94,9 @@ public class BlockWoodenDecoration extends BlockIEBase // implements blusunrize.
     @Override
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
         int meta = world.getBlockMetadata(
-                x + (side == 4 ? 1 : side == 5 ? -1 : 0),
-                y + (side == 0 ? 1 : side == 1 ? -1 : 0),
-                z + (side == 2 ? 1 : side == 3 ? -1 : 0));
+            x + (side == 4 ? 1 : side == 5 ? -1 : 0),
+            y + (side == 0 ? 1 : side == 1 ? -1 : 0),
+            z + (side == 2 ? 1 : side == 3 ? -1 : 0));
         if (meta == 1 || meta == 2 || meta == 3) return true;
         if (meta == 5) return (world.getBlock(x, y, z) == this && world.getBlockMetadata(x, y, z) == 5) ? false : true;
         return super.shouldSideBeRendered(world, x, y, z, side);
@@ -107,61 +110,54 @@ public class BlockWoodenDecoration extends BlockIEBase // implements blusunrize.
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister iconRegister) {
-        for (int i = 0; i < subNames.length; i++)
-            if (i == 5) {
-                icons[i][0] = iconRegister.registerIcon("immersiveengineering:scaffolding_top");
-                icons[i][1] = iconRegister.registerIcon("immersiveengineering:scaffolding_side");
-            } else if (i == 6) {
-                icons[i][0] = iconRegister.registerIcon("immersiveengineering:wood_wallmount");
-                icons[i][1] = iconRegister.registerIcon("immersiveengineering:wood_wallmount");
-            } else {
-                icons[i][0] = iconRegister.registerIcon("immersiveengineering:treatedWood");
-                icons[i][1] = iconRegister.registerIcon("immersiveengineering:treatedWood");
-            }
+        for (int i = 0; i < subNames.length; i++) if (i == 5) {
+            icons[i][0] = iconRegister.registerIcon("immersiveengineering:scaffolding_top");
+            icons[i][1] = iconRegister.registerIcon("immersiveengineering:scaffolding_side");
+        } else if (i == 6) {
+            icons[i][0] = iconRegister.registerIcon("immersiveengineering:wood_wallmount");
+            icons[i][1] = iconRegister.registerIcon("immersiveengineering:wood_wallmount");
+        } else {
+            icons[i][0] = iconRegister.registerIcon("immersiveengineering:treatedWood");
+            icons[i][1] = iconRegister.registerIcon("immersiveengineering:treatedWood");
+        }
     }
 
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-        if (world.getBlockMetadata(x, y, z) == 1)
-            this.setBlockBounds(
-                    canConnectFenceTo(world, x - 1, y, z) ? 0 : .375f,
-                    0,
-                    canConnectFenceTo(world, x, y, z - 1) ? 0 : .375f,
-                    canConnectFenceTo(world, x + 1, y, z) ? 1 : .625f,
-                    1,
-                    canConnectFenceTo(world, x, y, z + 1) ? 1 : .625f);
+        if (world.getBlockMetadata(x, y, z) == 1) this.setBlockBounds(
+            canConnectFenceTo(world, x - 1, y, z) ? 0 : .375f,
+            0,
+            canConnectFenceTo(world, x, y, z - 1) ? 0 : .375f,
+            canConnectFenceTo(world, x + 1, y, z) ? 1 : .625f,
+            1,
+            canConnectFenceTo(world, x, y, z + 1) ? 1 : .625f);
         else if (world.getBlockMetadata(x, y, z) == 2) this.setBlockBounds(0, 0, 0, 1, .5f, 1);
         else if (world.getBlockMetadata(x, y, z) == 3) this.setBlockBounds(0, .5f, 0, 1, 1, 1);
         else if (world.getTileEntity(x, y, z) instanceof TileEntityWallmount) {
             TileEntityWallmount arm = (TileEntityWallmount) world.getTileEntity(x, y, z);
             int f = arm.facing;
-            if (arm.sideAttached > 0)
-                this.setBlockBounds(
-                        f == 4 ? 0 : f == 5 ? .375f : .3125f,
-                        arm.inverted ? .3125f : 0,
-                        f == 2 ? 0 : f == 3 ? .375f : .3125f,
-                        f == 5 ? 1 : f == 4 ? .625f : .6875f,
-                        arm.inverted ? 1 : .6875f,
-                        f == 3 ? 1 : f == 2 ? .625f : .6875f);
-            else
-                this.setBlockBounds(
-                        f == 5 ? 0 : .3125f,
-                        arm.inverted ? .375f : 0,
-                        f == 3 ? 0 : .3125f,
-                        f == 4 ? 1 : .6875f,
-                        arm.inverted ? 1 : .625f,
-                        f == 2 ? 1 : .6875f);
+            if (arm.sideAttached > 0) this.setBlockBounds(
+                f == 4 ? 0 : f == 5 ? .375f : .3125f,
+                arm.inverted ? .3125f : 0,
+                f == 2 ? 0 : f == 3 ? .375f : .3125f,
+                f == 5 ? 1 : f == 4 ? .625f : .6875f,
+                arm.inverted ? 1 : .6875f,
+                f == 3 ? 1 : f == 2 ? .625f : .6875f);
+            else this.setBlockBounds(
+                f == 5 ? 0 : .3125f,
+                arm.inverted ? .375f : 0,
+                f == 3 ? 0 : .3125f,
+                f == 4 ? 1 : .6875f,
+                arm.inverted ? 1 : .625f,
+                f == 2 ? 1 : .6875f);
         } else this.setBlockBounds(0, 0, 0, 1, 1, 1);
     }
 
     public boolean canConnectFenceTo(IBlockAccess world, int x, int y, int z) {
         Block block = world.getBlock(x, y, z);
         if (block == this && world.getBlockMetadata(x, y, z) == 1) return true;
-        return block != Blocks.fence_gate
-                ? (block.getMaterial().isOpaque() && block.renderAsNormalBlock()
-                        ? block.getMaterial() != Material.gourd
-                        : false)
-                : true;
+        return block != Blocks.fence_gate ? (block.getMaterial()
+            .isOpaque() && block.renderAsNormalBlock() ? block.getMaterial() != Material.gourd : false) : true;
     }
 
     @Override
@@ -171,14 +167,13 @@ public class BlockWoodenDecoration extends BlockIEBase // implements blusunrize.
 
     @Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-        if (world.getBlockMetadata(x, y, z) == 1)
-            this.setBlockBounds(
-                    canConnectFenceTo(world, x - 1, y, z) ? 0 : .375f,
-                    0,
-                    canConnectFenceTo(world, x, y, z - 1) ? 0 : .375f,
-                    canConnectFenceTo(world, x + 1, y, z) ? 1 : .625f,
-                    1.5f,
-                    canConnectFenceTo(world, x, y, z + 1) ? 1 : .625f);
+        if (world.getBlockMetadata(x, y, z) == 1) this.setBlockBounds(
+            canConnectFenceTo(world, x - 1, y, z) ? 0 : .375f,
+            0,
+            canConnectFenceTo(world, x, y, z - 1) ? 0 : .375f,
+            canConnectFenceTo(world, x + 1, y, z) ? 1 : .625f,
+            1.5f,
+            canConnectFenceTo(world, x, y, z + 1) ? 1 : .625f);
         else if (world.getBlockMetadata(x, y, z) == 5) this.setBlockBounds(.0625f, 0, .0625f, .9375f, 1, .9375f);
         else this.setBlockBoundsBasedOnState(world, x, y, z);
         return super.getCollisionBoundingBoxFromPool(world, x, y, z);

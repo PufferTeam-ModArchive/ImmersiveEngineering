@@ -1,5 +1,21 @@
 package blusunrize.immersiveengineering.api.tool;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Random;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
@@ -17,39 +33,25 @@ import blusunrize.lib.manual.ManualPages;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.StatCollector;
-import net.minecraft.world.World;
 
 /**
  * @author BluSunrize - 03.06.2015
  *
- * The Handler for the Excavator. Chunk->Ore calculation is done here, as is registration
+ *         The Handler for the Excavator. Chunk->Ore calculation is done here, as is registration
  */
 public class ExcavatorHandler {
+
     /**
      * A HashMap of MineralMixes and their rarity (Integer out of 100)
      */
     public static LinkedHashMap<MineralMix, Integer> mineralList = new LinkedHashMap<MineralMix, Integer>();
 
-    public static HashMap<DimensionChunkCoords, MineralWorldInfo> mineralCache =
-            new HashMap<DimensionChunkCoords, MineralWorldInfo>();
+    public static HashMap<DimensionChunkCoords, MineralWorldInfo> mineralCache = new HashMap<DimensionChunkCoords, MineralWorldInfo>();
     private static HashMap<Integer, Integer> dimensionBasedTotalWeight = new HashMap<Integer, Integer>();
     public static int mineralVeinCapacity = 0;
 
-    public static MineralMix addMineral(
-            String name, int mineralWeight, float failChance, String[] ores, float[] chances) {
+    public static MineralMix addMineral(String name, int mineralWeight, float failChance, String[] ores,
+        float[] chances) {
         assert ores.length == chances.length;
         MineralMix mix = new MineralMix(name, failChance, ores, chances);
         mineralList.put(mix, mineralWeight);
@@ -57,10 +59,11 @@ public class ExcavatorHandler {
     }
 
     public static void recalculateChances(boolean mutePackets) {
-        for (Map.Entry<MineralMix, Integer> e : mineralList.entrySet())
-            e.getKey().recalculateChances();
+        for (Map.Entry<MineralMix, Integer> e : mineralList.entrySet()) e.getKey()
+            .recalculateChances();
         dimensionBasedTotalWeight.clear();
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) {
             HashMap<MineralMix, Integer> packetMap = new HashMap<MineralMix, Integer>();
             for (Map.Entry<MineralMix, Integer> e : ExcavatorHandler.mineralList.entrySet())
                 if (e.getKey() != null && e.getValue() != null) packetMap.put(e.getKey(), e.getValue());
@@ -72,8 +75,13 @@ public class ExcavatorHandler {
         if (dimensionBasedTotalWeight.containsKey(dim)) return dimensionBasedTotalWeight.get(dim);
         int totalWeight = 0;
         for (Map.Entry<MineralMix, Integer> e : mineralList.entrySet()) {
-            e.getKey().recalculateChances();
-            if (e.getKey().isValid() && e.getKey().validDimension(dim)) totalWeight += e.getValue();
+            e.getKey()
+                .recalculateChances();
+            if (e.getKey()
+                .isValid()
+                && e.getKey()
+                    .validDimension(dim))
+                totalWeight += e.getValue();
         }
         dimensionBasedTotalWeight.put(dim, totalWeight);
         return totalWeight;
@@ -97,20 +105,23 @@ public class ExcavatorHandler {
         MineralWorldInfo worldInfo = mineralCache.get(coords);
         if (worldInfo == null) {
             MineralMix mix = null;
-            Random r = world.getChunkFromChunkCoords(chunkX, chunkZ).getRandomWithSeed(940610);
+            Random r = world.getChunkFromChunkCoords(chunkX, chunkZ)
+                .getRandomWithSeed(940610);
             double dd = r.nextDouble();
             boolean empty = dd > .125;
             int query = r.nextInt();
             if (!empty) {
                 int weight = Math.abs(query % getDimensionTotalWeight(dim));
-                for (Map.Entry<MineralMix, Integer> e : mineralList.entrySet())
-                    if (e.getKey().isValid() && e.getKey().validDimension(dim)) {
-                        weight -= e.getValue();
-                        if (weight < 0) {
-                            mix = e.getKey();
-                            break;
+                for (Map.Entry<MineralMix, Integer> e : mineralList.entrySet()) if (e.getKey()
+                    .isValid()
+                    && e.getKey()
+                        .validDimension(dim)) {
+                            weight -= e.getValue();
+                            if (weight < 0) {
+                                mix = e.getKey();
+                                break;
+                            }
                         }
-                    }
             }
             worldInfo = new MineralWorldInfo();
             worldInfo.mineral = mix;
@@ -126,6 +137,7 @@ public class ExcavatorHandler {
     }
 
     public static class MineralMix {
+
         public String name;
         public float failChance;
         public String[] ores;
@@ -133,7 +145,10 @@ public class ExcavatorHandler {
         public ItemStack[] oreOutput;
         public float[] recalculatedChances;
         boolean isValid = false;
-        /**Should an ore given to this mix not be present in the dictionary, it will attempt to draw a replacement from this list*/
+        /**
+         * Should an ore given to this mix not be present in the dictionary, it will attempt to draw a replacement from
+         * this list
+         */
         public HashMap<String, String> replacementOres;
 
         public int[] dimensionWhitelist = new int[0];
@@ -258,6 +273,7 @@ public class ExcavatorHandler {
     }
 
     public static class MineralWorldInfo {
+
         public MineralMix mineral;
         public MineralMix mineralOverride;
         public int depletion;
@@ -295,18 +311,20 @@ public class ExcavatorHandler {
         if (ManualHelper.getManual() != null) {
             ArrayList<IManualPage> pages = new ArrayList();
             pages.add(new ManualPages.Text(ManualHelper.getManual(), "minerals0"));
-            pages.add(new ManualPages.Crafting(
+            pages.add(
+                new ManualPages.Crafting(
                     ManualHelper.getManual(),
                     "minerals1",
                     new ItemStack(IEContent.blockMetalDevice, 1, BlockMetalDevices.META_sampleDrill)));
             pages.add(new ManualPages.Text(ManualHelper.getManual(), "minerals2"));
 
-            final ExcavatorHandler.MineralMix[] minerals =
-                    ExcavatorHandler.mineralList.keySet().toArray(new ExcavatorHandler.MineralMix[0]);
+            final ExcavatorHandler.MineralMix[] minerals = ExcavatorHandler.mineralList.keySet()
+                .toArray(new ExcavatorHandler.MineralMix[0]);
 
             ArrayList<Integer> mineralIndices = new ArrayList();
             for (int i = 0; i < minerals.length; i++) if (minerals[i].isValid()) mineralIndices.add(i);
             Collections.sort(mineralIndices, new Comparator<Integer>() {
+
                 @Override
                 public int compare(Integer paramT1, Integer paramT2) {
                     String name1 = Lib.DESC_INFO + "mineral." + minerals[paramT1].name;
@@ -329,82 +347,80 @@ public class ExcavatorHandler {
                     String validDims = "";
                     for (int dim : minerals[i].dimensionWhitelist)
                         validDims += (!validDims.isEmpty() ? ", " : "") + "<dim;" + dim + ">";
-                    s0 = StatCollector.translateToLocalFormatted(
-                            "ie.manual.entry.mineralsDimValid", localizedName, validDims);
+                    s0 = StatCollector
+                        .translateToLocalFormatted("ie.manual.entry.mineralsDimValid", localizedName, validDims);
                 } else if (minerals[i].dimensionBlacklist != null && minerals[i].dimensionBlacklist.length > 0) {
                     String invalidDims = "";
                     for (int dim : minerals[i].dimensionBlacklist)
                         invalidDims += (!invalidDims.isEmpty() ? ", " : "") + "<dim;" + dim + ">";
-                    s0 = StatCollector.translateToLocalFormatted(
-                            "ie.manual.entry.mineralsDimInvalid", localizedName, invalidDims);
+                    s0 = StatCollector
+                        .translateToLocalFormatted("ie.manual.entry.mineralsDimInvalid", localizedName, invalidDims);
                 } else s0 = StatCollector.translateToLocalFormatted("ie.manual.entry.mineralsDimAny", localizedName);
 
                 ArrayList<Integer> formattedOutputs = new ArrayList<Integer>();
                 for (int j = 0; j < minerals[i].oreOutput.length; j++) formattedOutputs.add(j);
                 final int fi = i;
                 Collections.sort(formattedOutputs, new Comparator<Integer>() {
+
                     @Override
                     public int compare(Integer paramT1, Integer paramT2) {
                         return -Double.compare(
-                                minerals[fi].recalculatedChances[paramT1], minerals[fi].recalculatedChances[paramT2]);
+                            minerals[fi].recalculatedChances[paramT1],
+                            minerals[fi].recalculatedChances[paramT2]);
                     }
                 });
 
                 String s1 = "";
                 ItemStack[] sortedOres = new ItemStack[minerals[i].oreOutput.length];
-                for (int j = 0; j < formattedOutputs.size(); j++)
-                    if (minerals[i].oreOutput[j] != null) {
-                        int sorted = formattedOutputs.get(j);
-                        s1 += "<br>"
-                                + Utils.formatDouble(minerals[i].recalculatedChances[sorted] * 100, "00.00")
-                                        .replaceAll("\\G0", " ")
-                                + "% " + minerals[i].oreOutput[sorted].getDisplayName();
-                        sortedOres[j] = minerals[i].oreOutput[sorted];
-                    }
+                for (int j = 0; j < formattedOutputs.size(); j++) if (minerals[i].oreOutput[j] != null) {
+                    int sorted = formattedOutputs.get(j);
+                    s1 += "<br>" + Utils.formatDouble(minerals[i].recalculatedChances[sorted] * 100, "00.00")
+                        .replaceAll("\\G0", " ") + "% " + minerals[i].oreOutput[sorted].getDisplayName();
+                    sortedOres[j] = minerals[i].oreOutput[sorted];
+                }
                 String s2 = StatCollector.translateToLocalFormatted("ie.manual.entry.minerals3", s0, s1);
                 pages.add(new ManualPages.ItemDisplay(ManualHelper.getManual(), s2, sortedOres));
             }
 
-            //			String[][][] multiTables = formatToTable_ExcavatorMinerals();
-            //			for(String[][] minTable : multiTables)
-            //				pages.add(new ManualPages.Table(ManualHelper.getManual(), "", minTable,true));
+            // String[][][] multiTables = formatToTable_ExcavatorMinerals();
+            // for(String[][] minTable : multiTables)
+            // pages.add(new ManualPages.Table(ManualHelper.getManual(), "", minTable,true));
             if (mineralEntry != null) mineralEntry.setPages(pages.toArray(new IManualPage[pages.size()]));
             else {
-                ManualHelper.addEntry(
-                        "minerals", ManualHelper.CAT_GENERAL, pages.toArray(new IManualPage[pages.size()]));
-                mineralEntry = ManualHelper.getManual().getEntry("minerals");
+                ManualHelper
+                    .addEntry("minerals", ManualHelper.CAT_GENERAL, pages.toArray(new IManualPage[pages.size()]));
+                mineralEntry = ManualHelper.getManual()
+                    .getEntry("minerals");
             }
         }
     }
 
     @SideOnly(Side.CLIENT)
     static String[][][] formatToTable_ExcavatorMinerals() {
-        ExcavatorHandler.MineralMix[] minerals =
-                ExcavatorHandler.mineralList.keySet().toArray(new ExcavatorHandler.MineralMix[0]);
+        ExcavatorHandler.MineralMix[] minerals = ExcavatorHandler.mineralList.keySet()
+            .toArray(new ExcavatorHandler.MineralMix[0]);
         String[][][] multiTables = new String[1][minerals.length][2];
         int curTable = 0;
         int totalLines = 0;
-        for (int i = 0; i < minerals.length; i++)
-            if (minerals[i].isValid()) {
-                String name = Lib.DESC_INFO + "mineral." + minerals[i].name;
-                if (StatCollector.translateToLocal(name) == name) name = minerals[i].name;
-                multiTables[curTable][i][0] = name;
-                multiTables[curTable][i][1] = "";
-                for (int j = 0; j < minerals[i].oreOutput.length; j++)
-                    if (minerals[i].oreOutput[j] != null) {
-                        multiTables[curTable][i][1] += minerals[i].oreOutput[j].getDisplayName() + " "
-                                + (Utils.formatDouble(minerals[i].recalculatedChances[j] * 100, "#.00") + "%")
-                                + (j < minerals[i].oreOutput.length - 1 ? "\n" : "");
-                        totalLines++;
-                    }
-                if (i < minerals.length - 1 && totalLines + minerals[i + 1].oreOutput.length >= 13) {
-                    String[][][] newMultiTables = new String[multiTables.length + 1][minerals.length][2];
-                    System.arraycopy(multiTables, 0, newMultiTables, 0, multiTables.length);
-                    multiTables = newMultiTables;
-                    totalLines = 0;
-                    curTable++;
-                }
+        for (int i = 0; i < minerals.length; i++) if (minerals[i].isValid()) {
+            String name = Lib.DESC_INFO + "mineral." + minerals[i].name;
+            if (StatCollector.translateToLocal(name) == name) name = minerals[i].name;
+            multiTables[curTable][i][0] = name;
+            multiTables[curTable][i][1] = "";
+            for (int j = 0; j < minerals[i].oreOutput.length; j++) if (minerals[i].oreOutput[j] != null) {
+                multiTables[curTable][i][1] += minerals[i].oreOutput[j].getDisplayName() + " "
+                    + (Utils.formatDouble(minerals[i].recalculatedChances[j] * 100, "#.00") + "%")
+                    + (j < minerals[i].oreOutput.length - 1 ? "\n" : "");
+                totalLines++;
             }
+            if (i < minerals.length - 1 && totalLines + minerals[i + 1].oreOutput.length >= 13) {
+                String[][][] newMultiTables = new String[multiTables.length + 1][minerals.length][2];
+                System.arraycopy(multiTables, 0, newMultiTables, 0, multiTables.length);
+                multiTables = newMultiTables;
+                totalLines = 0;
+                curTable++;
+            }
+        }
         return multiTables;
     }
 }

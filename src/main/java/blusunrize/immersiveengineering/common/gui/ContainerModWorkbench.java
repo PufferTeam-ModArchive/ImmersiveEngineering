@@ -1,8 +1,5 @@
 package blusunrize.immersiveengineering.common.gui;
 
-import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
-import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityModWorkbench;
-import blusunrize.immersiveengineering.common.items.ItemEngineersBlueprint;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -10,7 +7,12 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
+import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityModWorkbench;
+import blusunrize.immersiveengineering.common.items.ItemEngineersBlueprint;
+
 public class ContainerModWorkbench extends Container {
+
     public int slotCount;
     public InventoryStorageItem toolInv;
     public TileEntityModWorkbench tile;
@@ -23,9 +25,8 @@ public class ContainerModWorkbench extends Container {
     }
 
     private void bindPlayerInv(InventoryPlayer inventoryPlayer) {
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 9; j++)
-                addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 87 + i * 18));
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++)
+            addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 87 + i * 18));
         for (int i = 0; i < 9; i++) addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 145));
     }
 
@@ -34,18 +35,18 @@ public class ContainerModWorkbench extends Container {
         this.addSlotToContainer(new IESlot.UpgradeableItem(this, tile, 0, 24, 22, 1));
         slotCount = 1;
 
-        ItemStack tool = this.getSlot(0).getStack();
+        ItemStack tool = this.getSlot(0)
+            .getStack();
         if (tool != null && tool.getItem() instanceof IUpgradeableTool) {
             if (tool.getItem() instanceof ItemEngineersBlueprint)
                 ((ItemEngineersBlueprint) tool.getItem()).updateOutputs(tool);
 
             this.toolInv = new InventoryStorageItem(this, tool);
             Slot[] slots = ((IUpgradeableTool) tool.getItem()).getWorkbenchSlots(this, tool, toolInv);
-            if (slots != null)
-                for (Slot s : slots) {
-                    this.addSlotToContainer(s);
-                    slotCount++;
-                }
+            if (slots != null) for (Slot s : slots) {
+                this.addSlotToContainer(s);
+                slotCount++;
+            }
 
             ItemStack[] cont = ((IUpgradeableTool) tool.getItem()).getContainedItems(tool);
             ((InventoryStorageItem) this.toolInv).stackList = cont;
@@ -72,7 +73,7 @@ public class ContainerModWorkbench extends Container {
                 if (!this.mergeItemStack(stackInSlot, slotCount, (slotCount + 36), true)) return null;
             } else if (stackInSlot != null) {
                 if (stackInSlot.getItem() instanceof IUpgradeableTool
-                        && ((IUpgradeableTool) stackInSlot.getItem()).canModify(stackInSlot)) {
+                    && ((IUpgradeableTool) stackInSlot.getItem()).canModify(stackInSlot)) {
                     if (!this.mergeItemStack(stackInSlot, 0, 1, true)) return null;
                 } else if (slotCount > 1) {
                     boolean b = true;
@@ -100,6 +101,7 @@ public class ContainerModWorkbench extends Container {
     @Override
     public void onCraftMatrixChanged(IInventory p_75130_1_) {
         super.onCraftMatrixChanged(p_75130_1_);
-        tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+        tile.getWorldObj()
+            .markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
     }
 }

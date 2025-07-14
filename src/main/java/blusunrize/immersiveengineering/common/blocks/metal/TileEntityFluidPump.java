@@ -1,13 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe.DirectionalFluidOutput;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyReceiver;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,8 +15,16 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe.DirectionalFluidOutput;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyReceiver;
+
 public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandler, IEnergyReceiver {
-    public int[] sideConfig = new int[] {0, -1, -1, -1, -1, -1};
+
+    public int[] sideConfig = new int[] { 0, -1, -1, -1, -1, -1 };
     public boolean dummy = true;
     public FluidTank tank = new FluidTank(4000);
     public EnergyStorage energyStorage = new EnergyStorage(8000);
@@ -42,44 +45,39 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
         }
 
         if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)
-                || worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord + 1, zCoord)) {
-            for (int i = 0; i < 6; i++)
-                if (sideConfig[i] == 0) {
-                    ForgeDirection fd = ForgeDirection.getOrientation(i);
-                    TileEntity tile =
-                            worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
-                    if (tile instanceof IFluidHandler) {
-                        FluidStack drain = ((IFluidHandler) tile).drain(fd.getOpposite(), 500, false);
-                        if (drain == null || drain.amount <= 0) continue;
-                        if (((IFluidHandler) tile).canDrain(fd.getOpposite(), drain.getFluid())) {
-                            int out = this.outputFluid(drain, false);
-                            ((IFluidHandler) tile).drain(fd.getOpposite(), out, true);
-                        }
-                    } else if (worldObj.getTotalWorldTime() % 20 == ((xCoord ^ zCoord) & 19)
-                            && worldObj.getBlock(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ)
-                                    == Blocks.water
-                            && Config.getBoolean("pump_infiniteWater")
-                            && tank.fill(new FluidStack(FluidRegistry.WATER, 1000), false) == 1000
-                            && this.energyStorage.extractEnergy(Config.getInt("pump_consumption"), true)
-                                    >= Config.getInt("pump_consumption")) {
-                        int connectedSources = 0;
-                        for (int j = 2; j < 6; j++)
-                            if (worldObj.getBlock(
-                                                    xCoord + fd.offsetX + (j == 4 ? -1 : j == 5 ? 1 : 0),
-                                                    yCoord + fd.offsetY,
-                                                    zCoord + fd.offsetZ + (j == 2 ? -1 : j == 3 ? 1 : 0))
-                                            == Blocks.water
-                                    && worldObj.getBlockMetadata(
-                                                    xCoord + fd.offsetX + (j == 4 ? -1 : j == 5 ? 1 : 0),
-                                                    yCoord + fd.offsetY,
-                                                    zCoord + fd.offsetZ + (j == 2 ? -1 : j == 3 ? 1 : 0))
-                                            == 0) connectedSources++;
-                        if (connectedSources > 1) {
-                            this.energyStorage.extractEnergy(Config.getInt("pump_consumption"), false);
-                            this.tank.fill(new FluidStack(FluidRegistry.WATER, 1000), true);
-                        }
+            || worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord + 1, zCoord)) {
+            for (int i = 0; i < 6; i++) if (sideConfig[i] == 0) {
+                ForgeDirection fd = ForgeDirection.getOrientation(i);
+                TileEntity tile = worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
+                if (tile instanceof IFluidHandler) {
+                    FluidStack drain = ((IFluidHandler) tile).drain(fd.getOpposite(), 500, false);
+                    if (drain == null || drain.amount <= 0) continue;
+                    if (((IFluidHandler) tile).canDrain(fd.getOpposite(), drain.getFluid())) {
+                        int out = this.outputFluid(drain, false);
+                        ((IFluidHandler) tile).drain(fd.getOpposite(), out, true);
                     }
-                }
+                } else if (worldObj.getTotalWorldTime() % 20 == ((xCoord ^ zCoord) & 19)
+                    && worldObj.getBlock(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ) == Blocks.water
+                    && Config.getBoolean("pump_infiniteWater")
+                    && tank.fill(new FluidStack(FluidRegistry.WATER, 1000), false) == 1000
+                    && this.energyStorage.extractEnergy(Config.getInt("pump_consumption"), true)
+                        >= Config.getInt("pump_consumption")) {
+                            int connectedSources = 0;
+                            for (int j = 2; j < 6; j++) if (worldObj.getBlock(
+                                xCoord + fd.offsetX + (j == 4 ? -1 : j == 5 ? 1 : 0),
+                                yCoord + fd.offsetY,
+                                zCoord + fd.offsetZ + (j == 2 ? -1 : j == 3 ? 1 : 0)) == Blocks.water
+                                && worldObj.getBlockMetadata(
+                                    xCoord + fd.offsetX + (j == 4 ? -1 : j == 5 ? 1 : 0),
+                                    yCoord + fd.offsetY,
+                                    zCoord + fd.offsetZ + (j == 2 ? -1 : j == 3 ? 1 : 0)) == 0)
+                                connectedSources++;
+                            if (connectedSources > 1) {
+                                this.energyStorage.extractEnergy(Config.getInt("pump_consumption"), false);
+                                this.tank.fill(new FluidStack(FluidRegistry.WATER, 1000), true);
+                            }
+                        }
+            }
             if (worldObj.getTotalWorldTime() % 40 == ((xCoord ^ zCoord) & 39)) {
                 if (closedList.isEmpty()) prepareAreaCheck();
                 else {
@@ -88,21 +86,21 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
                     FluidStack fs = Utils.drainFluidBlock(worldObj, cc.posX, cc.posY, cc.posZ, false);
                     if (fs == null) closedList.remove(target);
                     else if (tank.fill(fs, false) == fs.amount
-                            && this.energyStorage.extractEnergy(Config.getInt("pump_consumption"), true)
-                                    >= Config.getInt("pump_consumption")) {
-                        this.energyStorage.extractEnergy(Config.getInt("pump_consumption"), false);
-                        fs = Utils.drainFluidBlock(worldObj, cc.posX, cc.posY, cc.posZ, true);
-                        //						int rainbow = (closedList.size()%11)+1;
-                        //						if(rainbow>6)
-                        //							rainbow+=2;
-                        //						if(rainbow>9)
-                        //							rainbow++;
-                        //						worldObj.setBlock( cc.posX,cc.posY,cc.posZ, Blocks.stained_glass,rainbow, 0x3);
-                        if (Config.getBoolean("pump_placeCobble") && placeCobble)
-                            worldObj.setBlock(cc.posX, cc.posY, cc.posZ, Blocks.cobblestone);
-                        this.tank.fill(fs, true);
-                        closedList.remove(target);
-                    }
+                        && this.energyStorage.extractEnergy(Config.getInt("pump_consumption"), true)
+                            >= Config.getInt("pump_consumption")) {
+                                this.energyStorage.extractEnergy(Config.getInt("pump_consumption"), false);
+                                fs = Utils.drainFluidBlock(worldObj, cc.posX, cc.posY, cc.posZ, true);
+                                // int rainbow = (closedList.size()%11)+1;
+                                // if(rainbow>6)
+                                // rainbow+=2;
+                                // if(rainbow>9)
+                                // rainbow++;
+                                // worldObj.setBlock( cc.posX,cc.posY,cc.posZ, Blocks.stained_glass,rainbow, 0x3);
+                                if (Config.getBoolean("pump_placeCobble") && placeCobble)
+                                    worldObj.setBlock(cc.posX, cc.posY, cc.posZ, Blocks.cobblestone);
+                                this.tank.fill(fs, true);
+                                closedList.remove(target);
+                            }
                 }
             }
         }
@@ -114,12 +112,11 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
         openList.clear();
         closedList.clear();
         checked.clear();
-        for (int i = 0; i < 6; i++)
-            if (sideConfig[i] == 0) {
-                ForgeDirection fd = ForgeDirection.getOrientation(i);
-                openList.add(new ChunkCoordinates(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ));
-                checkingArea = true;
-            }
+        for (int i = 0; i < 6; i++) if (sideConfig[i] == 0) {
+            ForgeDirection fd = ForgeDirection.getOrientation(i);
+            openList.add(new ChunkCoordinates(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ));
+            checkingArea = true;
+        }
     }
 
     public void checkAreaTick() {
@@ -131,21 +128,21 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
             next = openList.get(0);
             if (!checked.contains(next)) {
                 FluidStack fs = Utils.drainFluidBlock(worldObj, next.posX, next.posY, next.posZ, false);
-                if (fs != null
-                        && (fs.getFluid() != FluidRegistry.WATER || !Config.getBoolean("pump_infiniteWater"))
-                        && (searchFluid == null || fs.getFluid() == searchFluid)) {
+                if (fs != null && (fs.getFluid() != FluidRegistry.WATER || !Config.getBoolean("pump_infiniteWater"))
+                    && (searchFluid == null || fs.getFluid() == searchFluid)) {
                     if (searchFluid == null) searchFluid = fs.getFluid();
                     closedList.add(next);
                     for (ForgeDirection fd : ForgeDirection.VALID_DIRECTIONS) {
                         ChunkCoordinates cc2 = new ChunkCoordinates(
-                                next.posX + fd.offsetX, next.posY + fd.offsetY, next.posZ + fd.offsetZ);
+                            next.posX + fd.offsetX,
+                            next.posY + fd.offsetY,
+                            next.posZ + fd.offsetZ);
                         FluidStack fs2 = Utils.drainFluidBlock(worldObj, cc2.posX, cc2.posY, cc2.posZ, false);
-                        if (!checked.contains(cc2)
-                                && !closedList.contains(cc2)
-                                && !openList.contains(cc2)
-                                && fs2 != null
-                                && (fs2.getFluid() != FluidRegistry.WATER || !Config.getBoolean("pump_infiniteWater"))
-                                && (searchFluid == null || fs2.getFluid() == searchFluid)) openList.add(cc2);
+                        if (!checked.contains(cc2) && !closedList.contains(cc2)
+                            && !openList.contains(cc2)
+                            && fs2 != null
+                            && (fs2.getFluid() != FluidRegistry.WATER || !Config.getBoolean("pump_infiniteWater"))
+                            && (searchFluid == null || fs2.getFluid() == searchFluid)) openList.add(cc2);
                     }
                 }
                 checked.add(next);
@@ -165,26 +162,26 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
         final int fluidForSort = canAccept;
         int sum = 0;
         HashMap<DirectionalFluidOutput, Integer> sorting = new HashMap<DirectionalFluidOutput, Integer>();
-        for (int i = 0; i < 6; i++)
-            if (sideConfig[i] == 1) {
-                ForgeDirection fd = ForgeDirection.getOrientation(i);
-                TileEntity tile = worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
-                if (tile instanceof IFluidHandler
-                        && ((IFluidHandler) tile)
-                                .canFill(ForgeDirection.getOrientation(i).getOpposite(), fs.getFluid())) {
-                    FluidStack insertResource = new FluidStack(fs.getFluid(), fs.amount);
-                    if (tile instanceof TileEntityFluidPipe
-                            && this.energyStorage.extractEnergy(accelPower, true) >= accelPower) {
-                        insertResource.tag = new NBTTagCompound();
-                        insertResource.tag.setBoolean("pressurized", true);
-                    }
-                    int temp = ((IFluidHandler) tile).fill(fd.getOpposite(), insertResource, false);
-                    if (temp > 0) {
-                        sorting.put(new DirectionalFluidOutput((IFluidHandler) tile, fd), temp);
-                        sum += temp;
-                    }
+        for (int i = 0; i < 6; i++) if (sideConfig[i] == 1) {
+            ForgeDirection fd = ForgeDirection.getOrientation(i);
+            TileEntity tile = worldObj.getTileEntity(xCoord + fd.offsetX, yCoord + fd.offsetY, zCoord + fd.offsetZ);
+            if (tile instanceof IFluidHandler && ((IFluidHandler) tile).canFill(
+                ForgeDirection.getOrientation(i)
+                    .getOpposite(),
+                fs.getFluid())) {
+                FluidStack insertResource = new FluidStack(fs.getFluid(), fs.amount);
+                if (tile instanceof TileEntityFluidPipe
+                    && this.energyStorage.extractEnergy(accelPower, true) >= accelPower) {
+                    insertResource.tag = new NBTTagCompound();
+                    insertResource.tag.setBoolean("pressurized", true);
+                }
+                int temp = ((IFluidHandler) tile).fill(fd.getOpposite(), insertResource, false);
+                if (temp > 0) {
+                    sorting.put(new DirectionalFluidOutput((IFluidHandler) tile, fd), temp);
+                    sum += temp;
                 }
             }
+        }
         if (sum > 0) {
             int f = 0;
             int i = 0;
@@ -194,7 +191,7 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
                 if (i++ == sorting.size() - 1) amount = canAccept;
                 FluidStack insertResource = new FluidStack(fs.getFluid(), amount);
                 if (output.output instanceof TileEntityFluidPipe
-                        && this.energyStorage.extractEnergy(accelPower, true) >= accelPower) {
+                    && this.energyStorage.extractEnergy(accelPower, true) >= accelPower) {
                     this.energyStorage.extractEnergy(accelPower, false);
                     insertResource.tag = new NBTTagCompound();
                     insertResource.tag.setBoolean("pressurized", true);
@@ -212,7 +209,7 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
     @Override
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
         sideConfig = nbt.getIntArray("sideConfig");
-        if (sideConfig == null || sideConfig.length != 6) sideConfig = new int[] {0, -1, -1, -1, -1, -1};
+        if (sideConfig == null || sideConfig.length != 6) sideConfig = new int[] { 0, -1, -1, -1, -1, -1 };
         dummy = nbt.getBoolean("dummy");
         if (nbt.hasKey("placeCobble")) placeCobble = nbt.getBoolean("placeCobble");
         tank.readFromNBT(nbt.getCompoundTag("tank"));
@@ -238,11 +235,10 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        if (resource == null
-                || dummy
-                || from == null
-                || from == ForgeDirection.UNKNOWN
-                || sideConfig[from.ordinal()] != 0) return 0;
+        if (resource == null || dummy
+            || from == null
+            || from == ForgeDirection.UNKNOWN
+            || sideConfig[from.ordinal()] != 0) return 0;
         return this.tank.fill(resource, doFill);
     }
 
@@ -271,14 +267,14 @@ public class TileEntityFluidPump extends TileEntityIEBase implements IFluidHandl
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
         if (!dummy && from != ForgeDirection.UNKNOWN && sideConfig[from.ordinal()] != -1)
-            return new FluidTankInfo[] {tank.getInfo()};
+            return new FluidTankInfo[] { tank.getInfo() };
         return new FluidTankInfo[0];
     }
 
     @Override
     public boolean canConnectEnergy(ForgeDirection from) {
         return from == ForgeDirection.UP
-                || (!dummy && from != ForgeDirection.UNKNOWN && this.sideConfig[from.ordinal()] == -1);
+            || (!dummy && from != ForgeDirection.UNKNOWN && this.sideConfig[from.ordinal()] == -1);
     }
 
     @Override

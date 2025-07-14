@@ -1,5 +1,8 @@
 package blusunrize.immersiveengineering.common.util.compat.opencomputers;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityEnergyMeter;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
@@ -7,8 +10,6 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.prefab.DriverTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class EnergyMeterDriver extends DriverTileEntity {
 
@@ -27,6 +28,7 @@ public class EnergyMeterDriver extends DriverTileEntity {
     }
 
     public class EnergyMeterEnvironment extends ManagedEnvironmentIE<TileEntityEnergyMeter> {
+
         public EnergyMeterEnvironment(World w, int x, int y, int z) {
             super(w, x, y, z, TileEntityEnergyMeter.class);
         }
@@ -49,7 +51,7 @@ public class EnergyMeterDriver extends DriverTileEntity {
 
         @Callback(doc = "function():int -- returns the average amount of energy transferred during the last 20 ticks")
         public Object[] getAvgEnergy(Context context, Arguments args) {
-            return new Object[] {getTileEntity().getAveragePower()};
+            return new Object[] { getTileEntity().getAveragePower() };
         }
     }
 }

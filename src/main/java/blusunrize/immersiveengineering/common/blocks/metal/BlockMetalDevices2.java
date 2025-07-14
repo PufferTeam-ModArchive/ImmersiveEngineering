@@ -1,24 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.AdvancedAABB;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
-import blusunrize.immersiveengineering.client.render.BlockRenderMetalDevices2;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IColouredTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICustomBoundingboxes;
-import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenBarrel;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.compat.IC2Helper;
-import cofh.api.energy.IEnergyContainerItem;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -44,10 +28,29 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.AdvancedAABB;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
+import blusunrize.immersiveengineering.client.render.BlockRenderMetalDevices2;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IColouredTile;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICustomBoundingboxes;
+import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenBarrel;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.compat.IC2Helper;
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 // @Optional.Interface(iface = "blusunrize.aquatweaks.api.IAquaConnectable", modid = "AquaTweaks")
-public class BlockMetalDevices2 extends BlockIEBase
-        implements ICustomBoundingboxes // , blusunrize.aquatweaks.api.IAquaConnectable
+public class BlockMetalDevices2 extends BlockIEBase implements ICustomBoundingboxes // ,
+                                                                                    // blusunrize.aquatweaks.api.IAquaConnectable
 {
+
     public static final int META_breakerSwitch = 0;
     public static final int META_skycrateDispenser = 1;
     public static final int META_energyMeter = 2;
@@ -68,22 +71,22 @@ public class BlockMetalDevices2 extends BlockIEBase
 
     public BlockMetalDevices2() {
         super(
-                "metalDevice2",
-                Material.iron,
-                1,
-                ItemBlockMetalDevices2.class,
-                "breakerSwitch",
-                "skycrateDispenser",
-                "energyMeter",
-                "electricLantern",
-                "floodlight",
-                "fluidPipe",
-                "fluidPump",
-                "barrel",
-                "capacitorCreative",
-                "redstoneBreaker",
-                "chargingStation",
-                "blastFurnacePreheater");
+            "metalDevice2",
+            Material.iron,
+            1,
+            ItemBlockMetalDevices2.class,
+            "breakerSwitch",
+            "skycrateDispenser",
+            "energyMeter",
+            "electricLantern",
+            "floodlight",
+            "fluidPipe",
+            "fluidPump",
+            "barrel",
+            "capacitorCreative",
+            "redstoneBreaker",
+            "chargingStation",
+            "blastFurnacePreheater");
         setHardness(3.0F);
         setResistance(15.0F);
         this.setMetaLightOpacity(META_barrel, 255);
@@ -108,18 +111,17 @@ public class BlockMetalDevices2 extends BlockIEBase
         list.add(new ItemStack(item, 1, 10));
         list.add(new ItemStack(item, 1, 11));
 
-        //		for(int i=0; i<subNames.length; i++)
-        //		{
-        //			list.add(new ItemStack(item, 1, i));
-        //		}
+        // for(int i=0; i<subNames.length; i++)
+        // {
+        // list.add(new ItemStack(item, 1, i));
+        // }
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister iconRegister) {
-        for (int i = 0; i < this.subNames.length; i++)
-            if (i != META_fluidPump && i != META_capacitorCreative)
-                this.icons[i][0] = iconRegister.registerIcon("immersiveEngineering:metal2_" + this.subNames[i]);
+        for (int i = 0; i < this.subNames.length; i++) if (i != META_fluidPump && i != META_capacitorCreative)
+            this.icons[i][0] = iconRegister.registerIcon("immersiveEngineering:metal2_" + this.subNames[i]);
         // creativeCap
         for (int i = 0; i < 3; i++) {
             String s = i == 0 ? "none" : i == 1 ? "in" : "out";
@@ -164,10 +166,9 @@ public class BlockMetalDevices2 extends BlockIEBase
         if (meta == META_fluidPump) return iconPump[Math.min(side + 1, 6)];
         if (meta == META_floodlight && side == 1) return iconFloodlightGlass;
         if (meta == META_barrel && side < 2) return iconBarrel[0];
-        if (meta == META_capacitorCreative)
-            if (side == 0) return iconCap[0][0];
-            else if (side == 1) return iconCap[1][0];
-            else return iconCap[2][0];
+        if (meta == META_capacitorCreative) if (side == 0) return iconCap[0][0];
+        else if (side == 1) return iconCap[1][0];
+        else return iconCap[2][0];
         return super.getIcon(side, meta);
     }
 
@@ -198,8 +199,8 @@ public class BlockMetalDevices2 extends BlockIEBase
     }
 
     @Override
-    public boolean onBlockActivated(
-            World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
+        float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof IColouredTile) {
             int dye = Utils.getDye(player.getCurrentEquippedItem());
@@ -222,13 +223,13 @@ public class BlockMetalDevices2 extends BlockIEBase
                 return true;
             }
         }
-        if (!player.isSneaking()
-                && te instanceof TileEntityBreakerSwitch
-                && !(te instanceof TileEntityRedstoneBreaker)) {
+        if (!player.isSneaking() && te instanceof TileEntityBreakerSwitch
+            && !(te instanceof TileEntityRedstoneBreaker)) {
             if (!world.isRemote) {
                 if (Utils.isHammer(player.getCurrentEquippedItem())) {
                     ((TileEntityBreakerSwitch) te).inverted = !((TileEntityBreakerSwitch) te).inverted;
-                    player.addChatMessage(new ChatComponentTranslation(
+                    player.addChatMessage(
+                        new ChatComponentTranslation(
                             Lib.CHAT_INFO + (((TileEntityBreakerSwitch) te).inverted ? "invertedOn" : "invertedOff")));
                     te.markDirty();
                 } else {
@@ -254,17 +255,20 @@ public class BlockMetalDevices2 extends BlockIEBase
                 if (transfer > 0) {
                     transferred = Utils.formatDouble(transfer, "0.###");
                 }
-                player.addChatComponentMessage(new ChatComponentTranslation(
-                        Lib.CHAT_INFO + "energyTransfered", meter.lastPackets.size(), transferred));
+                player.addChatComponentMessage(
+                    new ChatComponentTranslation(
+                        Lib.CHAT_INFO + "energyTransfered",
+                        meter.lastPackets.size(),
+                        transferred));
             }
             return true;
 
         } else if (Utils.isHammer(player.getCurrentEquippedItem()) && te instanceof TileEntityFloodlight) {
             if (!world.isRemote) {
                 if (side == ((TileEntityFloodlight) te).side
-                        || ForgeDirection.OPPOSITES[side] == ((TileEntityFloodlight) te).side)
+                    || ForgeDirection.OPPOSITES[side] == ((TileEntityFloodlight) te).side)
                     ((TileEntityFloodlight) te).turnY(player.isSneaking(), false);
-                else ((TileEntityFloodlight) te).turnX(!player.isSneaking(), false);
+                else((TileEntityFloodlight) te).turnX(!player.isSneaking(), false);
             }
             return true;
         } else if (te instanceof TileEntityFluidPump) {
@@ -275,13 +279,12 @@ public class BlockMetalDevices2 extends BlockIEBase
                         if (player.isSneaking()) side = ForgeDirection.OPPOSITES[side];
                         pump.toggleSide(side);
                         world.markBlockForUpdate(x, y, z);
-                    } else if (Config.getBoolean("pump_placeCobble")
-                            && OreDictionary.itemMatches(
-                                    new ItemStack(IEContent.itemTool, 1, 1), player.getCurrentEquippedItem(), true)) {
-                        pump.placeCobble = !pump.placeCobble;
-                        player.addChatMessage(
+                    } else if (Config.getBoolean("pump_placeCobble") && OreDictionary
+                        .itemMatches(new ItemStack(IEContent.itemTool, 1, 1), player.getCurrentEquippedItem(), true)) {
+                            pump.placeCobble = !pump.placeCobble;
+                            player.addChatMessage(
                                 new ChatComponentTranslation(Lib.CHAT_INFO + "pump.placeCobble." + pump.placeCobble));
-                    }
+                        }
                 }
                 return true;
             }
@@ -293,7 +296,8 @@ public class BlockMetalDevices2 extends BlockIEBase
 
                     ArrayList<AxisAlignedBB> boxes = addCustomSelectionBoxesToList(world, x, y, z);
                     for (AxisAlignedBB box : boxes) {
-                        if (box.expand(.002, .002, .002).isVecInside(Vec3.createVectorHelper(hitX, hitY, hitZ)))
+                        if (box.expand(.002, .002, .002)
+                            .isVecInside(Vec3.createVectorHelper(hitX, hitY, hitZ)))
                             if (box instanceof AdvancedAABB) fd = ((AdvancedAABB) box).fd;
                     }
                     if (fd != null && fd != ForgeDirection.UNKNOWN) {
@@ -308,11 +312,11 @@ public class BlockMetalDevices2 extends BlockIEBase
                 for (ItemStack valid : TileEntityFluidPipe.validScaffoldCoverings)
                     if (OreDictionary.itemMatches(valid, player.getCurrentEquippedItem(), true)) {
                         if (!OreDictionary.itemMatches(tile.scaffoldCovering, player.getCurrentEquippedItem(), true)) {
-                            if (!world.isRemote
-                                    && tile.scaffoldCovering != null
-                                    && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
-                                EntityItem entityitem =
-                                        player.dropPlayerItemWithRandomChoice(tile.scaffoldCovering.copy(), false);
+                            if (!world.isRemote && tile.scaffoldCovering != null
+                                && world.getGameRules()
+                                    .getGameRuleBooleanValue("doTileDrops")) {
+                                EntityItem entityitem = player
+                                    .dropPlayerItemWithRandomChoice(tile.scaffoldCovering.copy(), false);
                                 entityitem.delayBeforeCanPickup = 0;
                             }
                             tile.scaffoldCovering = Utils.copyStackWithAmount(player.getCurrentEquippedItem(), 1);
@@ -327,9 +331,10 @@ public class BlockMetalDevices2 extends BlockIEBase
                 TileEntityFluidPipe pipe = (TileEntityFluidPipe) te;
                 if (pipe.scaffoldCovering != null) {
                     if (!world.isRemote) {
-                        if (world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
-                            EntityItem entityitem =
-                                    player.dropPlayerItemWithRandomChoice(pipe.scaffoldCovering.copy(), false);
+                        if (world.getGameRules()
+                            .getGameRuleBooleanValue("doTileDrops")) {
+                            EntityItem entityitem = player
+                                .dropPlayerItemWithRandomChoice(pipe.scaffoldCovering.copy(), false);
                             entityitem.delayBeforeCanPickup = 0;
                         }
                         pipe.scaffoldCovering = null;
@@ -355,8 +360,8 @@ public class BlockMetalDevices2 extends BlockIEBase
                     world.markBlockForUpdate(barrel.xCoord, barrel.yCoord, barrel.zCoord);
                     return true;
                 }
-                if (player.getCurrentEquippedItem() != null
-                        && player.getCurrentEquippedItem().getItem() instanceof IFluidContainerItem) {
+                if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
+                    .getItem() instanceof IFluidContainerItem) {
                     barrel.markDirty();
                     world.markBlockForUpdate(barrel.xCoord, barrel.yCoord, barrel.zCoord);
                     return true;
@@ -373,9 +378,8 @@ public class BlockMetalDevices2 extends BlockIEBase
             return true;
         } else if (te instanceof TileEntityChargingStation) {
             ItemStack equipped = player.getCurrentEquippedItem();
-            if (equipped != null
-                    && (equipped.getItem() instanceof IEnergyContainerItem
-                            || (Lib.IC2 && IC2Helper.isElectricItem(equipped)))) {
+            if (equipped != null && (equipped.getItem() instanceof IEnergyContainerItem
+                || (Lib.IC2 && IC2Helper.isElectricItem(equipped)))) {
                 ItemStack stored = ((TileEntityChargingStation) te).inventory;
                 ((TileEntityChargingStation) te).setInventorySlotContents(0, player.getCurrentEquippedItem());
                 player.setCurrentItemOrArmor(0, stored);
@@ -395,42 +399,39 @@ public class BlockMetalDevices2 extends BlockIEBase
         if (te instanceof TileEntityBreakerSwitch && !(te instanceof TileEntityRedstoneBreaker)) {
             int f = ((TileEntityBreakerSwitch) te).facing;
             int side = ((TileEntityBreakerSwitch) te).sideAttached;
-            if (side == 0)
-                this.setBlockBounds(
-                        f < 4 ? .25f : f == 5 ? .75f : 0,
-                        .1875f,
-                        f > 3 ? .25f : f == 3 ? .75f : 0,
-                        f < 4 ? .75f : f == 4 ? .25f : 1,
-                        .8125f,
-                        f > 3 ? .75f : f == 2 ? .25f : 1);
-            else if (side == 1)
-                this.setBlockBounds(
-                        f >= 4 ? .1875f : .25f,
-                        0,
-                        f <= 3 ? .1875f : .25f,
-                        f >= 4 ? .8125f : .75f,
-                        .25f,
-                        f <= 3 ? .8125f : .75f);
-            else
-                this.setBlockBounds(
-                        f >= 4 ? .1875f : .25f,
-                        .75f,
-                        f <= 3 ? .1875f : .25f,
-                        f >= 4 ? .8125f : .75f,
-                        1,
-                        f <= 3 ? .8125f : .75f);
+            if (side == 0) this.setBlockBounds(
+                f < 4 ? .25f : f == 5 ? .75f : 0,
+                .1875f,
+                f > 3 ? .25f : f == 3 ? .75f : 0,
+                f < 4 ? .75f : f == 4 ? .25f : 1,
+                .8125f,
+                f > 3 ? .75f : f == 2 ? .25f : 1);
+            else if (side == 1) this.setBlockBounds(
+                f >= 4 ? .1875f : .25f,
+                0,
+                f <= 3 ? .1875f : .25f,
+                f >= 4 ? .8125f : .75f,
+                .25f,
+                f <= 3 ? .8125f : .75f);
+            else this.setBlockBounds(
+                f >= 4 ? .1875f : .25f,
+                .75f,
+                f <= 3 ? .1875f : .25f,
+                f >= 4 ? .8125f : .75f,
+                1,
+                f <= 3 ? .8125f : .75f);
         } else if (te instanceof TileEntityEnergyMeter && !((TileEntityEnergyMeter) te).dummy) {
             this.setBlockBounds(.1875f, 0, .1875f, .8125f, .875f, .8125f);
         } else if (te instanceof TileEntityFloodlight) {
             TileEntityFloodlight light = ((TileEntityFloodlight) te);
 
             this.setBlockBounds(
-                    light.side / 2 == 2 ? 0 : .0625f,
-                    light.side / 2 == 0 ? 0 : .0625f,
-                    light.side / 2 == 1 ? 0 : .0625f,
-                    light.side / 2 == 2 ? 1 : .9375f,
-                    light.side / 2 == 0 ? 1 : .9375f,
-                    light.side / 2 == 1 ? 1 : .9375f);
+                light.side / 2 == 2 ? 0 : .0625f,
+                light.side / 2 == 0 ? 0 : .0625f,
+                light.side / 2 == 1 ? 0 : .0625f,
+                light.side / 2 == 2 ? 1 : .9375f,
+                light.side / 2 == 0 ? 1 : .9375f,
+                light.side / 2 == 1 ? 1 : .9375f);
         } else if (te instanceof TileEntityFluidPipe) this.setBlockBounds(.25f, .25f, .25f, .75f, .75f, .75f);
         else if (te instanceof TileEntityFluidPump) {
             if (((TileEntityFluidPump) te).dummy) this.setBlockBounds(0.1875f, 0, 0.1875f, 0.8125f, 1, 0.8125f);
@@ -441,12 +442,10 @@ public class BlockMetalDevices2 extends BlockIEBase
             int f = ((TileEntityBreakerSwitch) te).facing;
             int side = ((TileEntityBreakerSwitch) te).sideAttached;
             if (side == 0) this.setBlockBounds(0, .125f, 0, 1, .875f, 1);
-            else if (side == 1)
-                this.setBlockBounds(
-                        f >= 4 ? .125f : 0, 0, f <= 3 ? .125f : 0, f >= 4 ? .875f : 1, 1, f <= 3 ? .875f : 1);
-            else
-                this.setBlockBounds(
-                        f >= 4 ? .125f : 0, 0, f <= 3 ? .125f : 0, f >= 4 ? .875f : 1, 1, f <= 3 ? .875f : 1);
+            else if (side == 1) this
+                .setBlockBounds(f >= 4 ? .125f : 0, 0, f <= 3 ? .125f : 0, f >= 4 ? .875f : 1, 1, f <= 3 ? .875f : 1);
+            else this
+                .setBlockBounds(f >= 4 ? .125f : 0, 0, f <= 3 ? .125f : 0, f >= 4 ? .875f : 1, 1, f <= 3 ? .875f : 1);
         } else if (te instanceof TileEntityChargingStation) {
             int f = ((TileEntityChargingStation) te).facing;
             this.setBlockBounds(f < 4 ? .125f : 0, 0, f > 3 ? .125f : 0, f < 4 ? .875f : 1, 1, f > 3 ? .875f : 1);
@@ -467,7 +466,7 @@ public class BlockMetalDevices2 extends BlockIEBase
 
                 byte connections = tile.getConnectionByte();
                 if (
-                /*connections==16||connections==32||*/ connections == 48) {
+                /* connections==16||connections==32|| */ connections == 48) {
                     this.setBlockBounds(0, .25f, .25f, 1, .75f, .75f);
                     addCollisionBox(world, x, y, z, aabb, list, ent);
                     if ((connections & 16) == 0) {
@@ -479,7 +478,7 @@ public class BlockMetalDevices2 extends BlockIEBase
                         addCollisionBox(world, x, y, z, aabb, list, ent);
                     }
                 } else if (
-                /*connections==4||connections==8||*/ connections == 12) {
+                /* connections==4||connections==8|| */ connections == 12) {
                     this.setBlockBounds(.25f, .25f, 0, .75f, .75f, 1);
                     addCollisionBox(world, x, y, z, aabb, list, ent);
                     if ((connections & 4) == 0) {
@@ -491,7 +490,7 @@ public class BlockMetalDevices2 extends BlockIEBase
                         addCollisionBox(world, x, y, z, aabb, list, ent);
                     }
                 } else if (
-                /*connections==1||connections==2||*/ connections == 3) {
+                /* connections==1||connections==2|| */ connections == 3) {
                     this.setBlockBounds(.25f, 0, .25f, .75f, 1, .75f);
                     addCollisionBox(world, x, y, z, aabb, list, ent);
                     if ((connections & 1) == 0) {
@@ -508,12 +507,12 @@ public class BlockMetalDevices2 extends BlockIEBase
                     for (int i = 0; i < 6; i++) {
                         if ((connections & 0x1) == 1) {
                             this.setBlockBounds(
-                                    i == 4 ? 0 : i == 5 ? .875f : .125f,
-                                    i == 0 ? 0 : i == 1 ? .875f : .125f,
-                                    i == 2 ? 0 : i == 3 ? .875f : .125f,
-                                    i == 4 ? .125f : i == 5 ? 1 : .875f,
-                                    i == 0 ? .125f : i == 1 ? 1 : .875f,
-                                    i == 2 ? .125f : i == 3 ? 1 : .875f);
+                                i == 4 ? 0 : i == 5 ? .875f : .125f,
+                                i == 0 ? 0 : i == 1 ? .875f : .125f,
+                                i == 2 ? 0 : i == 3 ? .875f : .125f,
+                                i == 4 ? .125f : i == 5 ? 1 : .875f,
+                                i == 0 ? .125f : i == 1 ? 1 : .875f,
+                                i == 2 ? .125f : i == 3 ? 1 : .875f);
                             addCollisionBox(world, x, y, z, aabb, list, ent);
                         }
                         connections >>= 1;
@@ -531,28 +530,28 @@ public class BlockMetalDevices2 extends BlockIEBase
             TileEntityFluidPipe tile = (TileEntityFluidPipe) te;
             byte connections = tile.getAvailableConnectionByte();
             byte availableConnections = tile.getConnectionByte();
-            double[] baseAABB = tile.scaffoldCovering != null
-                    ? new double[] {.002, .998, .002, .998, .002, .998}
-                    : new double[] {.25, .75, .25, .75, .25, .75};
+            double[] baseAABB = tile.scaffoldCovering != null ? new double[] { .002, .998, .002, .998, .002, .998 }
+                : new double[] { .25, .75, .25, .75, .25, .75 };
             for (int i = 0; i < 6; i++) {
                 double depth = tile.getConnectionStyle(i) == 0 ? .25 : .125;
                 double size = tile.getConnectionStyle(i) == 0 ? .25 : .125;
                 if (tile.scaffoldCovering != null) size = 0;
-                if ((connections & 0x1) == 1)
-                    list.add(new AdvancedAABB(
-                            i == 4 ? 0 : i == 5 ? 1 - depth : size,
-                            i == 0 ? 0 : i == 1 ? 1 - depth : size,
-                            i == 2 ? 0 : i == 3 ? 1 - depth : size,
-                            i == 4 ? depth : i == 5 ? 1 : 1 - size,
-                            i == 0 ? depth : i == 1 ? 1 : 1 - size,
-                            i == 2 ? depth : i == 3 ? 1 : 1 - size,
-                            ForgeDirection.getOrientation(i)));
+                if ((connections & 0x1) == 1) list.add(
+                    new AdvancedAABB(
+                        i == 4 ? 0 : i == 5 ? 1 - depth : size,
+                        i == 0 ? 0 : i == 1 ? 1 - depth : size,
+                        i == 2 ? 0 : i == 3 ? 1 - depth : size,
+                        i == 4 ? depth : i == 5 ? 1 : 1 - size,
+                        i == 0 ? depth : i == 1 ? 1 : 1 - size,
+                        i == 2 ? depth : i == 3 ? 1 : 1 - size,
+                        ForgeDirection.getOrientation(i)));
                 if ((availableConnections & 0x1) == 1) baseAABB[i] += i % 2 == 1 ? .125 : -.125;
                 baseAABB[i] = Math.min(Math.max(baseAABB[i], 0), 1);
                 availableConnections = (byte) (availableConnections >> 1);
                 connections = (byte) (connections >> 1);
             }
-            list.add(new AdvancedAABB(
+            list.add(
+                new AdvancedAABB(
                     baseAABB[4],
                     baseAABB[0],
                     baseAABB[2],
@@ -565,31 +564,23 @@ public class BlockMetalDevices2 extends BlockIEBase
     }
 
     @Override
-    public boolean addSpecifiedSubBox(
-            World world,
-            int x,
-            int y,
-            int z,
-            EntityPlayer player,
-            AxisAlignedBB box,
-            Vec3 hitVec,
-            ArrayList<AxisAlignedBB> list) {
-        if (world.getTileEntity(x, y, z) instanceof TileEntityFluidPipe
-                && box instanceof AdvancedAABB
-                && ((AdvancedAABB) box).fd != null) {
+    public boolean addSpecifiedSubBox(World world, int x, int y, int z, EntityPlayer player, AxisAlignedBB box,
+        Vec3 hitVec, ArrayList<AxisAlignedBB> list) {
+        if (world.getTileEntity(x, y, z) instanceof TileEntityFluidPipe && box instanceof AdvancedAABB
+            && ((AdvancedAABB) box).fd != null) {
             ForgeDirection fd = ((AdvancedAABB) box).fd;
-            //			AxisAlignedBB newBox = box.expand(fd.offsetX!=0?0:.03125, fd.offsetY!=0?0:.03125,
+            // AxisAlignedBB newBox = box.expand(fd.offsetX!=0?0:.03125, fd.offsetY!=0?0:.03125,
             // fd.offsetZ!=0?0:.03125);
-            //			if(newBox.isVecInside(hitVec.addVector(-x,-y,-z)))
-            //				return newBox;
-            if (box.expand(.002, .002, .002).isVecInside(hitVec.addVector(-x, -y, -z))) {
+            // if(newBox.isVecInside(hitVec.addVector(-x,-y,-z)))
+            // return newBox;
+            if (box.expand(.002, .002, .002)
+                .isVecInside(hitVec.addVector(-x, -y, -z))) {
                 list.add(
-                        fd == ForgeDirection.UNKNOWN
-                                ? box
-                                : box.expand(
-                                        fd.offsetX != 0 ? 0 : .03125,
-                                        fd.offsetY != 0 ? 0 : .03125,
-                                        fd.offsetZ != 0 ? 0 : .03125));
+                    fd == ForgeDirection.UNKNOWN ? box
+                        : box.expand(
+                            fd.offsetX != 0 ? 0 : .03125,
+                            fd.offsetY != 0 ? 0 : .03125,
+                            fd.offsetZ != 0 ? 0 : .03125));
                 return fd == ForgeDirection.UNKNOWN && list.isEmpty();
             }
         }
@@ -637,8 +628,8 @@ public class BlockMetalDevices2 extends BlockIEBase
         if (meta == META_electricLantern) return side.ordinal() < 2;
         else if (meta == META_floodlight) {
             TileEntity te = world.getTileEntity(x, y, z);
-            return te instanceof TileEntityFloodlight
-                    && side.getOpposite().ordinal() == ((TileEntityFloodlight) te).side;
+            return te instanceof TileEntityFloodlight && side.getOpposite()
+                .ordinal() == ((TileEntityFloodlight) te).side;
         } else if (meta == META_fluidPipe) {
             TileEntity te = world.getTileEntity(x, y, z);
             if (te instanceof TileEntityFluidPipe && ((TileEntityFluidPipe) te).scaffoldCovering != null) return true;
@@ -708,10 +699,15 @@ public class BlockMetalDevices2 extends BlockIEBase
             if (((TileEntityFluidPump) te).dummy) world.setBlockToAir(x, y - 1, z);
             else world.setBlockToAir(x, y + 1, z);
         }
-        if (te instanceof TileEntityFluidPipe && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+        if (te instanceof TileEntityFluidPipe && world.getGameRules()
+            .getGameRuleBooleanValue("doTileDrops")) {
             if (((TileEntityFluidPipe) te).scaffoldCovering != null) {
                 EntityItem entityitem = new EntityItem(
-                        world, x + .5, y + .5, z + .5, ((TileEntityFluidPipe) te).scaffoldCovering.copy());
+                    world,
+                    x + .5,
+                    y + .5,
+                    z + .5,
+                    ((TileEntityFluidPipe) te).scaffoldCovering.copy());
                 entityitem.delayBeforeCanPickup = 10;
                 world.spawnEntityInWorld(entityitem);
             }
@@ -732,9 +728,10 @@ public class BlockMetalDevices2 extends BlockIEBase
                 entityitem.motionX = world.rand.nextGaussian() * .05;
                 entityitem.motionY = world.rand.nextGaussian() * .05 + .2;
                 entityitem.motionZ = world.rand.nextGaussian() * .05;
-                if (s.hasTagCompound())
-                    entityitem.getEntityItem().setTagCompound((NBTTagCompound)
-                            s.getTagCompound().copy());
+                if (s.hasTagCompound()) entityitem.getEntityItem()
+                    .setTagCompound(
+                        (NBTTagCompound) s.getTagCompound()
+                            .copy());
                 world.spawnEntityInWorld(entityitem);
             }
         }
@@ -797,17 +794,12 @@ public class BlockMetalDevices2 extends BlockIEBase
         if (tile instanceof TileEntityFluidPipe) {
             TileEntity other = world.getTileEntity(tileX, tileY, tileZ);
             if (other instanceof IFluidHandler) {
-                if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
-                    TileEntityFluidPipe.indirectConnections.clear();
-                ForgeDirection fd = tileY < y
-                        ? ForgeDirection.DOWN
-                        : tileY > y
-                                ? ForgeDirection.UP
-                                : tileZ < z
-                                        ? ForgeDirection.NORTH
-                                        : tileZ > z
-                                                ? ForgeDirection.SOUTH
-                                                : tileX < x ? ForgeDirection.WEST : ForgeDirection.EAST;
+                if (FMLCommonHandler.instance()
+                    .getEffectiveSide() == Side.SERVER) TileEntityFluidPipe.indirectConnections.clear();
+                ForgeDirection fd = tileY < y ? ForgeDirection.DOWN
+                    : tileY > y ? ForgeDirection.UP
+                        : tileZ < z ? ForgeDirection.NORTH
+                            : tileZ > z ? ForgeDirection.SOUTH : tileX < x ? ForgeDirection.WEST : ForgeDirection.EAST;
                 ((TileEntityFluidPipe) tile).sideConfig[fd.ordinal()] = 0;
             }
         }
@@ -827,104 +819,104 @@ public class BlockMetalDevices2 extends BlockIEBase
         }
     }
 
-    //	@Override
-    //	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
-    //	{
-    //		TileEntity tileEntity = world.getTileEntity(x, y, z);
-    //		if (tileEntity instanceof TileEntityFluidPipe_old && !(world.getTileEntity(tileX, tileY, tileZ) instanceof
+    // @Override
+    // public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
+    // {
+    // TileEntity tileEntity = world.getTileEntity(x, y, z);
+    // if (tileEntity instanceof TileEntityFluidPipe_old && !(world.getTileEntity(tileX, tileY, tileZ) instanceof
     // TileEntityFluidPipe_old))
-    //		{
-    //			TileEntityFluidPipe_old fluidPipe = (TileEntityFluidPipe_old) tileEntity;
-    //			boolean connected = false;
-    //			for (PipeConnection connection : fluidPipe.connections)
-    //			{
-    //				connected = connection.to.equals(new ChunkCoordinates(tileX, tileY, tileZ));
-    //				if(connected)
-    //					break;
-    //			}
-    //			TileEntity neighbouringTileEntity = world.getTileEntity(tileX, tileY, tileZ);
+    // {
+    // TileEntityFluidPipe_old fluidPipe = (TileEntityFluidPipe_old) tileEntity;
+    // boolean connected = false;
+    // for (PipeConnection connection : fluidPipe.connections)
+    // {
+    // connected = connection.to.equals(new ChunkCoordinates(tileX, tileY, tileZ));
+    // if(connected)
+    // break;
+    // }
+    // TileEntity neighbouringTileEntity = world.getTileEntity(tileX, tileY, tileZ);
     //
-    //			if (PipeConnection.isTank(neighbouringTileEntity,
+    // if (PipeConnection.isTank(neighbouringTileEntity,
     // PipeConnection.toDirection(Utils.toCC(neighbouringTileEntity), Utils.toCC(fluidPipe)).getOpposite()))
-    //			{
-    //				if (!connected)
-    //				{
-    //					fluidPipe.connections.add(new PipeConnection(Utils.toCC(fluidPipe), Utils.toCC(neighbouringTileEntity),
+    // {
+    // if (!connected)
+    // {
+    // fluidPipe.connections.add(new PipeConnection(Utils.toCC(fluidPipe), Utils.toCC(neighbouringTileEntity),
     // PipeConnection.Type.TANK));
-    //					fluidPipe.markDirty();
-    //					if (world instanceof World)
-    //						((World) world).markBlockForUpdate(x, y, z);
-    //				}
-    //			}
-    //			else if (connected)
-    //			{
-    //				for (PipeConnection connection : fluidPipe.connections)
-    //					if (connection.to.equals(new ChunkCoordinates(tileX, tileY, tileZ)))
-    //					{
-    //						fluidPipe.connections.remove(connection);
-    //						break;
-    //					}
-    //				fluidPipe.markDirty();
-    //				if (world instanceof World)
-    //					((World) world).markBlockForUpdate(x, y, z);
-    //			}
-    //		}
-    //	}
+    // fluidPipe.markDirty();
+    // if (world instanceof World)
+    // ((World) world).markBlockForUpdate(x, y, z);
+    // }
+    // }
+    // else if (connected)
+    // {
+    // for (PipeConnection connection : fluidPipe.connections)
+    // if (connection.to.equals(new ChunkCoordinates(tileX, tileY, tileZ)))
+    // {
+    // fluidPipe.connections.remove(connection);
+    // break;
+    // }
+    // fluidPipe.markDirty();
+    // if (world instanceof World)
+    // ((World) world).markBlockForUpdate(x, y, z);
+    // }
+    // }
+    // }
     //
-    //	@Override
-    //	public void onBlockAdded(World world, int x, int y, int z)
-    //	{
-    //		TileEntity tileEntity = world.getTileEntity(x, y, z);
-    //		if (tileEntity instanceof TileEntityFluidPipe_old)
-    //		{
-    //			TileEntityFluidPipe_old fluidPipe = (TileEntityFluidPipe_old) tileEntity;
-    //			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS)
-    //			{
-    //				TileEntity neighbouringTileEntity = world.getTileEntity(x + direction.offsetX, y + direction.offsetY, z +
+    // @Override
+    // public void onBlockAdded(World world, int x, int y, int z)
+    // {
+    // TileEntity tileEntity = world.getTileEntity(x, y, z);
+    // if (tileEntity instanceof TileEntityFluidPipe_old)
+    // {
+    // TileEntityFluidPipe_old fluidPipe = (TileEntityFluidPipe_old) tileEntity;
+    // for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS)
+    // {
+    // TileEntity neighbouringTileEntity = world.getTileEntity(x + direction.offsetX, y + direction.offsetY, z +
     // direction.offsetZ);
     //
-    //				if (neighbouringTileEntity instanceof TileEntityFluidPipe_old)
-    //				{
-    //					((TileEntityFluidPipe_old) neighbouringTileEntity).connections.add(new
+    // if (neighbouringTileEntity instanceof TileEntityFluidPipe_old)
+    // {
+    // ((TileEntityFluidPipe_old) neighbouringTileEntity).connections.add(new
     // PipeConnection(Utils.toCC(neighbouringTileEntity), Utils.toCC(fluidPipe), direction.getOpposite(),
     // PipeConnection.Type.PIPE));
-    //					fluidPipe.connections.add(new PipeConnection(Utils.toCC(fluidPipe), Utils.toCC(neighbouringTileEntity),
+    // fluidPipe.connections.add(new PipeConnection(Utils.toCC(fluidPipe), Utils.toCC(neighbouringTileEntity),
     // direction, PipeConnection.Type.PIPE));
-    //					fluidPipe.markDirty();
-    //					neighbouringTileEntity.markDirty();
-    //					world.markBlockForUpdate(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
-    //				}
-    //				else if(neighbouringTileEntity instanceof IFluidPipe)
-    //				{
-    //					((IFluidPipe) neighbouringTileEntity).addConnection(new PipeConnection(Utils.toCC(neighbouringTileEntity),
+    // fluidPipe.markDirty();
+    // neighbouringTileEntity.markDirty();
+    // world.markBlockForUpdate(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
+    // }
+    // else if(neighbouringTileEntity instanceof IFluidPipe)
+    // {
+    // ((IFluidPipe) neighbouringTileEntity).addConnection(new PipeConnection(Utils.toCC(neighbouringTileEntity),
     // Utils.toCC(fluidPipe), direction.getOpposite(), PipeConnection.Type.PIPE));
-    //					fluidPipe.connections.add(new PipeConnection(Utils.toCC(fluidPipe), Utils.toCC(neighbouringTileEntity),
+    // fluidPipe.connections.add(new PipeConnection(Utils.toCC(fluidPipe), Utils.toCC(neighbouringTileEntity),
     // direction, PipeConnection.Type.PIPE));
-    //					fluidPipe.markDirty();
-    //					neighbouringTileEntity.markDirty();
-    //					world.markBlockForUpdate(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
-    //				}
-    //				else
-    //				{
-    //					boolean isTank = neighbouringTileEntity instanceof IFluidHandler;
-    //					if(isTank)
-    //					{
-    //						IFluidHandler fluidHandler = (IFluidHandler) neighbouringTileEntity;
-    //						FluidTankInfo[] tankInfo = fluidHandler.getTankInfo(direction.getOpposite());
-    //						isTank = tankInfo!=null&&tankInfo.length > 0;
-    //					}
-    //					if(isTank)
-    //					{
-    //						fluidPipe.connections.add(new PipeConnection(Utils.toCC(fluidPipe), Utils.toCC(neighbouringTileEntity),
+    // fluidPipe.markDirty();
+    // neighbouringTileEntity.markDirty();
+    // world.markBlockForUpdate(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
+    // }
+    // else
+    // {
+    // boolean isTank = neighbouringTileEntity instanceof IFluidHandler;
+    // if(isTank)
+    // {
+    // IFluidHandler fluidHandler = (IFluidHandler) neighbouringTileEntity;
+    // FluidTankInfo[] tankInfo = fluidHandler.getTankInfo(direction.getOpposite());
+    // isTank = tankInfo!=null&&tankInfo.length > 0;
+    // }
+    // if(isTank)
+    // {
+    // fluidPipe.connections.add(new PipeConnection(Utils.toCC(fluidPipe), Utils.toCC(neighbouringTileEntity),
     // direction, PipeConnection.Type.TANK));
-    //						fluidPipe.markDirty();
-    //					}
-    //				}
-    //			}
-    //			world.markBlockForUpdate(x, y, z);
-    //			//			world.markBlockRangeForRenderUpdate(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
-    //		}
-    //	}
+    // fluidPipe.markDirty();
+    // }
+    // }
+    // }
+    // world.markBlockForUpdate(x, y, z);
+    // // world.markBlockRangeForRenderUpdate(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
+    // }
+    // }
 
     @Override
     public boolean hasComparatorInputOverride() {
@@ -987,20 +979,18 @@ public class BlockMetalDevices2 extends BlockIEBase
     @Optional.Method(modid = "AquaTweaks")
     public boolean shouldRenderFluid(IBlockAccess world, int x, int y, int z) {
         int meta = world.getBlockMetadata(x, y, z);
-        return meta == META_breakerSwitch
-                || meta == META_electricLantern
-                || meta == META_floodlight
-                || meta == META_fluidPipe
-                || meta == META_redstoneBreaker;
+        return meta == META_breakerSwitch || meta == META_electricLantern
+            || meta == META_floodlight
+            || meta == META_fluidPipe
+            || meta == META_redstoneBreaker;
     }
 
     @Optional.Method(modid = "AquaTweaks")
     public boolean canConnectTo(IBlockAccess world, int x, int y, int z, int side) {
         int meta = world.getBlockMetadata(x, y, z);
-        return meta == META_breakerSwitch
-                || meta == META_electricLantern
-                || meta == META_floodlight
-                || meta == META_fluidPipe
-                || meta == META_redstoneBreaker;
+        return meta == META_breakerSwitch || meta == META_electricLantern
+            || meta == META_floodlight
+            || meta == META_fluidPipe
+            || meta == META_redstoneBreaker;
     }
 }

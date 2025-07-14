@@ -1,17 +1,21 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.models.ModelIEObj;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenPost;
-import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import java.util.ArrayList;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.client.models.ModelIEObj;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenPost;
+import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
+
 public class TileRenderPost extends TileRenderIE {
+
     static ModelIEObj model = new ModelIEObj("immersiveengineering:models/post.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockWoodenDevice.getIcon(0, 0);
@@ -27,17 +31,15 @@ public class TileRenderPost extends TileRenderIE {
         parts.add("Base");
         boolean rotate = false;
         float fr = 0;
-        if (tile.getWorldObj() != null)
-            for (int i = 0; i < 4; i++)
-                rotate |= handleArms(
-                        tile.getWorldObj()
-                                .getTileEntity(
-                                        tile.xCoord + (i == 2 ? -1 : i == 3 ? 1 : 0),
-                                        tile.yCoord + 3,
-                                        tile.zCoord + (i == 0 ? -1 : i == 1 ? 1 : 0)),
-                        4 + i,
-                        fr,
-                        parts);
+        if (tile.getWorldObj() != null) for (int i = 0; i < 4; i++) rotate |= handleArms(
+            tile.getWorldObj()
+                .getTileEntity(
+                    tile.xCoord + (i == 2 ? -1 : i == 3 ? 1 : 0),
+                    tile.yCoord + 3,
+                    tile.zCoord + (i == 0 ? -1 : i == 1 ? 1 : 0)),
+            4 + i,
+            fr,
+            parts);
         else parts.add("Arm_right_u");
 
         translationMatrix.translate(.5, 0, .5);
@@ -61,9 +63,11 @@ public class TileRenderPost extends TileRenderIE {
 
     public static boolean canArmConnectToBlock(World world, int x, int y, int z, boolean down) {
         if (world.isAirBlock(x, y, z)) return false;
-        world.getBlock(x, y, z).setBlockBoundsBasedOnState(world, x, y, z);
-        return down
-                ? world.getBlock(x, y, z).getBlockBoundsMaxY() >= 1
-                : world.getBlock(x, y, z).getBlockBoundsMinY() <= 0;
+        world.getBlock(x, y, z)
+            .setBlockBoundsBasedOnState(world, x, y, z);
+        return down ? world.getBlock(x, y, z)
+            .getBlockBoundsMaxY() >= 1
+            : world.getBlock(x, y, z)
+                .getBlockBoundsMinY() <= 0;
     }
 }

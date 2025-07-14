@@ -1,19 +1,22 @@
 package blusunrize.immersiveengineering.api.energy;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
+
 /**
  * @author BluSunrize - 08.05.2015
  *
- * The temperature registry to allow additional blocks to work with the Thermoelectric Generator<br>
- * Register either OreDictionary names or
+ *         The temperature registry to allow additional blocks to work with the Thermoelectric Generator<br>
+ *         Register either OreDictionary names or
  */
 public class ThermoelectricHandler {
+
     static HashMap<String, Integer> temperatureMap = new HashMap<String, Integer>();
 
     public static void registerSourceInKelvin(String source, int value) {
@@ -23,7 +26,9 @@ public class ThermoelectricHandler {
     public static void registerSourceInCelsius(String source, int value) {
         temperatureMap.put(source, value + 273);
     }
-    /** 'murica!
+
+    /**
+     * 'murica!
      */
     public static void registerSourceInFarenheit(String source, int value) {
         temperatureMap.put(source, (int) Math.round((value - 32) / 1.8D + 273));

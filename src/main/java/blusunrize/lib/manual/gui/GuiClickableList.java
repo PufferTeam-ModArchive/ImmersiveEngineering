@@ -3,10 +3,12 @@ package blusunrize.lib.manual.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class GuiClickableList extends GuiButton {
+
     String[] entries;
     float textScale;
     int offset;
@@ -17,16 +19,8 @@ public class GuiClickableList extends GuiButton {
 
     private long prevWheelNano = 0;
 
-    public GuiClickableList(
-            GuiManual gui,
-            int id,
-            int x,
-            int y,
-            int w,
-            int h,
-            float textScale,
-            int translationType,
-            String... entries) {
+    public GuiClickableList(GuiManual gui, int id, int x, int y, int w, int h, float textScale, int translationType,
+        String... entries) {
         super(id, x, y, w, h, "");
         this.gui = gui;
         this.textScale = textScale;
@@ -57,11 +51,9 @@ public class GuiClickableList extends GuiButton {
             if (i != 0) GL11.glTranslatef(0, getFontHeight(), 0);
             int j = offset + i;
             if (j > entries.length - 1) j = entries.length - 1;
-            String s = translationType == -1
-                    ? entries[j]
-                    : translationType == 0
-                            ? gui.manual.formatCategoryName(entries[j])
-                            : gui.manual.formatEntryName(entries[j]);
+            String s = translationType == -1 ? entries[j]
+                : translationType == 0 ? gui.manual.formatCategoryName(entries[j])
+                    : gui.manual.formatEntryName(entries[j]);
 
             fr.drawString(s, 0, 0, col, false);
         }

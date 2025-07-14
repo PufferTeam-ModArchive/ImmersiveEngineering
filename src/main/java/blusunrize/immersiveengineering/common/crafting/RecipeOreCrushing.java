@@ -1,13 +1,15 @@
 package blusunrize.immersiveengineering.common.crafting;
 
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class RecipeOreCrushing implements IRecipe {
+
     String oreName;
     ItemStack dust;
 
@@ -23,9 +25,9 @@ public class RecipeOreCrushing implements IRecipe {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stackInSlot = inv.getStackInSlot(i);
             if (stackInSlot != null) {
-                if (hammer == null
-                        && stackInSlot.getItem().getToolClasses(stackInSlot).contains(Lib.TOOL_HAMMER))
-                    hammer = stackInSlot;
+                if (hammer == null && stackInSlot.getItem()
+                    .getToolClasses(stackInSlot)
+                    .contains(Lib.TOOL_HAMMER)) hammer = stackInSlot;
                 else if (ore == null && Utils.compareToOreName(stackInSlot, "ore" + oreName)) ore = stackInSlot;
                 else return false;
             }

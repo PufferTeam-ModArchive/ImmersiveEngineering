@@ -1,25 +1,28 @@
 package blusunrize.immersiveengineering.common.util.compat;
 
-import blusunrize.immersiveengineering.common.Config;
-import cpw.mods.fml.common.Loader;
 import java.lang.reflect.Field;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.common.Config;
+import cpw.mods.fml.common.Loader;
+
 public class EtFuturumHelper extends IECompatModule {
+
     static Class c_EntityLingeringEffect;
 
-    public static void createLingeringPotionEffect(
-            World world, double x, double y, double z, ItemStack potion, EntityLivingBase thrower) {
+    public static void createLingeringPotionEffect(World world, double x, double y, double z, ItemStack potion,
+        EntityLivingBase thrower) {
         if (!Loader.isModLoaded("etfuturum")) return;
         try {
             if (c_EntityLingeringEffect == null)
                 c_EntityLingeringEffect = Class.forName("ganymedes01.etfuturum.entities.EntityLingeringEffect");
             if (c_EntityLingeringEffect != null) {
-                Entity ent = (Entity)
-                        c_EntityLingeringEffect.getConstructor(World.class).newInstance(world);
+                Entity ent = (Entity) c_EntityLingeringEffect.getConstructor(World.class)
+                    .newInstance(world);
                 Field f = c_EntityLingeringEffect.getDeclaredField("thrower");
                 f.setAccessible(true);
                 f.set(ent, thrower);
@@ -31,8 +34,7 @@ public class EtFuturumHelper extends IECompatModule {
                 ent.setPosition(x, y, z);
                 world.spawnEntityInWorld(ent);
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
     }
 
     @Override

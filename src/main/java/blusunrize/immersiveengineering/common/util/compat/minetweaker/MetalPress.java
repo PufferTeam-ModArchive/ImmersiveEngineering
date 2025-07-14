@@ -1,23 +1,26 @@
 package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.ComparableItemStack;
 import blusunrize.immersiveengineering.api.crafting.MetalPressRecipe;
-import java.util.List;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
 import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
-import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersiveengineering.MetalPress")
 public class MetalPress {
+
     @ZenMethod
-    public static void addRecipe(
-            IItemStack output, IIngredient input, IItemStack mold, int energy, @Optional int inputSize) {
+    public static void addRecipe(IItemStack output, IIngredient input, IItemStack mold, int energy,
+        @Optional int inputSize) {
         Object oInput = MTHelper.toObject(input);
         if (oInput == null) return;
         ItemStack sOut = MTHelper.toStack(output);
@@ -30,6 +33,7 @@ public class MetalPress {
     }
 
     private static class Add implements IUndoableAction {
+
         private final MetalPressRecipe recipe;
 
         public Add(MetalPressRecipe recipe) {
@@ -73,6 +77,7 @@ public class MetalPress {
     }
 
     private static class Remove implements IUndoableAction {
+
         private final ItemStack output;
         List<MetalPressRecipe> removedRecipes;
 
@@ -87,9 +92,8 @@ public class MetalPress {
 
         @Override
         public void undo() {
-            if (removedRecipes != null)
-                for (MetalPressRecipe recipe : removedRecipes)
-                    if (recipe != null) MetalPressRecipe.recipeList.put(recipe.mold, recipe);
+            if (removedRecipes != null) for (MetalPressRecipe recipe : removedRecipes)
+                if (recipe != null) MetalPressRecipe.recipeList.put(recipe.mold, recipe);
         }
 
         @Override
@@ -119,6 +123,7 @@ public class MetalPress {
     }
 
     private static class RemoveByMold implements IUndoableAction {
+
         private final ComparableItemStack mold;
         List<MetalPressRecipe> removedRecipes;
 

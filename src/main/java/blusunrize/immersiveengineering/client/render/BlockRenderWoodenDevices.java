@@ -1,5 +1,13 @@
 package blusunrize.immersiveengineering.client.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.world.IBlockAccess;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityModWorkbench;
 import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWatermill;
@@ -8,14 +16,9 @@ import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWindmillAd
 import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenPost;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.world.IBlockAccess;
-import org.lwjgl.opengl.GL11;
 
 public class BlockRenderWoodenDevices implements ISimpleBlockRenderingHandler {
+
     public static int renderID = RenderingRegistry.getNextAvailableRenderId();
     private static final TileEntityWoodenPost woodenPost = new TileEntityWoodenPost();
     private static final TileEntityWatermill waterMill = new TileEntityWatermill();
@@ -55,7 +58,7 @@ public class BlockRenderWoodenDevices implements ISimpleBlockRenderingHandler {
                 Tessellator.instance.startDrawingQuads();
                 ClientUtils.handleStaticTileRenderer(workbench);
                 Tessellator.instance.draw();
-                //				TileEntityRendererDispatcher.instance.renderTileEntityAt(tile, 0,0,0,0);
+                // TileEntityRendererDispatcher.instance.renderTileEntityAt(tile, 0,0,0,0);
             } else if (metadata == 6) {
                 renderer.setRenderBounds(0, 0, 0, 1, 1, 1);
                 ClientUtils.drawInventoryBlock(block, metadata, renderer);
@@ -68,8 +71,8 @@ public class BlockRenderWoodenDevices implements ISimpleBlockRenderingHandler {
     }
 
     @Override
-    public boolean renderWorldBlock(
-            IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId,
+        RenderBlocks renderer) {
         if (world.getBlockMetadata(x, y, z) == 0) {
             TileEntityWoodenPost tile = (TileEntityWoodenPost) world.getTileEntity(x, y, z);
             if (tile.type == 0) {

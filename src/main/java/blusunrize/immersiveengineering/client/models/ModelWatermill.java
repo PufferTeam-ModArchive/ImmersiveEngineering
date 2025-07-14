@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 4.1.1
  */
 public class ModelWatermill extends ModelBase {
+
     public ModelRenderer Axle;
     public ModelRenderer blade1;
     public ModelRenderer blade2;

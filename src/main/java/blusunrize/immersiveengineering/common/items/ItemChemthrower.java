@@ -1,13 +1,7 @@
 package blusunrize.immersiveengineering.common.items;
 
-import blusunrize.immersiveengineering.api.shader.IShaderEquipableItem;
-import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
-import blusunrize.immersiveengineering.api.tool.ITool;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.entities.EntityChemthrowerShot;
-import blusunrize.immersiveengineering.common.gui.IESlot;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -22,7 +16,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 
+import blusunrize.immersiveengineering.api.shader.IShaderEquipableItem;
+import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
+import blusunrize.immersiveengineering.api.tool.ITool;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.entities.EntityChemthrowerShot;
+import blusunrize.immersiveengineering.common.gui.IESlot;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+
 public class ItemChemthrower extends ItemUpgradeableTool implements IShaderEquipableItem, IFluidContainerItem, ITool {
+
     public ItemChemthrower() {
         super("chemthrower", 1, "CHEMTHROWER");
     }
@@ -34,11 +37,13 @@ public class ItemChemthrower extends ItemUpgradeableTool implements IShaderEquip
 
         FluidStack fs = getFluid(stack);
         if (fs != null) {
-            EnumChatFormatting rarity = fs.getFluid().getRarity() == EnumRarity.common
-                    ? EnumChatFormatting.GRAY
-                    : fs.getFluid().getRarity().rarityColor;
-            list.add(rarity + fs.getLocalizedName() + EnumChatFormatting.GRAY + ": " + fs.amount + "/"
-                    + getCapacity(stack) + "mB");
+            EnumChatFormatting rarity = fs.getFluid()
+                .getRarity() == EnumRarity.common ? EnumChatFormatting.GRAY
+                    : fs.getFluid()
+                        .getRarity().rarityColor;
+            list.add(
+                rarity + fs
+                    .getLocalizedName() + EnumChatFormatting.GRAY + ": " + fs.amount + "/" + getCapacity(stack) + "mB");
         } else list.add(StatCollector.translateToLocal("desc.ImmersiveEngineering.flavour.drill.empty"));
     }
 
@@ -69,7 +74,8 @@ public class ItemChemthrower extends ItemUpgradeableTool implements IShaderEquip
             if (consumed * duration <= fs.amount) {
                 Vec3 v = player.getLookVec();
                 int split = 8;
-                boolean isGas = fs.getFluid().isGaseous() || ChemthrowerHandler.isGas(fs.getFluid());
+                boolean isGas = fs.getFluid()
+                    .isGaseous() || ChemthrowerHandler.isGas(fs.getFluid());
 
                 float scatter = isGas ? .15f : .05f;
                 float range = isGas ? .5f : 1f;
@@ -78,20 +84,23 @@ public class ItemChemthrower extends ItemUpgradeableTool implements IShaderEquip
                     scatter -= .025f;
                 }
 
-                boolean ignite =
-                        ChemthrowerHandler.isFlammable(fs.getFluid()) && ItemNBTHelper.getBoolean(stack, "ignite");
+                boolean ignite = ChemthrowerHandler.isFlammable(fs.getFluid())
+                    && ItemNBTHelper.getBoolean(stack, "ignite");
                 for (int i = 0; i < split; i++) {
                     Vec3 vecDir = v.addVector(
-                            player.getRNG().nextGaussian() * scatter,
-                            player.getRNG().nextGaussian() * scatter,
-                            player.getRNG().nextGaussian() * scatter);
+                        player.getRNG()
+                            .nextGaussian() * scatter,
+                        player.getRNG()
+                            .nextGaussian() * scatter,
+                        player.getRNG()
+                            .nextGaussian() * scatter);
                     EntityChemthrowerShot chem = new EntityChemthrowerShot(
-                            player.worldObj,
-                            player,
-                            vecDir.xCoord * 0.25,
-                            vecDir.yCoord * 0.25,
-                            vecDir.zCoord * 0.25,
-                            fs.getFluid());
+                        player.worldObj,
+                        player,
+                        vecDir.xCoord * 0.25,
+                        vecDir.yCoord * 0.25,
+                        vecDir.zCoord * 0.25,
+                        fs.getFluid());
                     chem.motionX = vecDir.xCoord * range;
                     chem.motionY = vecDir.yCoord * range;
                     chem.motionZ = vecDir.zCoord * range;
@@ -188,12 +197,10 @@ public class ItemChemthrower extends ItemUpgradeableTool implements IShaderEquip
 
     @Override
     public Slot[] getWorkbenchSlots(Container container, ItemStack stack, IInventory invItem) {
-        return new Slot[] {
-            new IESlot.Upgrades(container, invItem, 0, 80, 32, "CHEMTHROWER", stack, true),
+        return new Slot[] { new IESlot.Upgrades(container, invItem, 0, 80, 32, "CHEMTHROWER", stack, true),
             new IESlot.Upgrades(container, invItem, 1, 100, 32, "CHEMTHROWER", stack, true),
             new IESlot.Upgrades(container, invItem, 2, 120, 32, "CHEMTHROWER", stack, true),
-            new IESlot.Shader(container, invItem, 3, 150, 32, stack)
-        };
+            new IESlot.Shader(container, invItem, 3, 150, 32, stack) };
     }
 
     @Override

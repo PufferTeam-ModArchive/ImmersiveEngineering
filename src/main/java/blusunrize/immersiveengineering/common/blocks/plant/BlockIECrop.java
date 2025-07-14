@@ -1,12 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks.plant;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.common.IEContent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.BlockFarmland;
@@ -21,7 +17,14 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.common.IEContent;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class BlockIECrop extends BlockBush implements IGrowable {
+
     public String name;
     public String[] subNames;
     public final IIcon[] icons;
@@ -84,8 +87,8 @@ public class BlockIECrop extends BlockBush implements IGrowable {
     @Override
     public boolean canBlockStay(World world, int x, int y, int z) {
         boolean b = super.canBlockStay(world, x, y, z);
-        if (world.getBlockMetadata(x, y, z) == 5)
-            b = world.getBlock(x, y - 1, z).equals(this) && world.getBlockMetadata(x, y - 1, z) == getMaxMeta(0);
+        if (world.getBlockMetadata(x, y, z) == 5) b = world.getBlock(x, y - 1, z)
+            .equals(this) && world.getBlockMetadata(x, y - 1, z) == getMaxMeta(0);
         return b;
     }
 
@@ -140,8 +143,8 @@ public class BlockIECrop extends BlockBush implements IGrowable {
     float getGrowthSpeed(World world, int x, int y, int z, int meta, int light) {
         float growth = 0.125f * (light - 11);
         if (world.canBlockSeeTheSky(x, y, z)) growth += 2f;
-        if (world.getBlock(x, y - 1, z) != null && world.getBlock(x, y - 1, z).isFertile(world, x, y - 1, z))
-            growth *= 1.5f;
+        if (world.getBlock(x, y - 1, z) != null && world.getBlock(x, y - 1, z)
+            .isFertile(world, x, y - 1, z)) growth *= 1.5f;
         return 1f + growth;
     }
 
@@ -159,18 +162,18 @@ public class BlockIECrop extends BlockBush implements IGrowable {
     @Override
     public boolean func_149851_a(World world, int x, int y, int z, boolean client) {
         if (world.getBlockMetadata(x, y, z) < getMaxMeta(world.getBlockMetadata(x, y, z))) return true;
-        else
-            return world.getBlockMetadata(x, y, z) == 4
-                    && !world.getBlock(x, y + 1, z).equals(this);
+        else return world.getBlockMetadata(x, y, z) == 4 && !world.getBlock(x, y + 1, z)
+            .equals(this);
     }
+
     // canBonemeal
     @Override
     public boolean func_149852_a(World world, Random rand, int x, int y, int z) {
         if (world.getBlockMetadata(x, y, z) < getMaxMeta(world.getBlockMetadata(x, y, z))) return true;
-        else
-            return world.getBlockMetadata(x, y, z) == 4
-                    && !world.getBlock(x, y + 1, z).equals(this);
+        else return world.getBlockMetadata(x, y, z) == 4 && !world.getBlock(x, y + 1, z)
+            .equals(this);
     }
+
     // useBonemeal
     @Override
     public void func_149853_b(World world, Random rand, int x, int y, int z) {

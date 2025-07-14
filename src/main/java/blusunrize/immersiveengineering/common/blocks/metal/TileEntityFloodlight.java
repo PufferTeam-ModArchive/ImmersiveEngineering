@@ -1,5 +1,16 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.EnumSkyBlock;
+
 import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.common.IEContent;
@@ -9,17 +20,9 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.EnumSkyBlock;
 
 public class TileEntityFloodlight extends TileEntityImmersiveConnectable {
+
     public int energyStorage = 0;
     public boolean active = false;
     public int facing = -1;
@@ -58,10 +61,9 @@ public class TileEntityFloodlight extends TileEntityImmersiveConnectable {
         }
         switchCooldown--;
         computerTurnCooldown--;
-        if (computerTurnCooldown == 0)
-            synchronized (this) {
-                this.notifyAll();
-            }
+        if (computerTurnCooldown == 0) synchronized (this) {
+            this.notifyAll();
+        }
         if (active != b || worldObj.getTotalWorldTime() % 512 == ((xCoord ^ zCoord) & 511)) {
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
             updateFakeLights(true, active);
@@ -70,28 +72,28 @@ public class TileEntityFloodlight extends TileEntityImmersiveConnectable {
         if (!active) {
             if (!lightsToBePlaced.isEmpty()) lightsToBePlaced.clear();
         } else if (!lightsToBePlaced.isEmpty()
-                || !lightsToBeRemoved.isEmpty() && worldObj.getTotalWorldTime() % 8 == ((xCoord ^ zCoord) & 7)) {
-            Iterator<ChunkCoordinates> it = lightsToBePlaced.iterator();
-            int timeout = 0;
-            while (it.hasNext() && timeout++ < 16) {
-                ChunkCoordinates cc = it.next();
-                worldObj.setBlock(cc.posX, cc.posY, cc.posZ, IEContent.blockFakeLight, 0, 2);
-                TileEntity te = worldObj.getTileEntity(cc.posX, cc.posY, cc.posZ);
-                if (te instanceof TileEntityFakeLight)
-                    ((TileEntityFakeLight) te).floodlightCoords = new int[] {xCoord, yCoord, zCoord};
+            || !lightsToBeRemoved.isEmpty() && worldObj.getTotalWorldTime() % 8 == ((xCoord ^ zCoord) & 7)) {
+                Iterator<ChunkCoordinates> it = lightsToBePlaced.iterator();
+                int timeout = 0;
+                while (it.hasNext() && timeout++ < 16) {
+                    ChunkCoordinates cc = it.next();
+                    worldObj.setBlock(cc.posX, cc.posY, cc.posZ, IEContent.blockFakeLight, 0, 2);
+                    TileEntity te = worldObj.getTileEntity(cc.posX, cc.posY, cc.posZ);
+                    if (te instanceof TileEntityFakeLight)
+                        ((TileEntityFakeLight) te).floodlightCoords = new int[] { xCoord, yCoord, zCoord };
 
-                fakeLights.add(cc);
-                it.remove();
+                    fakeLights.add(cc);
+                    it.remove();
+                }
+                it = lightsToBeRemoved.iterator();
+                timeout = 0;
+                while (it.hasNext() && timeout++ < 16) {
+                    ChunkCoordinates cc = it.next();
+                    if (worldObj.getTileEntity(cc.posX, cc.posY, cc.posZ) instanceof TileEntityFakeLight)
+                        worldObj.setBlockToAir(cc.posX, cc.posY, cc.posZ);
+                    it.remove();
+                }
             }
-            it = lightsToBeRemoved.iterator();
-            timeout = 0;
-            while (it.hasNext() && timeout++ < 16) {
-                ChunkCoordinates cc = it.next();
-                if (worldObj.getTileEntity(cc.posX, cc.posY, cc.posZ) instanceof TileEntityFakeLight)
-                    worldObj.setBlockToAir(cc.posX, cc.posY, cc.posZ);
-                it.remove();
-            }
-        }
     }
 
     public void updateFakeLights(boolean deleteOld, boolean genNew) {
@@ -109,21 +111,13 @@ public class TileEntityFloodlight extends TileEntityImmersiveConnectable {
             float angle = (float) (facing == 3 ? 180 : facing == 4 ? 90 : facing == 5 ? -90 : 0);
             double angleX = Math.toRadians(rotX);
             double angleY = Math.toRadians(angle + rotY);
-            Vec3[] rays = {
-                /*Straight*/ Vec3.createVectorHelper(0, 0, 1),
-                /*U,D,L,R*/ Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1),
-                /*Intermediate*/ Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1),
-                /*Diagonal*/ Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1),
-                Vec3.createVectorHelper(0, 0, 1)
-            };
+            Vec3[] rays = { /* Straight */ Vec3.createVectorHelper(0, 0, 1),
+                /* U,D,L,R */ Vec3.createVectorHelper(0, 0, 1), Vec3.createVectorHelper(0, 0, 1),
+                Vec3.createVectorHelper(0, 0, 1), Vec3.createVectorHelper(0, 0, 1),
+                /* Intermediate */ Vec3.createVectorHelper(0, 0, 1), Vec3.createVectorHelper(0, 0, 1),
+                Vec3.createVectorHelper(0, 0, 1), Vec3.createVectorHelper(0, 0, 1),
+                /* Diagonal */ Vec3.createVectorHelper(0, 0, 1), Vec3.createVectorHelper(0, 0, 1),
+                Vec3.createVectorHelper(0, 0, 1), Vec3.createVectorHelper(0, 0, 1) };
             Matrix4 mat = new Matrix4();
             if (side == 0) mat.rotate(Math.PI, facing < 4 ? 0 : 1, 0, facing < 4 ? 1 : 0);
             else if (side != 1)
@@ -180,21 +174,18 @@ public class TileEntityFloodlight extends TileEntityImmersiveConnectable {
         HashSet<ChunkCoordinates> ignore = new HashSet<ChunkCoordinates>();
         ignore.add(new ChunkCoordinates(xCoord, yCoord, zCoord));
         ChunkCoordinates hit = Utils.rayTraceForFirst(
-                Utils.addVectors(vec, light),
-                light.addVector(vec.xCoord * range, vec.yCoord * range, vec.zCoord * range),
-                worldObj,
-                ignore);
-        double maxDistance = hit != null
-                ? Vec3.createVectorHelper(hit.posX + .5, hit.posY + .75, hit.posZ + .5)
-                        .squareDistanceTo(light)
-                : range * range;
+            Utils.addVectors(vec, light),
+            light.addVector(vec.xCoord * range, vec.yCoord * range, vec.zCoord * range),
+            worldObj,
+            ignore);
+        double maxDistance = hit != null ? Vec3.createVectorHelper(hit.posX + .5, hit.posY + .75, hit.posZ + .5)
+            .squareDistanceTo(light) : range * range;
         for (int i = 1 + offset; i <= range; i++) {
             int xx = xCoord + (int) Math.round(vec.xCoord * i);
             int yy = yCoord + (int) Math.round(vec.yCoord * i);
             int zz = zCoord + (int) Math.round(vec.zCoord * i);
-            double dist = (vec.xCoord * i * vec.xCoord * i)
-                    + (vec.yCoord * i * vec.yCoord * i)
-                    + (vec.zCoord * i * vec.zCoord * i);
+            double dist = (vec.xCoord * i * vec.xCoord * i) + (vec.yCoord * i * vec.yCoord * i)
+                + (vec.zCoord * i * vec.zCoord * i);
             if (dist > maxDistance) break;
             if (yy > 255 || yy < 0) continue;
             // &&worldObj.getBlockLightValue(xx,yy,zz)<12 using this makes it not work in daylight .-.
@@ -221,8 +212,8 @@ public class TileEntityFloodlight extends TileEntityImmersiveConnectable {
             int[] icc = nbt.getIntArray("fakeLight_" + i);
             fakeLights.add(new ChunkCoordinates(icc[0], icc[1], icc[2]));
         }
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && worldObj != null)
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.CLIENT && worldObj != null) worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
     @Override
@@ -237,7 +228,7 @@ public class TileEntityFloodlight extends TileEntityImmersiveConnectable {
         nbt.setInteger("lightAmount", fakeLights.size());
         for (int i = 0; i < fakeLights.size(); i++) {
             ChunkCoordinates cc = fakeLights.get(i);
-            nbt.setIntArray("fakeLight_" + i, new int[] {cc.posX, cc.posY, cc.posZ});
+            nbt.setIntArray("fakeLight_" + i, new int[] { cc.posX, cc.posY, cc.posZ });
         }
     }
 
@@ -305,21 +296,15 @@ public class TileEntityFloodlight extends TileEntityImmersiveConnectable {
 
     @Override
     public Vec3 getConnectionOffset(Connection con) {
-        int xDif = (con == null || con.start == null || con.end == null)
-                ? 0
-                : (con.start.equals(Utils.toCC(this)) && con.end != null)
-                        ? con.end.posX - xCoord
-                        : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posX - xCoord : 0;
-        int yDif = (con == null || con.start == null || con.end == null)
-                ? 0
-                : (con.start.equals(Utils.toCC(this)) && con.end != null)
-                        ? con.end.posY - yCoord
-                        : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posY - yCoord : 0;
-        int zDif = (con == null || con.start == null || con.end == null)
-                ? 0
-                : (con.start.equals(Utils.toCC(this)) && con.end != null)
-                        ? con.end.posZ - zCoord
-                        : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posZ - zCoord : 0;
+        int xDif = (con == null || con.start == null || con.end == null) ? 0
+            : (con.start.equals(Utils.toCC(this)) && con.end != null) ? con.end.posX - xCoord
+                : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posX - xCoord : 0;
+        int yDif = (con == null || con.start == null || con.end == null) ? 0
+            : (con.start.equals(Utils.toCC(this)) && con.end != null) ? con.end.posY - yCoord
+                : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posY - yCoord : 0;
+        int zDif = (con == null || con.start == null || con.end == null) ? 0
+            : (con.start.equals(Utils.toCC(this)) && con.end != null) ? con.end.posZ - zCoord
+                : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posZ - zCoord : 0;
         double x, y, z;
 
         switch (side) {

@@ -1,16 +1,19 @@
 package blusunrize.immersiveengineering.client.render;
 
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+
 import blusunrize.immersiveengineering.client.models.ModelIEObj;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices2;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityEnergyMeter;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 
 public class TileRenderEnergyMeter extends TileRenderImmersiveConnectable {
+
     ModelIEObj model = new ModelIEObj("immersiveengineering:models/eMeter.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockMetalDevice2.getIcon(0, BlockMetalDevices2.META_energyMeter);

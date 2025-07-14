@@ -1,5 +1,8 @@
 package blusunrize.immersiveengineering.common.util.network;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
+
 import blusunrize.immersiveengineering.common.IEContent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -7,10 +10,9 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 
 public class MessageSpeedloaderSync implements IMessage {
+
     int slot;
 
     public MessageSpeedloaderSync(int slot) {
@@ -30,13 +32,13 @@ public class MessageSpeedloaderSync implements IMessage {
     }
 
     public static class Handler implements IMessageHandler<MessageSpeedloaderSync, IMessage> {
+
         @Override
         public IMessage onMessage(MessageSpeedloaderSync message, MessageContext ctx) {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-                Minecraft.getMinecraft()
-                        .thePlayer
-                        .inventory
-                        .setInventorySlotContents(message.slot, new ItemStack(IEContent.itemRevolver, 1, 1));
+            if (FMLCommonHandler.instance()
+                .getEffectiveSide() == Side.CLIENT) {
+                Minecraft.getMinecraft().thePlayer.inventory
+                    .setInventorySlotContents(message.slot, new ItemStack(IEContent.itemRevolver, 1, 1));
             }
             return null;
         }

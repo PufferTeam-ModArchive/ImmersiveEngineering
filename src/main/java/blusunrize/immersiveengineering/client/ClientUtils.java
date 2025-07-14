@@ -1,19 +1,12 @@
 package blusunrize.immersiveengineering.client;
 
-import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.client.render.TileRenderIE;
-import blusunrize.immersiveengineering.common.util.IESound;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
-import codechicken.lib.gui.GuiDraw;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound.AttenuationType;
@@ -48,10 +41,21 @@ import net.minecraftforge.client.model.obj.Vertex;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.client.render.TileRenderIE;
+import blusunrize.immersiveengineering.common.util.IESound;
+import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
+import codechicken.lib.gui.GuiDraw;
+
 public class ClientUtils {
+
     public static final AxisAlignedBB standardBlockAABB = AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 1, 1);
     public static final Vec3 up = Vec3.createVectorHelper(0, 1, 0);
 
@@ -63,7 +67,8 @@ public class ClientUtils {
                 Iterator<ImmersiveNetHandler.Connection> itCon = outputs.iterator();
                 while (itCon.hasNext()) {
                     ImmersiveNetHandler.Connection con = itCon.next();
-                    TileEntity tileEnd = tile.getWorldObj().getTileEntity(con.end.posX, con.end.posY, con.end.posZ);
+                    TileEntity tileEnd = tile.getWorldObj()
+                        .getTileEntity(con.end.posX, con.end.posY, con.end.posZ);
                     if (tileEnd instanceof IImmersiveConnectable) {
                         TileEntity startTileForRender = tile;
                         int xDif = con.end.posX - con.start.posX;
@@ -81,42 +86,36 @@ public class ClientUtils {
                                 int zDif = con.end.posZ - con.start.posZ;
                                 if (zDif < 0) {
                                     con = new ImmersiveNetHandler.Connection(
-                                            con.end, con.start, con.cableType, con.length);
+                                        con.end,
+                                        con.start,
+                                        con.cableType,
+                                        con.length);
                                     startTileForRender = tileEnd;
                                     tileEnd = tile;
                                 }
                             }
                         }
                         drawConnection(
-                                con,
-                                (IImmersiveConnectable) startTileForRender,
-                                (IImmersiveConnectable) tileEnd,
-                                con.cableType.getIcon(con));
+                            con,
+                            (IImmersiveConnectable) startTileForRender,
+                            (IImmersiveConnectable) tileEnd,
+                            con.cableType.getIcon(con));
                     }
                 }
             }
         }
     }
 
-    public static void drawConnection(
-            ImmersiveNetHandler.Connection connection,
-            IImmersiveConnectable start,
-            IImmersiveConnectable end,
-            IIcon icon) {
+    public static void drawConnection(ImmersiveNetHandler.Connection connection, IImmersiveConnectable start,
+        IImmersiveConnectable end, IIcon icon) {
         if (connection == null || start == null || end == null) return;
         int col = connection.cableType.getColour(connection);
         double r = connection.cableType.getRenderDiameter() / 2;
         drawConnection(connection, start, end, col, 255, r, icon);
     }
 
-    public static void drawConnection(
-            ImmersiveNetHandler.Connection connection,
-            IImmersiveConnectable start,
-            IImmersiveConnectable end,
-            int colour,
-            int alpha,
-            double radius,
-            IIcon icon) {
+    public static void drawConnection(ImmersiveNetHandler.Connection connection, IImmersiveConnectable start,
+        IImmersiveConnectable end, int colour, int alpha, double radius, IIcon icon) {
         if (connection == null || start == null || end == null || connection.end == null || connection.start == null)
             return;
         Vec3 startOffset = start.getConnectionOffset(connection);
@@ -136,9 +135,9 @@ public class ClientUtils {
 
         Vec3[] vertex = connection.getSubVertices(world);
         Vec3 initPos = Vec3.createVectorHelper(
-                connection.start.posX + startOffset.xCoord,
-                connection.start.posY + startOffset.yCoord,
-                connection.start.posZ + startOffset.zCoord);
+            connection.start.posX + startOffset.xCoord,
+            connection.start.posY + startOffset.yCoord,
+            connection.start.posZ + startOffset.zCoord);
 
         double uMin = icon.getMinU();
         double uMax = icon.getMaxU();
@@ -148,76 +147,108 @@ public class ClientUtils {
         boolean vertical = connection.end.posX == connection.start.posX && connection.end.posZ == connection.start.posZ;
         boolean b = (dx < 0 && dz <= 0) || (dz < 0 && dx <= 0) || (dz < 0 && dx > 0);
         if (vertical) {
-            //			double uShift = Math.abs(dy)/ * uD;
+            // double uShift = Math.abs(dy)/ * uD;
             tes.addTranslation((float) initPos.xCoord, (float) initPos.yCoord, (float) initPos.zCoord);
             tes.setColorRGBA_I(colour, alpha);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX - radius, connection.start.posY, connection.start.posZ));
-            //			tes.addVertexWithUV(0-radius, 0, 0, b?uMax-uShift:uMin,vMin);
+            tes.setBrightness(
+                calcBrightness(world, connection.start.posX - radius, connection.start.posY, connection.start.posZ));
+            // tes.addVertexWithUV(0-radius, 0, 0, b?uMax-uShift:uMin,vMin);
             tes.addVertexWithUV(0 - radius, 0, 0, uMin, vMin);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX - radius, connection.start.posY + dy, connection.start.posZ));
-            //			tes.addVertexWithUV(dx-radius, dy, dz, b?uMin:uMin+uShift,vMin);
+            tes.setBrightness(
+                calcBrightness(
+                    world,
+                    connection.start.posX - radius,
+                    connection.start.posY + dy,
+                    connection.start.posZ));
+            // tes.addVertexWithUV(dx-radius, dy, dz, b?uMin:uMin+uShift,vMin);
             tes.addVertexWithUV(dx - radius, dy, dz, uMax, vMin);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX + radius, connection.start.posY + dy, connection.start.posZ));
-            //			tes.addVertexWithUV(dx+radius, dy, dz, b?uMin:uMin+uShift,vMax);
+            tes.setBrightness(
+                calcBrightness(
+                    world,
+                    connection.start.posX + radius,
+                    connection.start.posY + dy,
+                    connection.start.posZ));
+            // tes.addVertexWithUV(dx+radius, dy, dz, b?uMin:uMin+uShift,vMax);
             tes.addVertexWithUV(dx + radius, dy, dz, uMax, vMax);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX + radius, connection.start.posY, connection.start.posZ));
-            //			tes.addVertexWithUV(0+radius, 0, 0, b?uMax-uShift:uMin,vMax);
+            tes.setBrightness(
+                calcBrightness(world, connection.start.posX + radius, connection.start.posY, connection.start.posZ));
+            // tes.addVertexWithUV(0+radius, 0, 0, b?uMax-uShift:uMin,vMax);
             tes.addVertexWithUV(0 + radius, 0, 0, uMin, vMax);
 
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX - radius, connection.start.posY + dy, connection.start.posZ));
-            //			tes.addVertexWithUV(dx-radius, dy, dz, b?uMin:uMin+uShift,vMin);
+            tes.setBrightness(
+                calcBrightness(
+                    world,
+                    connection.start.posX - radius,
+                    connection.start.posY + dy,
+                    connection.start.posZ));
+            // tes.addVertexWithUV(dx-radius, dy, dz, b?uMin:uMin+uShift,vMin);
             tes.addVertexWithUV(dx - radius, dy, dz, uMax, vMin);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX - radius, connection.start.posY, connection.start.posZ));
-            //			tes.addVertexWithUV(0-radius, 0, 0, b?uMax-uShift:uMin,vMin);
+            tes.setBrightness(
+                calcBrightness(world, connection.start.posX - radius, connection.start.posY, connection.start.posZ));
+            // tes.addVertexWithUV(0-radius, 0, 0, b?uMax-uShift:uMin,vMin);
             tes.addVertexWithUV(0 - radius, 0, 0, uMin, vMin);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX + radius, connection.start.posY, connection.start.posZ));
-            //			tes.addVertexWithUV(0+radius, 0, 0, b?uMax-uShift:uMin,vMax);
+            tes.setBrightness(
+                calcBrightness(world, connection.start.posX + radius, connection.start.posY, connection.start.posZ));
+            // tes.addVertexWithUV(0+radius, 0, 0, b?uMax-uShift:uMin,vMax);
             tes.addVertexWithUV(0 + radius, 0, 0, uMin, vMax);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX + radius, connection.start.posY + dy, connection.start.posZ));
-            //			tes.addVertexWithUV(dx+radius, dy, dz, b?uMin:uMin+uShift,vMax);
+            tes.setBrightness(
+                calcBrightness(
+                    world,
+                    connection.start.posX + radius,
+                    connection.start.posY + dy,
+                    connection.start.posZ));
+            // tes.addVertexWithUV(dx+radius, dy, dz, b?uMin:uMin+uShift,vMax);
             tes.addVertexWithUV(dx + radius, dy, dz, uMax, vMax);
 
             tes.setColorRGBA_I(colour, alpha);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX, connection.start.posY, connection.start.posZ - radius));
-            //			tes.addVertexWithUV(0, 0, 0-radius, b?uMax-uShift:uMin,vMin);
+            tes.setBrightness(
+                calcBrightness(world, connection.start.posX, connection.start.posY, connection.start.posZ - radius));
+            // tes.addVertexWithUV(0, 0, 0-radius, b?uMax-uShift:uMin,vMin);
             tes.addVertexWithUV(0, 0, 0 - radius, uMin, vMin);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX, connection.start.posY + dy, connection.start.posZ - radius));
-            //			tes.addVertexWithUV(dx, dy, dz-radius, b?uMin:uMin+uShift,vMin);
+            tes.setBrightness(
+                calcBrightness(
+                    world,
+                    connection.start.posX,
+                    connection.start.posY + dy,
+                    connection.start.posZ - radius));
+            // tes.addVertexWithUV(dx, dy, dz-radius, b?uMin:uMin+uShift,vMin);
             tes.addVertexWithUV(dx, dy, dz - radius, uMax, vMin);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX, connection.start.posY + dy, connection.start.posZ + radius));
-            //			tes.addVertexWithUV(dx, dy, dz+radius, b?uMin:uMin+uShift,vMax);
+            tes.setBrightness(
+                calcBrightness(
+                    world,
+                    connection.start.posX,
+                    connection.start.posY + dy,
+                    connection.start.posZ + radius));
+            // tes.addVertexWithUV(dx, dy, dz+radius, b?uMin:uMin+uShift,vMax);
             tes.addVertexWithUV(dx, dy, dz + radius, uMax, vMax);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX, connection.start.posY, connection.start.posZ + radius));
-            //			tes.addVertexWithUV(0, 0, 0+radius, b?uMax-uShift:uMin,vMax);
+            tes.setBrightness(
+                calcBrightness(world, connection.start.posX, connection.start.posY, connection.start.posZ + radius));
+            // tes.addVertexWithUV(0, 0, 0+radius, b?uMax-uShift:uMin,vMax);
             tes.addVertexWithUV(0, 0, 0 + radius, uMin, vMax);
 
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX, connection.start.posY + dy, connection.start.posZ - radius));
-            //			tes.addVertexWithUV(dx, dy, dz-radius, b?uMin:uMin+uShift,vMin);
+            tes.setBrightness(
+                calcBrightness(
+                    world,
+                    connection.start.posX,
+                    connection.start.posY + dy,
+                    connection.start.posZ - radius));
+            // tes.addVertexWithUV(dx, dy, dz-radius, b?uMin:uMin+uShift,vMin);
             tes.addVertexWithUV(dx, dy, dz - radius, uMax, vMin);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX, connection.start.posY, connection.start.posZ - radius));
-            //			tes.addVertexWithUV(0, 0, 0-radius, b?uMax-uShift:uMin,vMin);
+            tes.setBrightness(
+                calcBrightness(world, connection.start.posX, connection.start.posY, connection.start.posZ - radius));
+            // tes.addVertexWithUV(0, 0, 0-radius, b?uMax-uShift:uMin,vMin);
             tes.addVertexWithUV(0, 0, 0 - radius, uMin, vMin);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX, connection.start.posY, connection.start.posZ + radius));
-            //			tes.addVertexWithUV(0, 0, 0+radius, b?uMax-uShift:uMin,vMax);
+            tes.setBrightness(
+                calcBrightness(world, connection.start.posX, connection.start.posY, connection.start.posZ + radius));
+            // tes.addVertexWithUV(0, 0, 0+radius, b?uMax-uShift:uMin,vMax);
             tes.addVertexWithUV(0, 0, 0 + radius, uMin, vMax);
-            tes.setBrightness(calcBrightness(
-                    world, connection.start.posX, connection.start.posY + dy, connection.start.posZ + radius));
-            //			tes.addVertexWithUV(dx, dy, dz+radius, b?uMin:uMin+uShift,vMax);
+            tes.setBrightness(
+                calcBrightness(
+                    world,
+                    connection.start.posX,
+                    connection.start.posY + dy,
+                    connection.start.posZ + radius));
+            // tes.addVertexWithUV(dx, dy, dz+radius, b?uMin:uMin+uShift,vMax);
             tes.addVertexWithUV(dx, dy, dz + radius, uMax, vMax);
             tes.addTranslation((float) -initPos.xCoord, (float) -initPos.yCoord, (float) -initPos.zCoord);
         } else {
@@ -242,185 +273,201 @@ public class ClientUtils {
                     u0 = uMax;
                 }
                 tes.setColorRGBA_I(colour, alpha);
-                tes.setBrightness(calcBrightness(
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v0.xCoord + renderOff1.xCoord,
                         v0.yCoord + renderOff1.yCoord,
                         v0.zCoord + renderOff1.zCoord));
                 tes.addVertexWithUV(
-                        v0.xCoord + renderOff1.xCoord,
-                        v0.yCoord + renderOff1.yCoord,
-                        v0.zCoord + renderOff1.zCoord,
-                        u0,
-                        vMax);
-                tes.setBrightness(calcBrightness(
+                    v0.xCoord + renderOff1.xCoord,
+                    v0.yCoord + renderOff1.yCoord,
+                    v0.zCoord + renderOff1.zCoord,
+                    u0,
+                    vMax);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v1.xCoord + renderOff1.xCoord,
                         v1.yCoord + renderOff1.yCoord,
                         v1.zCoord + renderOff1.zCoord));
                 tes.addVertexWithUV(
-                        v1.xCoord + renderOff1.xCoord,
-                        v1.yCoord + renderOff1.yCoord,
-                        v1.zCoord + renderOff1.zCoord,
-                        u1,
-                        vMax);
-                tes.setBrightness(calcBrightness(
+                    v1.xCoord + renderOff1.xCoord,
+                    v1.yCoord + renderOff1.yCoord,
+                    v1.zCoord + renderOff1.zCoord,
+                    u1,
+                    vMax);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v1.xCoord - renderOff1.xCoord,
                         v1.yCoord - renderOff1.yCoord,
                         v1.zCoord - renderOff1.zCoord));
                 tes.addVertexWithUV(
-                        v1.xCoord - renderOff1.xCoord,
-                        v1.yCoord - renderOff1.yCoord,
-                        v1.zCoord - renderOff1.zCoord,
-                        u1,
-                        vMin);
-                tes.setBrightness(calcBrightness(
+                    v1.xCoord - renderOff1.xCoord,
+                    v1.yCoord - renderOff1.yCoord,
+                    v1.zCoord - renderOff1.zCoord,
+                    u1,
+                    vMin);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v0.xCoord - renderOff1.xCoord,
                         v0.yCoord - renderOff1.yCoord,
                         v0.zCoord - renderOff1.zCoord));
                 tes.addVertexWithUV(
-                        v0.xCoord - renderOff1.xCoord,
-                        v0.yCoord - renderOff1.yCoord,
-                        v0.zCoord - renderOff1.zCoord,
-                        u0,
-                        vMin);
+                    v0.xCoord - renderOff1.xCoord,
+                    v0.yCoord - renderOff1.yCoord,
+                    v0.zCoord - renderOff1.zCoord,
+                    u0,
+                    vMin);
 
-                tes.setBrightness(calcBrightness(
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v1.xCoord + renderOff1.xCoord,
                         v1.yCoord + renderOff1.yCoord,
                         v1.zCoord + renderOff1.zCoord));
                 tes.addVertexWithUV(
-                        v1.xCoord + renderOff1.xCoord,
-                        v1.yCoord + renderOff1.yCoord,
-                        v1.zCoord + renderOff1.zCoord,
-                        u1,
-                        vMax);
-                tes.setBrightness(calcBrightness(
+                    v1.xCoord + renderOff1.xCoord,
+                    v1.yCoord + renderOff1.yCoord,
+                    v1.zCoord + renderOff1.zCoord,
+                    u1,
+                    vMax);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v0.xCoord + renderOff1.xCoord,
                         v0.yCoord + renderOff1.yCoord,
                         v0.zCoord + renderOff1.zCoord));
                 tes.addVertexWithUV(
-                        v0.xCoord + renderOff1.xCoord,
-                        v0.yCoord + renderOff1.yCoord,
-                        v0.zCoord + renderOff1.zCoord,
-                        u0,
-                        vMax);
-                tes.setBrightness(calcBrightness(
+                    v0.xCoord + renderOff1.xCoord,
+                    v0.yCoord + renderOff1.yCoord,
+                    v0.zCoord + renderOff1.zCoord,
+                    u0,
+                    vMax);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v0.xCoord - renderOff1.xCoord,
                         v0.yCoord - renderOff1.yCoord,
                         v0.zCoord - renderOff1.zCoord));
                 tes.addVertexWithUV(
-                        v0.xCoord - renderOff1.xCoord,
-                        v0.yCoord - renderOff1.yCoord,
-                        v0.zCoord - renderOff1.zCoord,
-                        u0,
-                        vMin);
-                tes.setBrightness(calcBrightness(
+                    v0.xCoord - renderOff1.xCoord,
+                    v0.yCoord - renderOff1.yCoord,
+                    v0.zCoord - renderOff1.zCoord,
+                    u0,
+                    vMin);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v1.xCoord - renderOff1.xCoord,
                         v1.yCoord - renderOff1.yCoord,
                         v1.zCoord - renderOff1.zCoord));
                 tes.addVertexWithUV(
-                        v1.xCoord - renderOff1.xCoord,
-                        v1.yCoord - renderOff1.yCoord,
-                        v1.zCoord - renderOff1.zCoord,
-                        u1,
-                        vMin);
+                    v1.xCoord - renderOff1.xCoord,
+                    v1.yCoord - renderOff1.yCoord,
+                    v1.zCoord - renderOff1.zCoord,
+                    u1,
+                    vMin);
 
-                tes.setBrightness(calcBrightness(
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v0.xCoord + renderOff2.xCoord,
                         v0.yCoord + renderOff2.yCoord,
                         v0.zCoord + renderOff2.zCoord));
                 tes.addVertexWithUV(
-                        v0.xCoord + renderOff2.xCoord,
-                        v0.yCoord + renderOff2.yCoord,
-                        v0.zCoord + renderOff2.zCoord,
-                        u0,
-                        vMax);
-                tes.setBrightness(calcBrightness(
+                    v0.xCoord + renderOff2.xCoord,
+                    v0.yCoord + renderOff2.yCoord,
+                    v0.zCoord + renderOff2.zCoord,
+                    u0,
+                    vMax);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v1.xCoord + renderOff2.xCoord,
                         v1.yCoord + renderOff2.yCoord,
                         v1.zCoord + renderOff2.zCoord));
                 tes.addVertexWithUV(
-                        v1.xCoord + renderOff2.xCoord,
-                        v1.yCoord + renderOff2.yCoord,
-                        v1.zCoord + renderOff2.zCoord,
-                        u1,
-                        vMax);
-                tes.setBrightness(calcBrightness(
+                    v1.xCoord + renderOff2.xCoord,
+                    v1.yCoord + renderOff2.yCoord,
+                    v1.zCoord + renderOff2.zCoord,
+                    u1,
+                    vMax);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v1.xCoord - renderOff2.xCoord,
                         v1.yCoord - renderOff2.yCoord,
                         v1.zCoord - renderOff2.zCoord));
                 tes.addVertexWithUV(
-                        v1.xCoord - renderOff2.xCoord,
-                        v1.yCoord - renderOff2.yCoord,
-                        v1.zCoord - renderOff2.zCoord,
-                        u1,
-                        vMin);
-                tes.setBrightness(calcBrightness(
+                    v1.xCoord - renderOff2.xCoord,
+                    v1.yCoord - renderOff2.yCoord,
+                    v1.zCoord - renderOff2.zCoord,
+                    u1,
+                    vMin);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v0.xCoord - renderOff2.xCoord,
                         v0.yCoord - renderOff2.yCoord,
                         v0.zCoord - renderOff2.zCoord));
                 tes.addVertexWithUV(
-                        v0.xCoord - renderOff2.xCoord,
-                        v0.yCoord - renderOff2.yCoord,
-                        v0.zCoord - renderOff2.zCoord,
-                        u0,
-                        vMin);
+                    v0.xCoord - renderOff2.xCoord,
+                    v0.yCoord - renderOff2.yCoord,
+                    v0.zCoord - renderOff2.zCoord,
+                    u0,
+                    vMin);
 
-                tes.setBrightness(calcBrightness(
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v1.xCoord + renderOff2.xCoord,
                         v1.yCoord + renderOff2.yCoord,
                         v1.zCoord + renderOff2.zCoord));
                 tes.addVertexWithUV(
-                        v1.xCoord + renderOff2.xCoord,
-                        v1.yCoord + renderOff2.yCoord,
-                        v1.zCoord + renderOff2.zCoord,
-                        u1,
-                        vMax);
-                tes.setBrightness(calcBrightness(
+                    v1.xCoord + renderOff2.xCoord,
+                    v1.yCoord + renderOff2.yCoord,
+                    v1.zCoord + renderOff2.zCoord,
+                    u1,
+                    vMax);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v0.xCoord + renderOff2.xCoord,
                         v0.yCoord + renderOff2.yCoord,
                         v0.zCoord + renderOff2.zCoord));
                 tes.addVertexWithUV(
-                        v0.xCoord + renderOff2.xCoord,
-                        v0.yCoord + renderOff2.yCoord,
-                        v0.zCoord + renderOff2.zCoord,
-                        u0,
-                        vMax);
-                tes.setBrightness(calcBrightness(
+                    v0.xCoord + renderOff2.xCoord,
+                    v0.yCoord + renderOff2.yCoord,
+                    v0.zCoord + renderOff2.zCoord,
+                    u0,
+                    vMax);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v0.xCoord - renderOff2.xCoord,
                         v0.yCoord - renderOff2.yCoord,
                         v0.zCoord - renderOff2.zCoord));
                 tes.addVertexWithUV(
-                        v0.xCoord - renderOff2.xCoord,
-                        v0.yCoord - renderOff2.yCoord,
-                        v0.zCoord - renderOff2.zCoord,
-                        u0,
-                        vMin);
-                tes.setBrightness(calcBrightness(
+                    v0.xCoord - renderOff2.xCoord,
+                    v0.yCoord - renderOff2.yCoord,
+                    v0.zCoord - renderOff2.zCoord,
+                    u0,
+                    vMin);
+                tes.setBrightness(
+                    calcBrightness(
                         world,
                         v1.xCoord - renderOff2.xCoord,
                         v1.yCoord - renderOff2.yCoord,
                         v1.zCoord - renderOff2.zCoord));
                 tes.addVertexWithUV(
-                        v1.xCoord - renderOff2.xCoord,
-                        v1.yCoord - renderOff2.yCoord,
-                        v1.zCoord - renderOff2.zCoord,
-                        u1,
-                        vMin);
+                    v1.xCoord - renderOff2.xCoord,
+                    v1.yCoord - renderOff2.yCoord,
+                    v1.zCoord - renderOff2.zCoord,
+                    u1,
+                    vMin);
             }
         }
         tes.setColorRGBA_I(0xffffff, 0xff);
@@ -430,8 +477,8 @@ public class ClientUtils {
         return world.getLightBrightnessForSkyBlocks((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z), 0);
     }
 
-    public static void tessellateBox(
-            double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, IIcon icon) {
+    public static void tessellateBox(double xMin, double yMin, double zMin, double xMax, double yMax, double zMax,
+        IIcon icon) {
         tes().addVertexWithUV(xMin, yMin, zMax, icon.getInterpolatedU(xMin * 16), icon.getInterpolatedV(zMax * 16));
         tes().addVertexWithUV(xMin, yMin, zMin, icon.getInterpolatedU(xMin * 16), icon.getInterpolatedV(zMin * 16));
         tes().addVertexWithUV(xMax, yMin, zMin, icon.getInterpolatedU(xMax * 16), icon.getInterpolatedV(zMin * 16));
@@ -475,12 +522,13 @@ public class ClientUtils {
     }
 
     public static void bindTexture(String path) {
-        mc().getTextureManager().bindTexture(getResource(path));
+        mc().getTextureManager()
+            .bindTexture(getResource(path));
     }
 
     public static void bindAtlas(int i) {
         mc().getTextureManager()
-                .bindTexture(i == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
+            .bindTexture(i == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
     }
 
     public static ResourceLocation getResource(String path) {
@@ -518,15 +566,17 @@ public class ClientUtils {
                     resource = split[0] + ":";
                     icon = split[1];
                 } else icon = name;
-                return resource + "textures/" + (stack.getItemSpriteNumber() == 0 ? "blocks" : "items") + "/" + icon
-                        + ".png";
+                return resource + "textures/"
+                    + (stack.getItemSpriteNumber() == 0 ? "blocks" : "items")
+                    + "/"
+                    + icon
+                    + ".png";
             }
         }
         return "";
     }
 
-    static int[] chatColours = {
-        0x000000, // BLACK
+    static int[] chatColours = { 0x000000, // BLACK
         0x0000AA, // DARK_BLUE
         0x00AA00, // DARK_GREEN
         0x00AAAA, // DARK_AQUA
@@ -548,47 +598,58 @@ public class ClientUtils {
         return rarityColor.ordinal() < 16 ? chatColours[rarityColor.ordinal()] : 0;
     }
 
-    public static IESound generatePositionedIESound(
-            String soundName, float volume, float pitch, boolean repeat, int delay, double x, double y, double z) {
+    public static IESound generatePositionedIESound(String soundName, float volume, float pitch, boolean repeat,
+        int delay, double x, double y, double z) {
         IESound sound = new IESound(
-                new ResourceLocation(soundName), volume, pitch, repeat, delay, x, y, z, AttenuationType.LINEAR);
+            new ResourceLocation(soundName),
+            volume,
+            pitch,
+            repeat,
+            delay,
+            x,
+            y,
+            z,
+            AttenuationType.LINEAR);
         sound.evaluateVolume();
-        ClientUtils.mc().getSoundHandler().playSound(sound);
+        ClientUtils.mc()
+            .getSoundHandler()
+            .playSound(sound);
         return sound;
     }
 
     public static ModelRenderer[] copyModelRenderers(ModelBase model, ModelRenderer... oldRenderers) {
         ModelRenderer[] newRenderers = new ModelRenderer[oldRenderers.length];
-        for (int i = 0; i < newRenderers.length; i++)
-            if (oldRenderers[i] != null) {
-                newRenderers[i] = new ModelRenderer(model, oldRenderers[i].boxName);
-                int toX = oldRenderers[i].textureOffsetX;
-                int toY = oldRenderers[i].textureOffsetY;
-                newRenderers[i].setTextureOffset(toX, toY);
-                newRenderers[i].mirror = oldRenderers[i].mirror;
-                ArrayList<ModelBox> newCubes = new ArrayList<ModelBox>();
-                for (ModelBox cube : (List<ModelBox>) oldRenderers[i].cubeList)
-                    newCubes.add(new ModelBox(
-                            newRenderers[i],
-                            toX,
-                            toY,
-                            cube.posX1,
-                            cube.posY1,
-                            cube.posZ1,
-                            (int) (cube.posX2 - cube.posX1),
-                            (int) (cube.posY2 - cube.posY1),
-                            (int) (cube.posZ2 - cube.posZ1),
-                            0));
-                newRenderers[i].cubeList = newCubes;
-                newRenderers[i].setRotationPoint(
-                        oldRenderers[i].rotationPointX, oldRenderers[i].rotationPointY, oldRenderers[i].rotationPointZ);
-                newRenderers[i].rotateAngleX = oldRenderers[i].rotateAngleX;
-                newRenderers[i].rotateAngleY = oldRenderers[i].rotateAngleY;
-                newRenderers[i].rotateAngleZ = oldRenderers[i].rotateAngleZ;
-                newRenderers[i].offsetX = oldRenderers[i].offsetX;
-                newRenderers[i].offsetY = oldRenderers[i].offsetY;
-                newRenderers[i].offsetZ = oldRenderers[i].offsetZ;
-            }
+        for (int i = 0; i < newRenderers.length; i++) if (oldRenderers[i] != null) {
+            newRenderers[i] = new ModelRenderer(model, oldRenderers[i].boxName);
+            int toX = oldRenderers[i].textureOffsetX;
+            int toY = oldRenderers[i].textureOffsetY;
+            newRenderers[i].setTextureOffset(toX, toY);
+            newRenderers[i].mirror = oldRenderers[i].mirror;
+            ArrayList<ModelBox> newCubes = new ArrayList<ModelBox>();
+            for (ModelBox cube : (List<ModelBox>) oldRenderers[i].cubeList) newCubes.add(
+                new ModelBox(
+                    newRenderers[i],
+                    toX,
+                    toY,
+                    cube.posX1,
+                    cube.posY1,
+                    cube.posZ1,
+                    (int) (cube.posX2 - cube.posX1),
+                    (int) (cube.posY2 - cube.posY1),
+                    (int) (cube.posZ2 - cube.posZ1),
+                    0));
+            newRenderers[i].cubeList = newCubes;
+            newRenderers[i].setRotationPoint(
+                oldRenderers[i].rotationPointX,
+                oldRenderers[i].rotationPointY,
+                oldRenderers[i].rotationPointZ);
+            newRenderers[i].rotateAngleX = oldRenderers[i].rotateAngleX;
+            newRenderers[i].rotateAngleY = oldRenderers[i].rotateAngleY;
+            newRenderers[i].rotateAngleZ = oldRenderers[i].rotateAngleZ;
+            newRenderers[i].offsetX = oldRenderers[i].offsetX;
+            newRenderers[i].offsetY = oldRenderers[i].offsetY;
+            newRenderers[i].offsetZ = oldRenderers[i].offsetZ;
+        }
         return newRenderers;
     }
 
@@ -605,82 +666,55 @@ public class ClientUtils {
         }
     }
 
-    public static void renderStaticWavefrontModel(
-            TileEntity tile,
-            WavefrontObject model,
-            Tessellator tes,
-            Matrix4 translationMatrix,
-            Matrix4 rotationMatrix,
-            int offsetLighting,
-            boolean invertFaces,
-            String... renderedParts) {
+    public static void renderStaticWavefrontModel(TileEntity tile, WavefrontObject model, Tessellator tes,
+        Matrix4 translationMatrix, Matrix4 rotationMatrix, int offsetLighting, boolean invertFaces,
+        String... renderedParts) {
         renderStaticWavefrontModel(
-                tile,
-                model,
-                tes,
-                translationMatrix,
-                rotationMatrix,
-                offsetLighting,
-                invertFaces,
-                1,
-                1,
-                1,
-                renderedParts);
+            tile,
+            model,
+            tes,
+            translationMatrix,
+            rotationMatrix,
+            offsetLighting,
+            invertFaces,
+            1,
+            1,
+            1,
+            renderedParts);
     }
 
     /**
      * A big "Thank you!" to AtomicBlom and Rorax for helping me figure this one out =P
      */
-    public static void renderStaticWavefrontModel(
-            TileEntity tile,
-            WavefrontObject model,
-            Tessellator tes,
-            Matrix4 translationMatrix,
-            Matrix4 rotationMatrix,
-            int offsetLighting,
-            boolean invertFaces,
-            float colR,
-            float colG,
-            float colB,
-            String... renderedParts) {
+    public static void renderStaticWavefrontModel(TileEntity tile, WavefrontObject model, Tessellator tes,
+        Matrix4 translationMatrix, Matrix4 rotationMatrix, int offsetLighting, boolean invertFaces, float colR,
+        float colG, float colB, String... renderedParts) {
         renderStaticWavefrontModel(
-                tile.getWorldObj(),
-                tile.xCoord,
-                tile.yCoord,
-                tile.zCoord,
-                model,
-                tes,
-                translationMatrix,
-                rotationMatrix,
-                offsetLighting,
-                invertFaces,
-                colR,
-                colG,
-                colB,
-                renderedParts);
+            tile.getWorldObj(),
+            tile.xCoord,
+            tile.yCoord,
+            tile.zCoord,
+            model,
+            tes,
+            translationMatrix,
+            rotationMatrix,
+            offsetLighting,
+            invertFaces,
+            colR,
+            colG,
+            colB,
+            renderedParts);
     }
 
-    public static void renderStaticWavefrontModel(
-            IBlockAccess world,
-            int x,
-            int y,
-            int z,
-            WavefrontObject model,
-            Tessellator tes,
-            Matrix4 translationMatrix,
-            Matrix4 rotationMatrix,
-            int offsetLighting,
-            boolean invertFaces,
-            float colR,
-            float colG,
-            float colB,
-            String... renderedParts) {
+    public static void renderStaticWavefrontModel(IBlockAccess world, int x, int y, int z, WavefrontObject model,
+        Tessellator tes, Matrix4 translationMatrix, Matrix4 rotationMatrix, int offsetLighting, boolean invertFaces,
+        float colR, float colG, float colB, String... renderedParts) {
         if (world != null) {
             int lb = world.getLightBrightnessForSkyBlocks(x, y, z, 0);
             int lb_j = lb % 65536;
             int lb_k = lb / 65536;
-            OpenGlHelper.setLightmapTextureCoords(
-                    OpenGlHelper.lightmapTexUnit, (float) lb_j / 1.0F, (float) lb_k / 1.0F);
+            OpenGlHelper
+                .setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) lb_j / 1.0F, (float) lb_k / 1.0F);
         }
         Vertex vertexCopy = new Vertex(0, 0, 0);
         Vertex normalCopy = new Vertex(0, 0, 0);
@@ -689,168 +723,138 @@ public class ClientUtils {
             boolean render = false;
             if (renderedParts == null || renderedParts.length < 1) render = true;
             else for (String s : renderedParts) if (groupObject.name.equalsIgnoreCase(s)) render = true;
-            if (render)
-                for (Face face : groupObject.faces) {
-                    if (face.faceNormal == null) face.faceNormal = face.calculateFaceNormal();
+            if (render) for (Face face : groupObject.faces) {
+                if (face.faceNormal == null) face.faceNormal = face.calculateFaceNormal();
 
-                    normalCopy.x = face.faceNormal.x;
-                    normalCopy.y = face.faceNormal.y;
-                    normalCopy.z = face.faceNormal.z;
-                    rotationMatrix.apply(normalCopy);
-                    float biggestNormal =
-                            Math.max(Math.abs(normalCopy.y), Math.max(Math.abs(normalCopy.x), Math.abs(normalCopy.z)));
-                    int side = biggestNormal == Math.abs(normalCopy.y)
-                            ? (normalCopy.y < 0 ? 0 : 1)
-                            : biggestNormal == Math.abs(normalCopy.z)
-                                    ? (normalCopy.z < 0 ? 2 : 3)
-                                    : (normalCopy.x < 0 ? 4 : 5);
+                normalCopy.x = face.faceNormal.x;
+                normalCopy.y = face.faceNormal.y;
+                normalCopy.z = face.faceNormal.z;
+                rotationMatrix.apply(normalCopy);
+                float biggestNormal = Math
+                    .max(Math.abs(normalCopy.y), Math.max(Math.abs(normalCopy.x), Math.abs(normalCopy.z)));
+                int side = biggestNormal == Math.abs(normalCopy.y) ? (normalCopy.y < 0 ? 0 : 1)
+                    : biggestNormal == Math.abs(normalCopy.z) ? (normalCopy.z < 0 ? 2 : 3) : (normalCopy.x < 0 ? 4 : 5);
 
-                    BlockLightingInfo faceLight = null;
-                    if (offsetLighting == 0 && world != null)
-                        faceLight = calculateBlockLighting(
-                                side, world, world.getBlock(x, y, z), x, y, z, colR, colG, colB, standardBlockAABB);
-                    else if (offsetLighting == 1 && world != null) {
-                        double faceMinX = face.vertices[0].x;
-                        double faceMinY = face.vertices[0].y;
-                        double faceMinZ = face.vertices[0].z;
-                        double faceMaxX = face.vertices[0].x;
-                        double faceMaxY = face.vertices[0].y;
-                        double faceMaxZ = face.vertices[0].z;
-                        for (int i = 1; i < face.vertices.length; ++i) {
-                            faceMinX = Math.min(faceMinX, face.vertices[i].x);
-                            faceMinY = Math.min(faceMinY, face.vertices[i].y);
-                            faceMinZ = Math.min(faceMinZ, face.vertices[i].z);
-                            faceMaxX = Math.max(faceMaxX, face.vertices[i].x);
-                            faceMaxY = Math.max(faceMaxY, face.vertices[i].y);
-                            faceMaxZ = Math.max(faceMaxZ, face.vertices[i].z);
-                        }
-                        faceLight = calculateBlockLighting(
-                                side,
-                                world,
-                                world.getBlock(x, y, z),
-                                x,
-                                y,
-                                z,
-                                colR,
-                                colG,
-                                colB,
-                                AxisAlignedBB.getBoundingBox(
-                                        faceMinX, faceMinY, faceMinZ, faceMaxX, faceMaxY, faceMaxZ));
+                BlockLightingInfo faceLight = null;
+                if (offsetLighting == 0 && world != null) faceLight = calculateBlockLighting(
+                    side,
+                    world,
+                    world.getBlock(x, y, z),
+                    x,
+                    y,
+                    z,
+                    colR,
+                    colG,
+                    colB,
+                    standardBlockAABB);
+                else if (offsetLighting == 1 && world != null) {
+                    double faceMinX = face.vertices[0].x;
+                    double faceMinY = face.vertices[0].y;
+                    double faceMinZ = face.vertices[0].z;
+                    double faceMaxX = face.vertices[0].x;
+                    double faceMaxY = face.vertices[0].y;
+                    double faceMaxZ = face.vertices[0].z;
+                    for (int i = 1; i < face.vertices.length; ++i) {
+                        faceMinX = Math.min(faceMinX, face.vertices[i].x);
+                        faceMinY = Math.min(faceMinY, face.vertices[i].y);
+                        faceMinZ = Math.min(faceMinZ, face.vertices[i].z);
+                        faceMaxX = Math.max(faceMaxX, face.vertices[i].x);
+                        faceMaxY = Math.max(faceMaxY, face.vertices[i].y);
+                        faceMaxZ = Math.max(faceMaxZ, face.vertices[i].z);
+                    }
+                    faceLight = calculateBlockLighting(
+                        side,
+                        world,
+                        world.getBlock(x, y, z),
+                        x,
+                        y,
+                        z,
+                        colR,
+                        colG,
+                        colB,
+                        AxisAlignedBB.getBoundingBox(faceMinX, faceMinY, faceMinZ, faceMaxX, faceMaxY, faceMaxZ));
+                }
+
+                tes.setNormal(face.faceNormal.x, face.faceNormal.y, face.faceNormal.z);
+
+                for (int i = 0; i < face.vertices.length; ++i) {
+                    int target = !invertFaces ? i : (face.vertices.length - 1 - i);
+                    int corner = (int) (target / (float) face.vertices.length * 4);
+                    Vertex vertex = face.vertices[target];
+                    vertexCopy.x = vertex.x;
+                    vertexCopy.y = vertex.y;
+                    vertexCopy.z = vertex.z;
+                    rotationMatrix.apply(vertexCopy);
+                    translationMatrix.apply(vertexCopy);
+                    if (faceLight != null) {
+                        int bright = corner == 0 ? faceLight.brightnessTopLeft
+                            : corner == 1 ? faceLight.brightnessBottomLeft
+                                : corner == 2 ? faceLight.brightnessBottomRight : faceLight.brightnessTopRight;
+                        int last = bright & 255;
+                        if (last > 247) bright -= last;
+                        tes.setBrightness(bright);
+                        float r = corner == 0 ? faceLight.colorRedTopLeft
+                            : corner == 1 ? faceLight.colorRedBottomLeft
+                                : corner == 2 ? faceLight.colorRedBottomRight : faceLight.colorRedTopRight;
+                        float g = corner == 0 ? faceLight.colorGreenTopLeft
+                            : corner == 1 ? faceLight.colorGreenBottomLeft
+                                : corner == 2 ? faceLight.colorGreenBottomRight : faceLight.colorGreenTopRight;
+                        float b = corner == 0 ? faceLight.colorBlueTopLeft
+                            : corner == 1 ? faceLight.colorBlueBottomLeft
+                                : corner == 2 ? faceLight.colorBlueBottomRight : faceLight.colorBlueTopRight;
+                        tes.setColorOpaque_F(r, g, b);
+                    } else if (world != null) {
+                        tes.setBrightness(0xb000b0);
+                        tes.setColorOpaque_F(colR, colG, colB);
                     }
 
-                    tes.setNormal(face.faceNormal.x, face.faceNormal.y, face.faceNormal.z);
-
-                    for (int i = 0; i < face.vertices.length; ++i) {
-                        int target = !invertFaces ? i : (face.vertices.length - 1 - i);
-                        int corner = (int) (target / (float) face.vertices.length * 4);
-                        Vertex vertex = face.vertices[target];
-                        vertexCopy.x = vertex.x;
-                        vertexCopy.y = vertex.y;
-                        vertexCopy.z = vertex.z;
-                        rotationMatrix.apply(vertexCopy);
-                        translationMatrix.apply(vertexCopy);
-                        if (faceLight != null) {
-                            int bright = corner == 0
-                                    ? faceLight.brightnessTopLeft
-                                    : corner == 1
-                                            ? faceLight.brightnessBottomLeft
-                                            : corner == 2
-                                                    ? faceLight.brightnessBottomRight
-                                                    : faceLight.brightnessTopRight;
-                            int last = bright & 255;
-                            if (last > 247) bright -= last;
-                            tes.setBrightness(bright);
-                            float r = corner == 0
-                                    ? faceLight.colorRedTopLeft
-                                    : corner == 1
-                                            ? faceLight.colorRedBottomLeft
-                                            : corner == 2 ? faceLight.colorRedBottomRight : faceLight.colorRedTopRight;
-                            float g = corner == 0
-                                    ? faceLight.colorGreenTopLeft
-                                    : corner == 1
-                                            ? faceLight.colorGreenBottomLeft
-                                            : corner == 2
-                                                    ? faceLight.colorGreenBottomRight
-                                                    : faceLight.colorGreenTopRight;
-                            float b = corner == 0
-                                    ? faceLight.colorBlueTopLeft
-                                    : corner == 1
-                                            ? faceLight.colorBlueBottomLeft
-                                            : corner == 2
-                                                    ? faceLight.colorBlueBottomRight
-                                                    : faceLight.colorBlueTopRight;
-                            tes.setColorOpaque_F(r, g, b);
-                        } else if (world != null) {
-                            tes.setBrightness(0xb000b0);
-                            tes.setColorOpaque_F(colR, colG, colB);
-                        }
-
-                        if (face.textureCoordinates != null && face.textureCoordinates.length > 0) {
-                            TextureCoordinate textureCoordinate = face.textureCoordinates[target];
-                            tes.addVertexWithUV(
-                                    vertexCopy.x, vertexCopy.y, vertexCopy.z, textureCoordinate.u, textureCoordinate.v);
-                        } else {
-                            tes.addVertex(vertexCopy.x, vertexCopy.y, vertexCopy.z);
-                        }
+                    if (face.textureCoordinates != null && face.textureCoordinates.length > 0) {
+                        TextureCoordinate textureCoordinate = face.textureCoordinates[target];
+                        tes.addVertexWithUV(
+                            vertexCopy.x,
+                            vertexCopy.y,
+                            vertexCopy.z,
+                            textureCoordinate.u,
+                            textureCoordinate.v);
+                    } else {
+                        tes.addVertex(vertexCopy.x, vertexCopy.y, vertexCopy.z);
                     }
                 }
+            }
         }
     }
 
-    public static void renderStaticWavefrontModelWithIcon(
-            TileEntity tile,
-            WavefrontObject model,
-            IIcon icon,
-            Tessellator tes,
-            Matrix4 translationMatrix,
-            Matrix4 rotationMatrix,
-            int offsetLighting,
-            boolean invertFaces,
-            float colR,
-            float colG,
-            float colB,
-            String... renderedParts) {
+    public static void renderStaticWavefrontModelWithIcon(TileEntity tile, WavefrontObject model, IIcon icon,
+        Tessellator tes, Matrix4 translationMatrix, Matrix4 rotationMatrix, int offsetLighting, boolean invertFaces,
+        float colR, float colG, float colB, String... renderedParts) {
         renderStaticWavefrontModelWithIcon(
-                tile.getWorldObj(),
-                tile.xCoord,
-                tile.yCoord,
-                tile.zCoord,
-                model,
-                icon,
-                tes,
-                translationMatrix,
-                rotationMatrix,
-                offsetLighting,
-                invertFaces,
-                colR,
-                colG,
-                colB,
-                renderedParts);
+            tile.getWorldObj(),
+            tile.xCoord,
+            tile.yCoord,
+            tile.zCoord,
+            model,
+            icon,
+            tes,
+            translationMatrix,
+            rotationMatrix,
+            offsetLighting,
+            invertFaces,
+            colR,
+            colG,
+            colB,
+            renderedParts);
     }
 
-    public static void renderStaticWavefrontModelWithIcon(
-            IBlockAccess world,
-            int x,
-            int y,
-            int z,
-            WavefrontObject model,
-            IIcon icon,
-            Tessellator tes,
-            Matrix4 translationMatrix,
-            Matrix4 rotationMatrix,
-            int offsetLighting,
-            boolean invertFaces,
-            float colR,
-            float colG,
-            float colB,
-            String... renderedParts) {
+    public static void renderStaticWavefrontModelWithIcon(IBlockAccess world, int x, int y, int z,
+        WavefrontObject model, IIcon icon, Tessellator tes, Matrix4 translationMatrix, Matrix4 rotationMatrix,
+        int offsetLighting, boolean invertFaces, float colR, float colG, float colB, String... renderedParts) {
         if (icon == null) return;
         if (world != null) {
             int lb = world.getLightBrightnessForSkyBlocks(x, y, z, 0);
             int lb_j = lb % 65536;
             int lb_k = lb / 65536;
-            OpenGlHelper.setLightmapTextureCoords(
-                    OpenGlHelper.lightmapTexUnit, (float) lb_j / 1.0F, (float) lb_k / 1.0F);
+            OpenGlHelper
+                .setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) lb_j / 1.0F, (float) lb_k / 1.0F);
         }
         Vertex normalCopy = new Vertex(0, 0, 0);
 
@@ -865,97 +869,103 @@ public class ClientUtils {
             boolean render = false;
             if (renderedParts == null || renderedParts.length < 1) render = true;
             else for (String s : renderedParts) if (groupObject.name.equalsIgnoreCase(s)) render = true;
-            if (render)
-                for (Face face : groupObject.faces) {
-                    if (face.faceNormal == null) face.faceNormal = face.calculateFaceNormal();
+            if (render) for (Face face : groupObject.faces) {
+                if (face.faceNormal == null) face.faceNormal = face.calculateFaceNormal();
 
-                    normalCopy.x = face.faceNormal.x;
-                    normalCopy.y = face.faceNormal.y;
-                    normalCopy.z = face.faceNormal.z;
-                    rotationMatrix.apply(normalCopy);
-                    float biggestNormal =
-                            Math.max(Math.abs(normalCopy.y), Math.max(Math.abs(normalCopy.x), Math.abs(normalCopy.z)));
-                    int side = biggestNormal == Math.abs(normalCopy.y)
-                            ? (normalCopy.y < 0 ? 0 : 1)
-                            : biggestNormal == Math.abs(normalCopy.z)
-                                    ? (normalCopy.z < 0 ? 2 : 3)
-                                    : (normalCopy.x < 0 ? 4 : 5);
+                normalCopy.x = face.faceNormal.x;
+                normalCopy.y = face.faceNormal.y;
+                normalCopy.z = face.faceNormal.z;
+                rotationMatrix.apply(normalCopy);
+                float biggestNormal = Math
+                    .max(Math.abs(normalCopy.y), Math.max(Math.abs(normalCopy.x), Math.abs(normalCopy.z)));
+                int side = biggestNormal == Math.abs(normalCopy.y) ? (normalCopy.y < 0 ? 0 : 1)
+                    : biggestNormal == Math.abs(normalCopy.z) ? (normalCopy.z < 0 ? 2 : 3) : (normalCopy.x < 0 ? 4 : 5);
 
-                    BlockLightingInfo faceLight = null;
-                    if (offsetLighting == 0 && world != null)
-                        faceLight = calculateBlockLighting(
-                                side, world, world.getBlock(x, y, z), x, y, z, colR, colG, colB, standardBlockAABB);
-                    else if (offsetLighting == 1 && world != null) {
-                        double faceMinX = face.vertices[0].x;
-                        double faceMinY = face.vertices[0].y;
-                        double faceMinZ = face.vertices[0].z;
-                        double faceMaxX = face.vertices[0].x;
-                        double faceMaxY = face.vertices[0].y;
-                        double faceMaxZ = face.vertices[0].z;
-                        for (int i = 1; i < face.vertices.length; ++i) {
-                            faceMinX = Math.min(faceMinX, face.vertices[i].x);
-                            faceMinY = Math.min(faceMinY, face.vertices[i].y);
-                            faceMinZ = Math.min(faceMinZ, face.vertices[i].z);
-                            faceMaxX = Math.max(faceMaxX, face.vertices[i].x);
-                            faceMaxY = Math.max(faceMaxY, face.vertices[i].y);
-                            faceMaxZ = Math.max(faceMaxZ, face.vertices[i].z);
-                        }
-                        faceLight = calculateBlockLighting(
-                                side,
-                                world,
-                                world.getBlock(x, y, z),
-                                x,
-                                y,
-                                z,
-                                colR,
-                                colG,
-                                colB,
-                                AxisAlignedBB.getBoundingBox(
-                                        faceMinX, faceMinY, faceMinZ, faceMaxX, faceMaxY, faceMaxZ));
+                BlockLightingInfo faceLight = null;
+                if (offsetLighting == 0 && world != null) faceLight = calculateBlockLighting(
+                    side,
+                    world,
+                    world.getBlock(x, y, z),
+                    x,
+                    y,
+                    z,
+                    colR,
+                    colG,
+                    colB,
+                    standardBlockAABB);
+                else if (offsetLighting == 1 && world != null) {
+                    double faceMinX = face.vertices[0].x;
+                    double faceMinY = face.vertices[0].y;
+                    double faceMinZ = face.vertices[0].z;
+                    double faceMaxX = face.vertices[0].x;
+                    double faceMaxY = face.vertices[0].y;
+                    double faceMaxZ = face.vertices[0].z;
+                    for (int i = 1; i < face.vertices.length; ++i) {
+                        faceMinX = Math.min(faceMinX, face.vertices[i].x);
+                        faceMinY = Math.min(faceMinY, face.vertices[i].y);
+                        faceMinZ = Math.min(faceMinZ, face.vertices[i].z);
+                        faceMaxX = Math.max(faceMaxX, face.vertices[i].x);
+                        faceMaxY = Math.max(faceMaxY, face.vertices[i].y);
+                        faceMaxZ = Math.max(faceMaxZ, face.vertices[i].z);
                     }
-
-                    tes.setNormal(face.faceNormal.x, face.faceNormal.y, face.faceNormal.z);
-
-                    float averageU = 0F;
-                    float averageV = 0F;
-                    if (face.textureCoordinates != null && face.textureCoordinates.length > 0) {
-                        for (int i = 0; i < face.textureCoordinates.length; ++i) {
-                            averageU += face.textureCoordinates[i].u;
-                            averageV += face.textureCoordinates[i].v;
-                        }
-                        averageU = averageU / face.textureCoordinates.length;
-                        averageV = averageV / face.textureCoordinates.length;
-                    }
-
-                    TextureCoordinate[] oldUVs = new TextureCoordinate[face.textureCoordinates.length];
-                    for (int v = 0; v < face.vertices.length; ++v) {
-                        float offsetU, offsetV;
-                        offsetU = baseOffsetU;
-                        offsetV = baseOffsetV;
-                        if (face.textureCoordinates[v].u > averageU) offsetU = -offsetU;
-                        if (face.textureCoordinates[v].v > averageV) offsetV = -offsetV;
-
-                        oldUVs[v] = face.textureCoordinates[v];
-                        TextureCoordinate textureCoordinate = face.textureCoordinates[v];
-                        face.textureCoordinates[v] = new TextureCoordinate(
-                                minU + sizeU * (textureCoordinate.u + offsetU),
-                                minV + sizeV * (textureCoordinate.v + offsetV));
-                    }
-                    addFaceToWorldRender(
-                            face, tes, faceLight, translationMatrix, rotationMatrix, invertFaces, colR, colG, colB);
-                    for (int v = 0; v < face.vertices.length; ++v)
-                        face.textureCoordinates[v] = new TextureCoordinate(oldUVs[v].u, oldUVs[v].v);
+                    faceLight = calculateBlockLighting(
+                        side,
+                        world,
+                        world.getBlock(x, y, z),
+                        x,
+                        y,
+                        z,
+                        colR,
+                        colG,
+                        colB,
+                        AxisAlignedBB.getBoundingBox(faceMinX, faceMinY, faceMinZ, faceMaxX, faceMaxY, faceMaxZ));
                 }
+
+                tes.setNormal(face.faceNormal.x, face.faceNormal.y, face.faceNormal.z);
+
+                float averageU = 0F;
+                float averageV = 0F;
+                if (face.textureCoordinates != null && face.textureCoordinates.length > 0) {
+                    for (int i = 0; i < face.textureCoordinates.length; ++i) {
+                        averageU += face.textureCoordinates[i].u;
+                        averageV += face.textureCoordinates[i].v;
+                    }
+                    averageU = averageU / face.textureCoordinates.length;
+                    averageV = averageV / face.textureCoordinates.length;
+                }
+
+                TextureCoordinate[] oldUVs = new TextureCoordinate[face.textureCoordinates.length];
+                for (int v = 0; v < face.vertices.length; ++v) {
+                    float offsetU, offsetV;
+                    offsetU = baseOffsetU;
+                    offsetV = baseOffsetV;
+                    if (face.textureCoordinates[v].u > averageU) offsetU = -offsetU;
+                    if (face.textureCoordinates[v].v > averageV) offsetV = -offsetV;
+
+                    oldUVs[v] = face.textureCoordinates[v];
+                    TextureCoordinate textureCoordinate = face.textureCoordinates[v];
+                    face.textureCoordinates[v] = new TextureCoordinate(
+                        minU + sizeU * (textureCoordinate.u + offsetU),
+                        minV + sizeV * (textureCoordinate.v + offsetV));
+                }
+                addFaceToWorldRender(
+                    face,
+                    tes,
+                    faceLight,
+                    translationMatrix,
+                    rotationMatrix,
+                    invertFaces,
+                    colR,
+                    colG,
+                    colB);
+                for (int v = 0; v < face.vertices.length; ++v)
+                    face.textureCoordinates[v] = new TextureCoordinate(oldUVs[v].u, oldUVs[v].v);
+            }
         }
     }
 
-    public static void renderWavefrontModelWithModifications(
-            WavefrontObject model,
-            Tessellator tes,
-            Matrix4 translationMatrix,
-            Matrix4 rotationMatrix,
-            boolean flipTextureU,
-            String... renderedParts) {
+    public static void renderWavefrontModelWithModifications(WavefrontObject model, Tessellator tes,
+        Matrix4 translationMatrix, Matrix4 rotationMatrix, boolean flipTextureU, String... renderedParts) {
         Vertex vertexCopy = new Vertex(0, 0, 0);
         Vertex normalCopy = new Vertex(0, 0, 0);
 
@@ -963,32 +973,36 @@ public class ClientUtils {
             boolean render = false;
             if (renderedParts == null || renderedParts.length < 1) render = true;
             else for (String s : renderedParts) if (groupObject.name.equalsIgnoreCase(s)) render = true;
-            if (render)
-                for (Face face : groupObject.faces) {
-                    if (face.faceNormal == null) face.faceNormal = face.calculateFaceNormal();
+            if (render) for (Face face : groupObject.faces) {
+                if (face.faceNormal == null) face.faceNormal = face.calculateFaceNormal();
 
-                    normalCopy.x = face.faceNormal.x;
-                    normalCopy.y = face.faceNormal.y;
-                    normalCopy.z = face.faceNormal.z;
-                    rotationMatrix.apply(normalCopy);
+                normalCopy.x = face.faceNormal.x;
+                normalCopy.y = face.faceNormal.y;
+                normalCopy.z = face.faceNormal.z;
+                rotationMatrix.apply(normalCopy);
 
-                    tes.setNormal(face.faceNormal.x, face.faceNormal.y, face.faceNormal.z);
-                    for (int i = 0; i < face.vertices.length; ++i) {
-                        Vertex vertex = face.vertices[i];
-                        vertexCopy.x = vertex.x;
-                        vertexCopy.y = vertex.y;
-                        vertexCopy.z = vertex.z;
-                        rotationMatrix.apply(vertexCopy);
-                        translationMatrix.apply(vertexCopy);
+                tes.setNormal(face.faceNormal.x, face.faceNormal.y, face.faceNormal.z);
+                for (int i = 0; i < face.vertices.length; ++i) {
+                    Vertex vertex = face.vertices[i];
+                    vertexCopy.x = vertex.x;
+                    vertexCopy.y = vertex.y;
+                    vertexCopy.z = vertex.z;
+                    rotationMatrix.apply(vertexCopy);
+                    translationMatrix.apply(vertexCopy);
 
-                        if ((face.textureCoordinates != null) && (face.textureCoordinates.length > 0)) {
-                            TextureCoordinate textureCoordinate = face.textureCoordinates[
-                                    flipTextureU ? (face.textureCoordinates.length - 1) - i : i];
-                            tes.addVertexWithUV(
-                                    vertexCopy.x, vertexCopy.y, vertexCopy.z, textureCoordinate.u, textureCoordinate.v);
-                        } else tes.addVertex(vertexCopy.x, vertexCopy.y, vertexCopy.z);
-                    }
+                    if ((face.textureCoordinates != null) && (face.textureCoordinates.length > 0)) {
+                        TextureCoordinate textureCoordinate = face.textureCoordinates[flipTextureU
+                            ? (face.textureCoordinates.length - 1) - i
+                            : i];
+                        tes.addVertexWithUV(
+                            vertexCopy.x,
+                            vertexCopy.y,
+                            vertexCopy.z,
+                            textureCoordinate.u,
+                            textureCoordinate.v);
+                    } else tes.addVertex(vertexCopy.x, vertexCopy.y, vertexCopy.z);
                 }
+            }
         }
     }
 
@@ -997,15 +1011,14 @@ public class ClientUtils {
         renderWavefrontWithIconUVs(model, GL11.GL_TRIANGLES, icon, parts);
     }
 
-    public static void renderWavefrontWithIconUVs(
-            WavefrontObject model, int glDrawingMode, IIcon icon, String... parts) {
+    public static void renderWavefrontWithIconUVs(WavefrontObject model, int glDrawingMode, IIcon icon,
+        String... parts) {
         if (icon == null) return;
         List<String> renderParts = Arrays.asList(parts);
         tes().startDrawing(glDrawingMode);
         for (GroupObject go : model.groupObjects)
-            if (go.glDrawingMode == glDrawingMode)
-                if (renderParts.isEmpty() || renderParts.contains(go.name))
-                    tessellateWavefrontGroupObjectWithIconUVs(go, icon);
+            if (go.glDrawingMode == glDrawingMode) if (renderParts.isEmpty() || renderParts.contains(go.name))
+                tessellateWavefrontGroupObjectWithIconUVs(go, icon);
         tes().draw();
     }
 
@@ -1041,7 +1054,8 @@ public class ClientUtils {
                 oldUVs[v] = face.textureCoordinates[v];
                 TextureCoordinate textureCoordinate = face.textureCoordinates[v];
                 face.textureCoordinates[v] = new TextureCoordinate(
-                        minU + sizeU * (textureCoordinate.u + offsetU), minV + sizeV * (textureCoordinate.v + offsetV));
+                    minU + sizeU * (textureCoordinate.u + offsetU),
+                    minV + sizeV * (textureCoordinate.v + offsetV));
             }
             face.addFaceForRender(ClientUtils.tes(), 0);
             for (int v = 0; v < face.vertices.length; ++v)
@@ -1049,16 +1063,8 @@ public class ClientUtils {
         }
     }
 
-    public static void addFaceToWorldRender(
-            Face face,
-            Tessellator tes,
-            BlockLightingInfo light,
-            Matrix4 translationMatrix,
-            Matrix4 rotationMatrix,
-            boolean invert,
-            float colR,
-            float colG,
-            float colB) {
+    public static void addFaceToWorldRender(Face face, Tessellator tes, BlockLightingInfo light,
+        Matrix4 translationMatrix, Matrix4 rotationMatrix, boolean invert, float colR, float colG, float colB) {
         Vertex vertexCopy = new Vertex(0, 0, 0);
         for (int i = 0; i < face.vertices.length; ++i) {
             int target = !invert ? i : (face.vertices.length - 1 - i);
@@ -1071,26 +1077,18 @@ public class ClientUtils {
             translationMatrix.apply(vertexCopy);
             if (light != null) {
                 tes.setBrightness(
-                        corner == 0
-                                ? light.brightnessTopLeft
-                                : corner == 1
-                                        ? light.brightnessBottomLeft
-                                        : corner == 2 ? light.brightnessBottomRight : light.brightnessTopRight);
-                float r = corner == 0
-                        ? light.colorRedTopLeft
-                        : corner == 1
-                                ? light.colorRedBottomLeft
-                                : corner == 2 ? light.colorRedBottomRight : light.colorRedTopRight;
-                float g = corner == 0
-                        ? light.colorGreenTopLeft
-                        : corner == 1
-                                ? light.colorGreenBottomLeft
-                                : corner == 2 ? light.colorGreenBottomRight : light.colorGreenTopRight;
-                float b = corner == 0
-                        ? light.colorBlueTopLeft
-                        : corner == 1
-                                ? light.colorBlueBottomLeft
-                                : corner == 2 ? light.colorBlueBottomRight : light.colorBlueTopRight;
+                    corner == 0 ? light.brightnessTopLeft
+                        : corner == 1 ? light.brightnessBottomLeft
+                            : corner == 2 ? light.brightnessBottomRight : light.brightnessTopRight);
+                float r = corner == 0 ? light.colorRedTopLeft
+                    : corner == 1 ? light.colorRedBottomLeft
+                        : corner == 2 ? light.colorRedBottomRight : light.colorRedTopRight;
+                float g = corner == 0 ? light.colorGreenTopLeft
+                    : corner == 1 ? light.colorGreenBottomLeft
+                        : corner == 2 ? light.colorGreenBottomRight : light.colorGreenTopRight;
+                float b = corner == 0 ? light.colorBlueTopLeft
+                    : corner == 1 ? light.colorBlueBottomLeft
+                        : corner == 2 ? light.colorBlueBottomRight : light.colorBlueTopRight;
                 tes.setColorOpaque_F(r, g, b);
             } else {
                 tes.setBrightness(0xb000b0);
@@ -1196,68 +1194,62 @@ public class ClientUtils {
         tes.startDrawingQuads();
         tes.setNormal(0.0F, -1.0F, 0.0F);
         renderer.renderFaceYNeg(
-                block,
-                0.0D,
-                0.0D,
-                0.0D,
-                renderer.overrideBlockTexture != null
-                        ? renderer.overrideBlockTexture
-                        : renderer.getBlockIconFromSideAndMetadata(block, 0, metadata));
+            block,
+            0.0D,
+            0.0D,
+            0.0D,
+            renderer.overrideBlockTexture != null ? renderer.overrideBlockTexture
+                : renderer.getBlockIconFromSideAndMetadata(block, 0, metadata));
         tes.draw();
         tes.startDrawingQuads();
         tes.setNormal(0.0F, 1.0F, 0.0F);
         renderer.renderFaceYPos(
-                block,
-                0.0D,
-                0.0D,
-                0.0D,
-                renderer.overrideBlockTexture != null
-                        ? renderer.overrideBlockTexture
-                        : renderer.getBlockIconFromSideAndMetadata(block, 1, metadata));
+            block,
+            0.0D,
+            0.0D,
+            0.0D,
+            renderer.overrideBlockTexture != null ? renderer.overrideBlockTexture
+                : renderer.getBlockIconFromSideAndMetadata(block, 1, metadata));
         tes.draw();
         tes.startDrawingQuads();
         tes.setNormal(0.0F, 0.0F, -1.0F);
         renderer.renderFaceZNeg(
-                block,
-                0.0D,
-                0.0D,
-                0.0D,
-                renderer.overrideBlockTexture != null
-                        ? renderer.overrideBlockTexture
-                        : renderer.getBlockIconFromSideAndMetadata(block, 2, metadata));
+            block,
+            0.0D,
+            0.0D,
+            0.0D,
+            renderer.overrideBlockTexture != null ? renderer.overrideBlockTexture
+                : renderer.getBlockIconFromSideAndMetadata(block, 2, metadata));
         tes.draw();
         tes.startDrawingQuads();
         tes.setNormal(0.0F, 0.0F, 1.0F);
         renderer.renderFaceZPos(
-                block,
-                0.0D,
-                0.0D,
-                0.0D,
-                renderer.overrideBlockTexture != null
-                        ? renderer.overrideBlockTexture
-                        : renderer.getBlockIconFromSideAndMetadata(block, 3, metadata));
+            block,
+            0.0D,
+            0.0D,
+            0.0D,
+            renderer.overrideBlockTexture != null ? renderer.overrideBlockTexture
+                : renderer.getBlockIconFromSideAndMetadata(block, 3, metadata));
         tes.draw();
         tes.startDrawingQuads();
         tes.setNormal(-1.0F, 0.0F, 0.0F);
         renderer.renderFaceXNeg(
-                block,
-                0.0D,
-                0.0D,
-                0.0D,
-                renderer.overrideBlockTexture != null
-                        ? renderer.overrideBlockTexture
-                        : renderer.getBlockIconFromSideAndMetadata(block, 4, metadata));
+            block,
+            0.0D,
+            0.0D,
+            0.0D,
+            renderer.overrideBlockTexture != null ? renderer.overrideBlockTexture
+                : renderer.getBlockIconFromSideAndMetadata(block, 4, metadata));
         tes.draw();
         tes.startDrawingQuads();
         tes.setNormal(1.0F, 0.0F, 0.0F);
         renderer.renderFaceXPos(
-                block,
-                0.0D,
-                0.0D,
-                0.0D,
-                renderer.overrideBlockTexture != null
-                        ? renderer.overrideBlockTexture
-                        : renderer.getBlockIconFromSideAndMetadata(block, 5, metadata));
+            block,
+            0.0D,
+            0.0D,
+            0.0D,
+            renderer.overrideBlockTexture != null ? renderer.overrideBlockTexture
+                : renderer.getBlockIconFromSideAndMetadata(block, 5, metadata));
         tes.draw();
         GL11.glPopMatrix();
     }
@@ -1320,7 +1312,7 @@ public class ClientUtils {
     }
 
     public static void drawTexturedRect(int x, int y, int w, int h, float picSize, int... uv) {
-        double[] d_uv = new double[] {uv[0] / picSize, uv[1] / picSize, uv[2] / picSize, uv[3] / picSize};
+        double[] d_uv = new double[] { uv[0] / picSize, uv[1] / picSize, uv[2] / picSize, uv[3] / picSize };
         drawTexturedRect(x, y, w, h, d_uv);
     }
 
@@ -1335,17 +1327,8 @@ public class ClientUtils {
         }
     }
 
-    public static void drawRepeatedIcon(
-            float x,
-            float y,
-            float w,
-            float h,
-            int iconWidth,
-            int iconHeight,
-            float uMin,
-            float uMax,
-            float vMin,
-            float vMax) {
+    public static void drawRepeatedIcon(float x, float y, float w, float h, int iconWidth, int iconHeight, float uMin,
+        float uMax, float vMin, float vMax) {
         int iterMaxW = (int) (w / iconWidth);
         int iterMaxH = (int) (h / iconHeight);
         float leftoverW = w % iconWidth;
@@ -1355,39 +1338,44 @@ public class ClientUtils {
         float iconUDif = uMax - uMin;
         float iconVDif = vMax - vMin;
         for (int ww = 0; ww < iterMaxW; ww++) {
-            for (int hh = 0; hh < iterMaxH; hh++)
-                drawTexturedRect(
-                        x + ww * iconWidth, y + hh * iconHeight, iconWidth, iconHeight, uMin, uMax, vMin, vMax);
+            for (int hh = 0; hh < iterMaxH; hh++) drawTexturedRect(
+                x + ww * iconWidth,
+                y + hh * iconHeight,
+                iconWidth,
+                iconHeight,
+                uMin,
+                uMax,
+                vMin,
+                vMax);
             drawTexturedRect(
-                    x + ww * iconWidth,
-                    y + iterMaxH * iconHeight,
-                    iconWidth,
-                    leftoverH,
-                    uMin,
-                    uMax,
-                    vMin,
-                    (vMin + iconVDif * leftoverHf));
+                x + ww * iconWidth,
+                y + iterMaxH * iconHeight,
+                iconWidth,
+                leftoverH,
+                uMin,
+                uMax,
+                vMin,
+                (vMin + iconVDif * leftoverHf));
         }
         if (leftoverW > 0) {
-            for (int hh = 0; hh < iterMaxH; hh++)
-                drawTexturedRect(
-                        x + iterMaxW * iconWidth,
-                        y + hh * iconHeight,
-                        leftoverW,
-                        iconHeight,
-                        uMin,
-                        (uMin + iconUDif * leftoverWf),
-                        vMin,
-                        vMax);
+            for (int hh = 0; hh < iterMaxH; hh++) drawTexturedRect(
+                x + iterMaxW * iconWidth,
+                y + hh * iconHeight,
+                leftoverW,
+                iconHeight,
+                uMin,
+                (uMin + iconUDif * leftoverWf),
+                vMin,
+                vMax);
             drawTexturedRect(
-                    x + iterMaxW * iconWidth,
-                    y + iterMaxH * iconHeight,
-                    leftoverW,
-                    leftoverH,
-                    uMin,
-                    (uMin + iconUDif * leftoverWf),
-                    vMin,
-                    (vMin + iconVDif * leftoverHf));
+                x + iterMaxW * iconWidth,
+                y + iterMaxH * iconHeight,
+                leftoverW,
+                leftoverH,
+                uMin,
+                (uMin + iconUDif * leftoverWf),
+                vMin,
+                (vMin + iconVDif * leftoverHf));
         }
     }
 
@@ -1410,7 +1398,8 @@ public class ClientUtils {
             if (k == 0) list.set(k, stack.getRarity().rarityColor + (String) list.get(k));
             else list.set(k, EnumChatFormatting.GRAY + (String) list.get(k));
 
-        FontRenderer font = stack.getItem().getFontRenderer(stack);
+        FontRenderer font = stack.getItem()
+            .getFontRenderer(stack);
         drawHoveringText(list, x, y, (font == null ? font() : font));
     }
 
@@ -1420,8 +1409,10 @@ public class ClientUtils {
 
     public static void drawHoveringText(List<String> list, int x, int y, FontRenderer font, int xSize, int ySize) {
         if (!list.isEmpty()) {
-            boolean uni = ClientUtils.font().getUnicodeFlag();
-            ClientUtils.font().setUnicodeFlag(false);
+            boolean uni = ClientUtils.font()
+                .getUnicodeFlag();
+            ClientUtils.font()
+                .setUnicodeFlag(false);
 
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             RenderHelper.disableStandardItemLighting();
@@ -1482,28 +1473,24 @@ public class ClientUtils {
             RenderHelper.enableStandardItemLighting();
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 
-            ClientUtils.font().setUnicodeFlag(uni);
+            ClientUtils.font()
+                .setUnicodeFlag(uni);
         }
     }
 
-    public static void handleGuiTank(
-            FluidTank tank,
-            int x,
-            int y,
-            int w,
-            int h,
-            int oX,
-            int oY,
-            int oW,
-            int oH,
-            int mX,
-            int mY,
-            String originalTexture,
-            ArrayList<String> tooltip) {
+    public static void handleGuiTank(FluidTank tank, int x, int y, int w, int h, int oX, int oY, int oW, int oH, int mX,
+        int mY, String originalTexture, ArrayList<String> tooltip) {
         if (tooltip == null) {
-            if (tank.getFluid() != null && tank.getFluid().getFluid() != null) {
+            if (tank.getFluid() != null && tank.getFluid()
+                .getFluid() != null) {
                 int fluidHeight = (int) (h * (tank.getFluid().amount / (float) tank.getCapacity()));
-                drawRepeatedFluidIcon(tank.getFluid().getFluid(), x, y + h - fluidHeight, w, fluidHeight);
+                drawRepeatedFluidIcon(
+                    tank.getFluid()
+                        .getFluid(),
+                    x,
+                    y + h - fluidHeight,
+                    w,
+                    fluidHeight);
                 bindTexture(originalTexture);
             }
             int xOff = (w - oW) / 2;
@@ -1511,8 +1498,10 @@ public class ClientUtils {
             drawTexturedRect(x + xOff, y + yOff, oW, oH, 256f, oX, oX + oW, oY, oY + oH);
         } else {
             if (mX >= x && mX < x + w && mY >= y && mY < y + h) {
-                if (tank.getFluid() != null && tank.getFluid().getFluid() != null)
-                    tooltip.add(tank.getFluid().getLocalizedName());
+                if (tank.getFluid() != null && tank.getFluid()
+                    .getFluid() != null) tooltip.add(
+                        tank.getFluid()
+                            .getLocalizedName());
                 else tooltip.add(StatCollector.translateToLocal("gui.ImmersiveEngineering.empty"));
                 tooltip.add(tank.getFluidAmount() + "/" + tank.getCapacity() + "mB");
             }
@@ -1520,6 +1509,7 @@ public class ClientUtils {
     }
 
     public static class BlockLightingInfo {
+
         public int aoBrightnessXYNN;
         public int aoBrightnessYZNN;
         public int aoBrightnessYZNP;
@@ -1587,38 +1577,25 @@ public class ClientUtils {
             return par0 + par1 + par2 + par3 >> 2 & 16711935;
         }
 
-        public int mixAoBrightness(
-                int par0, int par1, int par2, int par3, double par4, double par5, double par6, double par7) {
-            int i1 = (int) ((double) (par0 >> 16 & 255) * par4
-                            + (double) (par1 >> 16 & 255) * par5
-                            + (double) (par2 >> 16 & 255) * par6
-                            + (double) (par3 >> 16 & 255) * par7)
-                    & 255;
-            int j1 = (int) ((double) (par0 & 255) * par4
-                            + (double) (par1 & 255) * par5
-                            + (double) (par2 & 255) * par6
-                            + (double) (par3 & 255) * par7)
-                    & 255;
+        public int mixAoBrightness(int par0, int par1, int par2, int par3, double par4, double par5, double par6,
+            double par7) {
+            int i1 = (int) ((double) (par0 >> 16 & 255) * par4 + (double) (par1 >> 16 & 255) * par5
+                + (double) (par2 >> 16 & 255) * par6
+                + (double) (par3 >> 16 & 255) * par7) & 255;
+            int j1 = (int) ((double) (par0 & 255) * par4 + (double) (par1 & 255) * par5
+                + (double) (par2 & 255) * par6
+                + (double) (par3 & 255) * par7) & 255;
             return i1 << 16 | j1;
         }
     }
 
-    public static BlockLightingInfo calculateBlockLighting(
-            int side, IBlockAccess world, Block block, int x, int y, int z, float colR, float colG, float colB) {
+    public static BlockLightingInfo calculateBlockLighting(int side, IBlockAccess world, Block block, int x, int y,
+        int z, float colR, float colG, float colB) {
         return calculateBlockLighting(side, world, block, x, y, z, colR, colG, colB, standardBlockAABB);
     }
 
-    public static BlockLightingInfo calculateBlockLighting(
-            int side,
-            IBlockAccess world,
-            Block block,
-            int x,
-            int y,
-            int z,
-            float colR,
-            float colG,
-            float colB,
-            AxisAlignedBB bounds) {
+    public static BlockLightingInfo calculateBlockLighting(int side, IBlockAccess world, Block block, int x, int y,
+        int z, float colR, float colG, float colB, AxisAlignedBB bounds) {
         float f3 = 0.0F;
         float f4 = 0.0F;
         float f5 = 0.0F;
@@ -1643,21 +1620,29 @@ public class ClientUtils {
             lightingInfo.aoBrightnessYZNN = block.getMixedBrightnessForBlock(world, x, y, z - 1);
             lightingInfo.aoBrightnessYZNP = block.getMixedBrightnessForBlock(world, x, y, z + 1);
             lightingInfo.aoBrightnessXYPN = block.getMixedBrightnessForBlock(world, x + 1, y, z);
-            lightingInfo.aoLightValueScratchXYNN = world.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchYZNN = world.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchYZNP = world.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXYPN = world.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-            flag2 = world.getBlock(x + 1, y - 1, z).getCanBlockGrass();
-            flag3 = world.getBlock(x - 1, y - 1, z).getCanBlockGrass();
-            flag4 = world.getBlock(x, y - 1, z + 1).getCanBlockGrass();
-            flag5 = world.getBlock(x, y - 1, z - 1).getCanBlockGrass();
+            lightingInfo.aoLightValueScratchXYNN = world.getBlock(x - 1, y, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchYZNN = world.getBlock(x, y, z - 1)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchYZNP = world.getBlock(x, y, z + 1)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXYPN = world.getBlock(x + 1, y, z)
+                .getAmbientOcclusionLightValue();
+            flag2 = world.getBlock(x + 1, y - 1, z)
+                .getCanBlockGrass();
+            flag3 = world.getBlock(x - 1, y - 1, z)
+                .getCanBlockGrass();
+            flag4 = world.getBlock(x, y - 1, z + 1)
+                .getCanBlockGrass();
+            flag5 = world.getBlock(x, y - 1, z - 1)
+                .getCanBlockGrass();
 
             if (!flag5 && !flag3) {
                 lightingInfo.aoLightValueScratchXYZNNN = lightingInfo.aoLightValueScratchXYNN;
                 lightingInfo.aoBrightnessXYZNNN = lightingInfo.aoBrightnessXYNN;
             } else {
-                lightingInfo.aoLightValueScratchXYZNNN =
-                        world.getBlock(x - 1, y, z - 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNNN = world.getBlock(x - 1, y, z - 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNNN = block.getMixedBrightnessForBlock(world, x - 1, y, z - 1);
             }
 
@@ -1665,8 +1650,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZNNP = lightingInfo.aoLightValueScratchXYNN;
                 lightingInfo.aoBrightnessXYZNNP = lightingInfo.aoBrightnessXYNN;
             } else {
-                lightingInfo.aoLightValueScratchXYZNNP =
-                        world.getBlock(x - 1, y, z + 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNNP = world.getBlock(x - 1, y, z + 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNNP = block.getMixedBrightnessForBlock(world, x - 1, y, z + 1);
             }
 
@@ -1674,8 +1659,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPNN = lightingInfo.aoLightValueScratchXYPN;
                 lightingInfo.aoBrightnessXYZPNN = lightingInfo.aoBrightnessXYPN;
             } else {
-                lightingInfo.aoLightValueScratchXYZPNN =
-                        world.getBlock(x + 1, y, z - 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPNN = world.getBlock(x + 1, y, z - 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPNN = block.getMixedBrightnessForBlock(world, x + 1, y, z - 1);
             }
 
@@ -1683,8 +1668,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPNP = lightingInfo.aoLightValueScratchXYPN;
                 lightingInfo.aoBrightnessXYZPNP = lightingInfo.aoBrightnessXYPN;
             } else {
-                lightingInfo.aoLightValueScratchXYZPNP =
-                        world.getBlock(x + 1, y, z + 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPNP = world.getBlock(x + 1, y, z + 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPNP = block.getMixedBrightnessForBlock(world, x + 1, y, z + 1);
             }
 
@@ -1694,46 +1679,52 @@ public class ClientUtils {
 
             i1 = l;
 
-            if (bounds.minY <= 0.0D || !world.getBlock(x, y - 1, z).isOpaqueCube()) {
+            if (bounds.minY <= 0.0D || !world.getBlock(x, y - 1, z)
+                .isOpaqueCube()) {
                 i1 = block.getMixedBrightnessForBlock(world, x, y - 1, z);
             }
 
-            f7 = world.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-            f3 = (lightingInfo.aoLightValueScratchXYZNNP
-                            + lightingInfo.aoLightValueScratchXYNN
-                            + lightingInfo.aoLightValueScratchYZNP
-                            + f7)
-                    / 4.0F;
-            f6 = (lightingInfo.aoLightValueScratchYZNP
-                            + f7
-                            + lightingInfo.aoLightValueScratchXYZPNP
-                            + lightingInfo.aoLightValueScratchXYPN)
-                    / 4.0F;
-            f5 = (f7
-                            + lightingInfo.aoLightValueScratchYZNN
-                            + lightingInfo.aoLightValueScratchXYPN
-                            + lightingInfo.aoLightValueScratchXYZPNN)
-                    / 4.0F;
-            f4 = (lightingInfo.aoLightValueScratchXYNN
-                            + lightingInfo.aoLightValueScratchXYZNNN
-                            + f7
-                            + lightingInfo.aoLightValueScratchYZNN)
-                    / 4.0F;
+            f7 = world.getBlock(x, y - 1, z)
+                .getAmbientOcclusionLightValue();
+            f3 = (lightingInfo.aoLightValueScratchXYZNNP + lightingInfo.aoLightValueScratchXYNN
+                + lightingInfo.aoLightValueScratchYZNP
+                + f7) / 4.0F;
+            f6 = (lightingInfo.aoLightValueScratchYZNP + f7
+                + lightingInfo.aoLightValueScratchXYZPNP
+                + lightingInfo.aoLightValueScratchXYPN) / 4.0F;
+            f5 = (f7 + lightingInfo.aoLightValueScratchYZNN
+                + lightingInfo.aoLightValueScratchXYPN
+                + lightingInfo.aoLightValueScratchXYZPNN) / 4.0F;
+            f4 = (lightingInfo.aoLightValueScratchXYNN + lightingInfo.aoLightValueScratchXYZNNN
+                + f7
+                + lightingInfo.aoLightValueScratchYZNN) / 4.0F;
             lightingInfo.brightnessTopLeft = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYZNNP, lightingInfo.aoBrightnessXYNN, lightingInfo.aoBrightnessYZNP, i1);
+                lightingInfo.aoBrightnessXYZNNP,
+                lightingInfo.aoBrightnessXYNN,
+                lightingInfo.aoBrightnessYZNP,
+                i1);
             lightingInfo.brightnessTopRight = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessYZNP, lightingInfo.aoBrightnessXYZPNP, lightingInfo.aoBrightnessXYPN, i1);
+                lightingInfo.aoBrightnessYZNP,
+                lightingInfo.aoBrightnessXYZPNP,
+                lightingInfo.aoBrightnessXYPN,
+                i1);
             lightingInfo.brightnessBottomRight = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessYZNN, lightingInfo.aoBrightnessXYPN, lightingInfo.aoBrightnessXYZPNN, i1);
+                lightingInfo.aoBrightnessYZNN,
+                lightingInfo.aoBrightnessXYPN,
+                lightingInfo.aoBrightnessXYZPNN,
+                i1);
             lightingInfo.brightnessBottomLeft = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYNN, lightingInfo.aoBrightnessXYZNNN, lightingInfo.aoBrightnessYZNN, i1);
+                lightingInfo.aoBrightnessXYNN,
+                lightingInfo.aoBrightnessXYZNNN,
+                lightingInfo.aoBrightnessYZNN,
+                i1);
 
-            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft =
-                    lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR * 0.5f;
-            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft =
-                    lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG * 0.5f;
-            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft =
-                    lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB * 0.5f;
+            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft = lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR
+                * 0.5f;
+            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft = lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG
+                * 0.5f;
+            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft = lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB
+                * 0.5f;
 
             lightingInfo.colorRedTopLeft *= f3;
             lightingInfo.colorGreenTopLeft *= f3;
@@ -1750,7 +1741,7 @@ public class ClientUtils {
         }
 
         if (side == 1)
-        //			if(lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x, y + 1, z, 1))
+        // if(lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x, y + 1, z, 1))
         {
             if (bounds.maxY >= 1.0D) {
                 ++y;
@@ -1760,21 +1751,29 @@ public class ClientUtils {
             lightingInfo.aoBrightnessXYPP = block.getMixedBrightnessForBlock(world, x + 1, y, z);
             lightingInfo.aoBrightnessYZPN = block.getMixedBrightnessForBlock(world, x, y, z - 1);
             lightingInfo.aoBrightnessYZPP = block.getMixedBrightnessForBlock(world, x, y, z + 1);
-            lightingInfo.aoLightValueScratchXYNP = world.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXYPP = world.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchYZPN = world.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchYZPP = world.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-            flag2 = world.getBlock(x + 1, y + 1, z).getCanBlockGrass();
-            flag3 = world.getBlock(x - 1, y + 1, z).getCanBlockGrass();
-            flag4 = world.getBlock(x, y + 1, z + 1).getCanBlockGrass();
-            flag5 = world.getBlock(x, y + 1, z - 1).getCanBlockGrass();
+            lightingInfo.aoLightValueScratchXYNP = world.getBlock(x - 1, y, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXYPP = world.getBlock(x + 1, y, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchYZPN = world.getBlock(x, y, z - 1)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchYZPP = world.getBlock(x, y, z + 1)
+                .getAmbientOcclusionLightValue();
+            flag2 = world.getBlock(x + 1, y + 1, z)
+                .getCanBlockGrass();
+            flag3 = world.getBlock(x - 1, y + 1, z)
+                .getCanBlockGrass();
+            flag4 = world.getBlock(x, y + 1, z + 1)
+                .getCanBlockGrass();
+            flag5 = world.getBlock(x, y + 1, z - 1)
+                .getCanBlockGrass();
 
             if (!flag5 && !flag3) {
                 lightingInfo.aoLightValueScratchXYZNPN = lightingInfo.aoLightValueScratchXYNP;
                 lightingInfo.aoBrightnessXYZNPN = lightingInfo.aoBrightnessXYNP;
             } else {
-                lightingInfo.aoLightValueScratchXYZNPN =
-                        world.getBlock(x - 1, y, z - 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNPN = world.getBlock(x - 1, y, z - 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNPN = block.getMixedBrightnessForBlock(world, x - 1, y, z - 1);
             }
 
@@ -1782,8 +1781,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPPN = lightingInfo.aoLightValueScratchXYPP;
                 lightingInfo.aoBrightnessXYZPPN = lightingInfo.aoBrightnessXYPP;
             } else {
-                lightingInfo.aoLightValueScratchXYZPPN =
-                        world.getBlock(x + 1, y, z - 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPPN = world.getBlock(x + 1, y, z - 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPPN = block.getMixedBrightnessForBlock(world, x + 1, y, z - 1);
             }
 
@@ -1791,8 +1790,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZNPP = lightingInfo.aoLightValueScratchXYNP;
                 lightingInfo.aoBrightnessXYZNPP = lightingInfo.aoBrightnessXYNP;
             } else {
-                lightingInfo.aoLightValueScratchXYZNPP =
-                        world.getBlock(x - 1, y, z + 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNPP = world.getBlock(x - 1, y, z + 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNPP = block.getMixedBrightnessForBlock(world, x - 1, y, z + 1);
             }
 
@@ -1800,8 +1799,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPPP = lightingInfo.aoLightValueScratchXYPP;
                 lightingInfo.aoBrightnessXYZPPP = lightingInfo.aoBrightnessXYPP;
             } else {
-                lightingInfo.aoLightValueScratchXYZPPP =
-                        world.getBlock(x + 1, y, z + 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPPP = world.getBlock(x + 1, y, z + 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPPP = block.getMixedBrightnessForBlock(world, x + 1, y, z + 1);
             }
 
@@ -1811,45 +1810,48 @@ public class ClientUtils {
 
             i1 = l;
 
-            if (bounds.maxY >= 1.0D || !world.getBlock(x, y + 1, z).isOpaqueCube()) {
+            if (bounds.maxY >= 1.0D || !world.getBlock(x, y + 1, z)
+                .isOpaqueCube()) {
                 i1 = block.getMixedBrightnessForBlock(world, x, y + 1, z);
             }
 
-            f7 = world.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
-            f6 = (lightingInfo.aoLightValueScratchXYZNPP
-                            + lightingInfo.aoLightValueScratchXYNP
-                            + lightingInfo.aoLightValueScratchYZPP
-                            + f7)
-                    / 4.0F;
-            f3 = (lightingInfo.aoLightValueScratchYZPP
-                            + f7
-                            + lightingInfo.aoLightValueScratchXYZPPP
-                            + lightingInfo.aoLightValueScratchXYPP)
-                    / 4.0F;
-            f4 = (f7
-                            + lightingInfo.aoLightValueScratchYZPN
-                            + lightingInfo.aoLightValueScratchXYPP
-                            + lightingInfo.aoLightValueScratchXYZPPN)
-                    / 4.0F;
-            f5 = (lightingInfo.aoLightValueScratchXYNP
-                            + lightingInfo.aoLightValueScratchXYZNPN
-                            + f7
-                            + lightingInfo.aoLightValueScratchYZPN)
-                    / 4.0F;
+            f7 = world.getBlock(x, y + 1, z)
+                .getAmbientOcclusionLightValue();
+            f6 = (lightingInfo.aoLightValueScratchXYZNPP + lightingInfo.aoLightValueScratchXYNP
+                + lightingInfo.aoLightValueScratchYZPP
+                + f7) / 4.0F;
+            f3 = (lightingInfo.aoLightValueScratchYZPP + f7
+                + lightingInfo.aoLightValueScratchXYZPPP
+                + lightingInfo.aoLightValueScratchXYPP) / 4.0F;
+            f4 = (f7 + lightingInfo.aoLightValueScratchYZPN
+                + lightingInfo.aoLightValueScratchXYPP
+                + lightingInfo.aoLightValueScratchXYZPPN) / 4.0F;
+            f5 = (lightingInfo.aoLightValueScratchXYNP + lightingInfo.aoLightValueScratchXYZNPN
+                + f7
+                + lightingInfo.aoLightValueScratchYZPN) / 4.0F;
             lightingInfo.brightnessTopRight = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYZNPP, lightingInfo.aoBrightnessXYNP, lightingInfo.aoBrightnessYZPP, i1);
+                lightingInfo.aoBrightnessXYZNPP,
+                lightingInfo.aoBrightnessXYNP,
+                lightingInfo.aoBrightnessYZPP,
+                i1);
             lightingInfo.brightnessTopLeft = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessYZPP, lightingInfo.aoBrightnessXYZPPP, lightingInfo.aoBrightnessXYPP, i1);
+                lightingInfo.aoBrightnessYZPP,
+                lightingInfo.aoBrightnessXYZPPP,
+                lightingInfo.aoBrightnessXYPP,
+                i1);
             lightingInfo.brightnessBottomLeft = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessYZPN, lightingInfo.aoBrightnessXYPP, lightingInfo.aoBrightnessXYZPPN, i1);
+                lightingInfo.aoBrightnessYZPN,
+                lightingInfo.aoBrightnessXYPP,
+                lightingInfo.aoBrightnessXYZPPN,
+                i1);
             lightingInfo.brightnessBottomRight = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYNP, lightingInfo.aoBrightnessXYZNPN, lightingInfo.aoBrightnessYZPN, i1);
-            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft =
-                    lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR;
-            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft =
-                    lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG;
-            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft =
-                    lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB;
+                lightingInfo.aoBrightnessXYNP,
+                lightingInfo.aoBrightnessXYZNPN,
+                lightingInfo.aoBrightnessYZPN,
+                i1);
+            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft = lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR;
+            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft = lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG;
+            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft = lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB;
             lightingInfo.colorRedTopLeft *= f3;
             lightingInfo.colorGreenTopLeft *= f3;
             lightingInfo.colorBlueTopLeft *= f3;
@@ -1874,31 +1876,39 @@ public class ClientUtils {
         int i2;
 
         if (side == 2)
-        //			if (lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x, y, z - 1, 2))
+        // if (lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x, y, z - 1, 2))
         {
             if (bounds.minZ <= 0.0D) {
                 --z;
             }
 
-            lightingInfo.aoLightValueScratchXZNN = world.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchYZNN = world.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchYZPN = world.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXZPN = world.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXZNN = world.getBlock(x - 1, y, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchYZNN = world.getBlock(x, y - 1, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchYZPN = world.getBlock(x, y + 1, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXZPN = world.getBlock(x + 1, y, z)
+                .getAmbientOcclusionLightValue();
             lightingInfo.aoBrightnessXZNN = block.getMixedBrightnessForBlock(world, x - 1, y, z);
             lightingInfo.aoBrightnessYZNN = block.getMixedBrightnessForBlock(world, x, y - 1, z);
             lightingInfo.aoBrightnessYZPN = block.getMixedBrightnessForBlock(world, x, y + 1, z);
             lightingInfo.aoBrightnessXZPN = block.getMixedBrightnessForBlock(world, x + 1, y, z);
-            flag2 = world.getBlock(x + 1, y, z - 1).getCanBlockGrass();
-            flag3 = world.getBlock(x - 1, y, z - 1).getCanBlockGrass();
-            flag4 = world.getBlock(x, y + 1, z - 1).getCanBlockGrass();
-            flag5 = world.getBlock(x, y - 1, z - 1).getCanBlockGrass();
+            flag2 = world.getBlock(x + 1, y, z - 1)
+                .getCanBlockGrass();
+            flag3 = world.getBlock(x - 1, y, z - 1)
+                .getCanBlockGrass();
+            flag4 = world.getBlock(x, y + 1, z - 1)
+                .getCanBlockGrass();
+            flag5 = world.getBlock(x, y - 1, z - 1)
+                .getCanBlockGrass();
 
             if (!flag3 && !flag5) {
                 lightingInfo.aoLightValueScratchXYZNNN = lightingInfo.aoLightValueScratchXZNN;
                 lightingInfo.aoBrightnessXYZNNN = lightingInfo.aoBrightnessXZNN;
             } else {
-                lightingInfo.aoLightValueScratchXYZNNN =
-                        world.getBlock(x - 1, y - 1, z).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNNN = world.getBlock(x - 1, y - 1, z)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNNN = block.getMixedBrightnessForBlock(world, x - 1, y - 1, z);
             }
 
@@ -1906,8 +1916,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZNPN = lightingInfo.aoLightValueScratchXZNN;
                 lightingInfo.aoBrightnessXYZNPN = lightingInfo.aoBrightnessXZNN;
             } else {
-                lightingInfo.aoLightValueScratchXYZNPN =
-                        world.getBlock(x - 1, y + 1, z).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNPN = world.getBlock(x - 1, y + 1, z)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNPN = block.getMixedBrightnessForBlock(world, x - 1, y + 1, z);
             }
 
@@ -1915,8 +1925,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPNN = lightingInfo.aoLightValueScratchXZPN;
                 lightingInfo.aoBrightnessXYZPNN = lightingInfo.aoBrightnessXZPN;
             } else {
-                lightingInfo.aoLightValueScratchXYZPNN =
-                        world.getBlock(x + 1, y - 1, z).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPNN = world.getBlock(x + 1, y - 1, z)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPNN = block.getMixedBrightnessForBlock(world, x + 1, y - 1, z);
             }
 
@@ -1924,8 +1934,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPPN = lightingInfo.aoLightValueScratchXZPN;
                 lightingInfo.aoBrightnessXYZPPN = lightingInfo.aoBrightnessXZPN;
             } else {
-                lightingInfo.aoLightValueScratchXYZPPN =
-                        world.getBlock(x + 1, y + 1, z).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPPN = world.getBlock(x + 1, y + 1, z)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPPN = block.getMixedBrightnessForBlock(world, x + 1, y + 1, z);
             }
 
@@ -1935,98 +1945,100 @@ public class ClientUtils {
 
             i1 = l;
 
-            if (bounds.minZ <= 0.0D || !world.getBlock(x, y, z - 1).isOpaqueCube()) {
+            if (bounds.minZ <= 0.0D || !world.getBlock(x, y, z - 1)
+                .isOpaqueCube()) {
                 i1 = block.getMixedBrightnessForBlock(world, x, y, z - 1);
             }
 
-            f7 = world.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-            f8 = (lightingInfo.aoLightValueScratchXZNN
-                            + lightingInfo.aoLightValueScratchXYZNPN
-                            + f7
-                            + lightingInfo.aoLightValueScratchYZPN)
-                    / 4.0F;
-            f9 = (f7
-                            + lightingInfo.aoLightValueScratchYZPN
-                            + lightingInfo.aoLightValueScratchXZPN
-                            + lightingInfo.aoLightValueScratchXYZPPN)
-                    / 4.0F;
-            f10 = (lightingInfo.aoLightValueScratchYZNN
-                            + f7
-                            + lightingInfo.aoLightValueScratchXYZPNN
-                            + lightingInfo.aoLightValueScratchXZPN)
-                    / 4.0F;
-            f11 = (lightingInfo.aoLightValueScratchXYZNNN
-                            + lightingInfo.aoLightValueScratchXZNN
-                            + lightingInfo.aoLightValueScratchYZNN
-                            + f7)
-                    / 4.0F;
-            f3 = (float) ((double) f8 * bounds.maxY * (1.0D - bounds.minX)
-                    + (double) f9 * bounds.maxY * bounds.minX
-                    + (double) f10 * (1.0D - bounds.maxY) * bounds.minX
-                    + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.minX));
-            f4 = (float) ((double) f8 * bounds.maxY * (1.0D - bounds.maxX)
-                    + (double) f9 * bounds.maxY * bounds.maxX
-                    + (double) f10 * (1.0D - bounds.maxY) * bounds.maxX
-                    + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.maxX));
-            f5 = (float) ((double) f8 * bounds.minY * (1.0D - bounds.maxX)
-                    + (double) f9 * bounds.minY * bounds.maxX
-                    + (double) f10 * (1.0D - bounds.minY) * bounds.maxX
-                    + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.maxX));
-            f6 = (float) ((double) f8 * bounds.minY * (1.0D - bounds.minX)
-                    + (double) f9 * bounds.minY * bounds.minX
-                    + (double) f10 * (1.0D - bounds.minY) * bounds.minX
-                    + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.minX));
+            f7 = world.getBlock(x, y, z - 1)
+                .getAmbientOcclusionLightValue();
+            f8 = (lightingInfo.aoLightValueScratchXZNN + lightingInfo.aoLightValueScratchXYZNPN
+                + f7
+                + lightingInfo.aoLightValueScratchYZPN) / 4.0F;
+            f9 = (f7 + lightingInfo.aoLightValueScratchYZPN
+                + lightingInfo.aoLightValueScratchXZPN
+                + lightingInfo.aoLightValueScratchXYZPPN) / 4.0F;
+            f10 = (lightingInfo.aoLightValueScratchYZNN + f7
+                + lightingInfo.aoLightValueScratchXYZPNN
+                + lightingInfo.aoLightValueScratchXZPN) / 4.0F;
+            f11 = (lightingInfo.aoLightValueScratchXYZNNN + lightingInfo.aoLightValueScratchXZNN
+                + lightingInfo.aoLightValueScratchYZNN
+                + f7) / 4.0F;
+            f3 = (float) ((double) f8 * bounds.maxY * (1.0D - bounds.minX) + (double) f9 * bounds.maxY * bounds.minX
+                + (double) f10 * (1.0D - bounds.maxY) * bounds.minX
+                + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.minX));
+            f4 = (float) ((double) f8 * bounds.maxY * (1.0D - bounds.maxX) + (double) f9 * bounds.maxY * bounds.maxX
+                + (double) f10 * (1.0D - bounds.maxY) * bounds.maxX
+                + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.maxX));
+            f5 = (float) ((double) f8 * bounds.minY * (1.0D - bounds.maxX) + (double) f9 * bounds.minY * bounds.maxX
+                + (double) f10 * (1.0D - bounds.minY) * bounds.maxX
+                + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.maxX));
+            f6 = (float) ((double) f8 * bounds.minY * (1.0D - bounds.minX) + (double) f9 * bounds.minY * bounds.minX
+                + (double) f10 * (1.0D - bounds.minY) * bounds.minX
+                + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.minX));
             j1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXZNN, lightingInfo.aoBrightnessXYZNPN, lightingInfo.aoBrightnessYZPN, i1);
+                lightingInfo.aoBrightnessXZNN,
+                lightingInfo.aoBrightnessXYZNPN,
+                lightingInfo.aoBrightnessYZPN,
+                i1);
             k1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessYZPN, lightingInfo.aoBrightnessXZPN, lightingInfo.aoBrightnessXYZPPN, i1);
+                lightingInfo.aoBrightnessYZPN,
+                lightingInfo.aoBrightnessXZPN,
+                lightingInfo.aoBrightnessXYZPPN,
+                i1);
             l1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessYZNN, lightingInfo.aoBrightnessXYZPNN, lightingInfo.aoBrightnessXZPN, i1);
+                lightingInfo.aoBrightnessYZNN,
+                lightingInfo.aoBrightnessXYZPNN,
+                lightingInfo.aoBrightnessXZPN,
+                i1);
             i2 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYZNNN, lightingInfo.aoBrightnessXZNN, lightingInfo.aoBrightnessYZNN, i1);
+                lightingInfo.aoBrightnessXYZNNN,
+                lightingInfo.aoBrightnessXZNN,
+                lightingInfo.aoBrightnessYZNN,
+                i1);
             lightingInfo.brightnessTopLeft = lightingInfo.mixAoBrightness(
-                    j1,
-                    k1,
-                    l1,
-                    i2,
-                    bounds.maxY * (1.0D - bounds.minX),
-                    bounds.maxY * bounds.minX,
-                    (1.0D - bounds.maxY) * bounds.minX,
-                    (1.0D - bounds.maxY) * (1.0D - bounds.minX));
+                j1,
+                k1,
+                l1,
+                i2,
+                bounds.maxY * (1.0D - bounds.minX),
+                bounds.maxY * bounds.minX,
+                (1.0D - bounds.maxY) * bounds.minX,
+                (1.0D - bounds.maxY) * (1.0D - bounds.minX));
             lightingInfo.brightnessBottomLeft = lightingInfo.mixAoBrightness(
-                    j1,
-                    k1,
-                    l1,
-                    i2,
-                    bounds.maxY * (1.0D - bounds.maxX),
-                    bounds.maxY * bounds.maxX,
-                    (1.0D - bounds.maxY) * bounds.maxX,
-                    (1.0D - bounds.maxY) * (1.0D - bounds.maxX));
+                j1,
+                k1,
+                l1,
+                i2,
+                bounds.maxY * (1.0D - bounds.maxX),
+                bounds.maxY * bounds.maxX,
+                (1.0D - bounds.maxY) * bounds.maxX,
+                (1.0D - bounds.maxY) * (1.0D - bounds.maxX));
             lightingInfo.brightnessBottomRight = lightingInfo.mixAoBrightness(
-                    j1,
-                    k1,
-                    l1,
-                    i2,
-                    bounds.minY * (1.0D - bounds.maxX),
-                    bounds.minY * bounds.maxX,
-                    (1.0D - bounds.minY) * bounds.maxX,
-                    (1.0D - bounds.minY) * (1.0D - bounds.maxX));
+                j1,
+                k1,
+                l1,
+                i2,
+                bounds.minY * (1.0D - bounds.maxX),
+                bounds.minY * bounds.maxX,
+                (1.0D - bounds.minY) * bounds.maxX,
+                (1.0D - bounds.minY) * (1.0D - bounds.maxX));
             lightingInfo.brightnessTopRight = lightingInfo.mixAoBrightness(
-                    j1,
-                    k1,
-                    l1,
-                    i2,
-                    bounds.minY * (1.0D - bounds.minX),
-                    bounds.minY * bounds.minX,
-                    (1.0D - bounds.minY) * bounds.minX,
-                    (1.0D - bounds.minY) * (1.0D - bounds.minX));
+                j1,
+                k1,
+                l1,
+                i2,
+                bounds.minY * (1.0D - bounds.minX),
+                bounds.minY * bounds.minX,
+                (1.0D - bounds.minY) * bounds.minX,
+                (1.0D - bounds.minY) * (1.0D - bounds.minX));
 
-            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft =
-                    lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR * 0.8f;
-            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft =
-                    lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG * 0.8f;
-            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft =
-                    lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB * 0.8f;
+            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft = lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR
+                * 0.8f;
+            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft = lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG
+                * 0.8f;
+            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft = lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB
+                * 0.8f;
 
             lightingInfo.colorRedTopLeft *= f3;
             lightingInfo.colorGreenTopLeft *= f3;
@@ -2043,31 +2055,39 @@ public class ClientUtils {
         }
 
         if (side == 3)
-        //		if (lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x, y, z + 1, 3))
+        // if (lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x, y, z + 1, 3))
         {
             if (bounds.maxZ >= 1.0D) {
                 ++z;
             }
 
-            lightingInfo.aoLightValueScratchXZNP = world.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXZPP = world.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchYZNP = world.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchYZPP = world.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXZNP = world.getBlock(x - 1, y, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXZPP = world.getBlock(x + 1, y, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchYZNP = world.getBlock(x, y - 1, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchYZPP = world.getBlock(x, y + 1, z)
+                .getAmbientOcclusionLightValue();
             lightingInfo.aoBrightnessXZNP = block.getMixedBrightnessForBlock(world, x - 1, y, z);
             lightingInfo.aoBrightnessXZPP = block.getMixedBrightnessForBlock(world, x + 1, y, z);
             lightingInfo.aoBrightnessYZNP = block.getMixedBrightnessForBlock(world, x, y - 1, z);
             lightingInfo.aoBrightnessYZPP = block.getMixedBrightnessForBlock(world, x, y + 1, z);
-            flag2 = world.getBlock(x + 1, y, z + 1).getCanBlockGrass();
-            flag3 = world.getBlock(x - 1, y, z + 1).getCanBlockGrass();
-            flag4 = world.getBlock(x, y + 1, z + 1).getCanBlockGrass();
-            flag5 = world.getBlock(x, y - 1, z + 1).getCanBlockGrass();
+            flag2 = world.getBlock(x + 1, y, z + 1)
+                .getCanBlockGrass();
+            flag3 = world.getBlock(x - 1, y, z + 1)
+                .getCanBlockGrass();
+            flag4 = world.getBlock(x, y + 1, z + 1)
+                .getCanBlockGrass();
+            flag5 = world.getBlock(x, y - 1, z + 1)
+                .getCanBlockGrass();
 
             if (!flag3 && !flag5) {
                 lightingInfo.aoLightValueScratchXYZNNP = lightingInfo.aoLightValueScratchXZNP;
                 lightingInfo.aoBrightnessXYZNNP = lightingInfo.aoBrightnessXZNP;
             } else {
-                lightingInfo.aoLightValueScratchXYZNNP =
-                        world.getBlock(x - 1, y - 1, z).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNNP = world.getBlock(x - 1, y - 1, z)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNNP = block.getMixedBrightnessForBlock(world, x - 1, y - 1, z);
             }
 
@@ -2075,8 +2095,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZNPP = lightingInfo.aoLightValueScratchXZNP;
                 lightingInfo.aoBrightnessXYZNPP = lightingInfo.aoBrightnessXZNP;
             } else {
-                lightingInfo.aoLightValueScratchXYZNPP =
-                        world.getBlock(x - 1, y + 1, z).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNPP = world.getBlock(x - 1, y + 1, z)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNPP = block.getMixedBrightnessForBlock(world, x - 1, y + 1, z);
             }
 
@@ -2084,8 +2104,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPNP = lightingInfo.aoLightValueScratchXZPP;
                 lightingInfo.aoBrightnessXYZPNP = lightingInfo.aoBrightnessXZPP;
             } else {
-                lightingInfo.aoLightValueScratchXYZPNP =
-                        world.getBlock(x + 1, y - 1, z).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPNP = world.getBlock(x + 1, y - 1, z)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPNP = block.getMixedBrightnessForBlock(world, x + 1, y - 1, z);
             }
 
@@ -2093,8 +2113,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPPP = lightingInfo.aoLightValueScratchXZPP;
                 lightingInfo.aoBrightnessXYZPPP = lightingInfo.aoBrightnessXZPP;
             } else {
-                lightingInfo.aoLightValueScratchXYZPPP =
-                        world.getBlock(x + 1, y + 1, z).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPPP = world.getBlock(x + 1, y + 1, z)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPPP = block.getMixedBrightnessForBlock(world, x + 1, y + 1, z);
             }
 
@@ -2104,98 +2124,100 @@ public class ClientUtils {
 
             i1 = l;
 
-            if (bounds.maxZ >= 1.0D || !world.getBlock(x, y, z + 1).isOpaqueCube()) {
+            if (bounds.maxZ >= 1.0D || !world.getBlock(x, y, z + 1)
+                .isOpaqueCube()) {
                 i1 = block.getMixedBrightnessForBlock(world, x, y, z + 1);
             }
 
-            f7 = world.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-            f8 = (lightingInfo.aoLightValueScratchXZNP
-                            + lightingInfo.aoLightValueScratchXYZNPP
-                            + f7
-                            + lightingInfo.aoLightValueScratchYZPP)
-                    / 4.0F;
-            f9 = (f7
-                            + lightingInfo.aoLightValueScratchYZPP
-                            + lightingInfo.aoLightValueScratchXZPP
-                            + lightingInfo.aoLightValueScratchXYZPPP)
-                    / 4.0F;
-            f10 = (lightingInfo.aoLightValueScratchYZNP
-                            + f7
-                            + lightingInfo.aoLightValueScratchXYZPNP
-                            + lightingInfo.aoLightValueScratchXZPP)
-                    / 4.0F;
-            f11 = (lightingInfo.aoLightValueScratchXYZNNP
-                            + lightingInfo.aoLightValueScratchXZNP
-                            + lightingInfo.aoLightValueScratchYZNP
-                            + f7)
-                    / 4.0F;
-            f3 = (float) ((double) f8 * bounds.maxY * (1.0D - bounds.minX)
-                    + (double) f9 * bounds.maxY * bounds.minX
-                    + (double) f10 * (1.0D - bounds.maxY) * bounds.minX
-                    + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.minX));
-            f4 = (float) ((double) f8 * bounds.minY * (1.0D - bounds.minX)
-                    + (double) f9 * bounds.minY * bounds.minX
-                    + (double) f10 * (1.0D - bounds.minY) * bounds.minX
-                    + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.minX));
-            f5 = (float) ((double) f8 * bounds.minY * (1.0D - bounds.maxX)
-                    + (double) f9 * bounds.minY * bounds.maxX
-                    + (double) f10 * (1.0D - bounds.minY) * bounds.maxX
-                    + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.maxX));
-            f6 = (float) ((double) f8 * bounds.maxY * (1.0D - bounds.maxX)
-                    + (double) f9 * bounds.maxY * bounds.maxX
-                    + (double) f10 * (1.0D - bounds.maxY) * bounds.maxX
-                    + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.maxX));
+            f7 = world.getBlock(x, y, z + 1)
+                .getAmbientOcclusionLightValue();
+            f8 = (lightingInfo.aoLightValueScratchXZNP + lightingInfo.aoLightValueScratchXYZNPP
+                + f7
+                + lightingInfo.aoLightValueScratchYZPP) / 4.0F;
+            f9 = (f7 + lightingInfo.aoLightValueScratchYZPP
+                + lightingInfo.aoLightValueScratchXZPP
+                + lightingInfo.aoLightValueScratchXYZPPP) / 4.0F;
+            f10 = (lightingInfo.aoLightValueScratchYZNP + f7
+                + lightingInfo.aoLightValueScratchXYZPNP
+                + lightingInfo.aoLightValueScratchXZPP) / 4.0F;
+            f11 = (lightingInfo.aoLightValueScratchXYZNNP + lightingInfo.aoLightValueScratchXZNP
+                + lightingInfo.aoLightValueScratchYZNP
+                + f7) / 4.0F;
+            f3 = (float) ((double) f8 * bounds.maxY * (1.0D - bounds.minX) + (double) f9 * bounds.maxY * bounds.minX
+                + (double) f10 * (1.0D - bounds.maxY) * bounds.minX
+                + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.minX));
+            f4 = (float) ((double) f8 * bounds.minY * (1.0D - bounds.minX) + (double) f9 * bounds.minY * bounds.minX
+                + (double) f10 * (1.0D - bounds.minY) * bounds.minX
+                + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.minX));
+            f5 = (float) ((double) f8 * bounds.minY * (1.0D - bounds.maxX) + (double) f9 * bounds.minY * bounds.maxX
+                + (double) f10 * (1.0D - bounds.minY) * bounds.maxX
+                + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.maxX));
+            f6 = (float) ((double) f8 * bounds.maxY * (1.0D - bounds.maxX) + (double) f9 * bounds.maxY * bounds.maxX
+                + (double) f10 * (1.0D - bounds.maxY) * bounds.maxX
+                + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.maxX));
             j1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXZNP, lightingInfo.aoBrightnessXYZNPP, lightingInfo.aoBrightnessYZPP, i1);
+                lightingInfo.aoBrightnessXZNP,
+                lightingInfo.aoBrightnessXYZNPP,
+                lightingInfo.aoBrightnessYZPP,
+                i1);
             k1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessYZPP, lightingInfo.aoBrightnessXZPP, lightingInfo.aoBrightnessXYZPPP, i1);
+                lightingInfo.aoBrightnessYZPP,
+                lightingInfo.aoBrightnessXZPP,
+                lightingInfo.aoBrightnessXYZPPP,
+                i1);
             l1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessYZNP, lightingInfo.aoBrightnessXYZPNP, lightingInfo.aoBrightnessXZPP, i1);
+                lightingInfo.aoBrightnessYZNP,
+                lightingInfo.aoBrightnessXYZPNP,
+                lightingInfo.aoBrightnessXZPP,
+                i1);
             i2 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYZNNP, lightingInfo.aoBrightnessXZNP, lightingInfo.aoBrightnessYZNP, i1);
+                lightingInfo.aoBrightnessXYZNNP,
+                lightingInfo.aoBrightnessXZNP,
+                lightingInfo.aoBrightnessYZNP,
+                i1);
             lightingInfo.brightnessTopLeft = lightingInfo.mixAoBrightness(
-                    j1,
-                    i2,
-                    l1,
-                    k1,
-                    bounds.maxY * (1.0D - bounds.minX),
-                    (1.0D - bounds.maxY) * (1.0D - bounds.minX),
-                    (1.0D - bounds.maxY) * bounds.minX,
-                    bounds.maxY * bounds.minX);
+                j1,
+                i2,
+                l1,
+                k1,
+                bounds.maxY * (1.0D - bounds.minX),
+                (1.0D - bounds.maxY) * (1.0D - bounds.minX),
+                (1.0D - bounds.maxY) * bounds.minX,
+                bounds.maxY * bounds.minX);
             lightingInfo.brightnessBottomLeft = lightingInfo.mixAoBrightness(
-                    j1,
-                    i2,
-                    l1,
-                    k1,
-                    bounds.minY * (1.0D - bounds.minX),
-                    (1.0D - bounds.minY) * (1.0D - bounds.minX),
-                    (1.0D - bounds.minY) * bounds.minX,
-                    bounds.minY * bounds.minX);
+                j1,
+                i2,
+                l1,
+                k1,
+                bounds.minY * (1.0D - bounds.minX),
+                (1.0D - bounds.minY) * (1.0D - bounds.minX),
+                (1.0D - bounds.minY) * bounds.minX,
+                bounds.minY * bounds.minX);
             lightingInfo.brightnessBottomRight = lightingInfo.mixAoBrightness(
-                    j1,
-                    i2,
-                    l1,
-                    k1,
-                    bounds.minY * (1.0D - bounds.maxX),
-                    (1.0D - bounds.minY) * (1.0D - bounds.maxX),
-                    (1.0D - bounds.minY) * bounds.maxX,
-                    bounds.minY * bounds.maxX);
+                j1,
+                i2,
+                l1,
+                k1,
+                bounds.minY * (1.0D - bounds.maxX),
+                (1.0D - bounds.minY) * (1.0D - bounds.maxX),
+                (1.0D - bounds.minY) * bounds.maxX,
+                bounds.minY * bounds.maxX);
             lightingInfo.brightnessTopRight = lightingInfo.mixAoBrightness(
-                    j1,
-                    i2,
-                    l1,
-                    k1,
-                    bounds.maxY * (1.0D - bounds.maxX),
-                    (1.0D - bounds.maxY) * (1.0D - bounds.maxX),
-                    (1.0D - bounds.maxY) * bounds.maxX,
-                    bounds.maxY * bounds.maxX);
+                j1,
+                i2,
+                l1,
+                k1,
+                bounds.maxY * (1.0D - bounds.maxX),
+                (1.0D - bounds.maxY) * (1.0D - bounds.maxX),
+                (1.0D - bounds.maxY) * bounds.maxX,
+                bounds.maxY * bounds.maxX);
 
-            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft =
-                    lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR * 0.8f;
-            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft =
-                    lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG * 0.8f;
-            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft =
-                    lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB * 0.8f;
+            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft = lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR
+                * 0.8f;
+            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft = lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG
+                * 0.8f;
+            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft = lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB
+                * 0.8f;
 
             lightingInfo.colorRedTopLeft *= f3;
             lightingInfo.colorGreenTopLeft *= f3;
@@ -2212,31 +2234,39 @@ public class ClientUtils {
         }
 
         if (side == 4)
-        //		if (lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x - 1, y, z, 4))
+        // if (lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x - 1, y, z, 4))
         {
             if (bounds.minX <= 0.0D) {
                 --x;
             }
 
-            lightingInfo.aoLightValueScratchXYNN = world.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXZNN = world.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXZNP = world.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXYNP = world.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXYNN = world.getBlock(x, y - 1, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXZNN = world.getBlock(x, y, z - 1)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXZNP = world.getBlock(x, y, z + 1)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXYNP = world.getBlock(x, y + 1, z)
+                .getAmbientOcclusionLightValue();
             lightingInfo.aoBrightnessXYNN = block.getMixedBrightnessForBlock(world, x, y - 1, z);
             lightingInfo.aoBrightnessXZNN = block.getMixedBrightnessForBlock(world, x, y, z - 1);
             lightingInfo.aoBrightnessXZNP = block.getMixedBrightnessForBlock(world, x, y, z + 1);
             lightingInfo.aoBrightnessXYNP = block.getMixedBrightnessForBlock(world, x, y + 1, z);
-            flag2 = world.getBlock(x - 1, y + 1, z).getCanBlockGrass();
-            flag3 = world.getBlock(x - 1, y - 1, z).getCanBlockGrass();
-            flag4 = world.getBlock(x - 1, y, z - 1).getCanBlockGrass();
-            flag5 = world.getBlock(x - 1, y, z + 1).getCanBlockGrass();
+            flag2 = world.getBlock(x - 1, y + 1, z)
+                .getCanBlockGrass();
+            flag3 = world.getBlock(x - 1, y - 1, z)
+                .getCanBlockGrass();
+            flag4 = world.getBlock(x - 1, y, z - 1)
+                .getCanBlockGrass();
+            flag5 = world.getBlock(x - 1, y, z + 1)
+                .getCanBlockGrass();
 
             if (!flag4 && !flag3) {
                 lightingInfo.aoLightValueScratchXYZNNN = lightingInfo.aoLightValueScratchXZNN;
                 lightingInfo.aoBrightnessXYZNNN = lightingInfo.aoBrightnessXZNN;
             } else {
-                lightingInfo.aoLightValueScratchXYZNNN =
-                        world.getBlock(x, y - 1, z - 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNNN = world.getBlock(x, y - 1, z - 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNNN = block.getMixedBrightnessForBlock(world, x, y - 1, z - 1);
             }
 
@@ -2244,8 +2274,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZNNP = lightingInfo.aoLightValueScratchXZNP;
                 lightingInfo.aoBrightnessXYZNNP = lightingInfo.aoBrightnessXZNP;
             } else {
-                lightingInfo.aoLightValueScratchXYZNNP =
-                        world.getBlock(x, y - 1, z + 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNNP = world.getBlock(x, y - 1, z + 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNNP = block.getMixedBrightnessForBlock(world, x, y - 1, z + 1);
             }
 
@@ -2253,8 +2283,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZNPN = lightingInfo.aoLightValueScratchXZNN;
                 lightingInfo.aoBrightnessXYZNPN = lightingInfo.aoBrightnessXZNN;
             } else {
-                lightingInfo.aoLightValueScratchXYZNPN =
-                        world.getBlock(x, y + 1, z - 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNPN = world.getBlock(x, y + 1, z - 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNPN = block.getMixedBrightnessForBlock(world, x, y + 1, z - 1);
             }
 
@@ -2262,8 +2292,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZNPP = lightingInfo.aoLightValueScratchXZNP;
                 lightingInfo.aoBrightnessXYZNPP = lightingInfo.aoBrightnessXZNP;
             } else {
-                lightingInfo.aoLightValueScratchXYZNPP =
-                        world.getBlock(x, y + 1, z + 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZNPP = world.getBlock(x, y + 1, z + 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZNPP = block.getMixedBrightnessForBlock(world, x, y + 1, z + 1);
             }
 
@@ -2273,98 +2303,100 @@ public class ClientUtils {
 
             i1 = l;
 
-            if (bounds.minX <= 0.0D || !world.getBlock(x - 1, y, z).isOpaqueCube()) {
+            if (bounds.minX <= 0.0D || !world.getBlock(x - 1, y, z)
+                .isOpaqueCube()) {
                 i1 = block.getMixedBrightnessForBlock(world, x - 1, y, z);
             }
 
-            f7 = world.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-            f8 = (lightingInfo.aoLightValueScratchXYNN
-                            + lightingInfo.aoLightValueScratchXYZNNP
-                            + f7
-                            + lightingInfo.aoLightValueScratchXZNP)
-                    / 4.0F;
-            f9 = (f7
-                            + lightingInfo.aoLightValueScratchXZNP
-                            + lightingInfo.aoLightValueScratchXYNP
-                            + lightingInfo.aoLightValueScratchXYZNPP)
-                    / 4.0F;
-            f10 = (lightingInfo.aoLightValueScratchXZNN
-                            + f7
-                            + lightingInfo.aoLightValueScratchXYZNPN
-                            + lightingInfo.aoLightValueScratchXYNP)
-                    / 4.0F;
-            f11 = (lightingInfo.aoLightValueScratchXYZNNN
-                            + lightingInfo.aoLightValueScratchXYNN
-                            + lightingInfo.aoLightValueScratchXZNN
-                            + f7)
-                    / 4.0F;
-            f3 = (float) ((double) f9 * bounds.maxY * bounds.maxZ
-                    + (double) f10 * bounds.maxY * (1.0D - bounds.maxZ)
-                    + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.maxZ)
-                    + (double) f8 * (1.0D - bounds.maxY) * bounds.maxZ);
-            f4 = (float) ((double) f9 * bounds.maxY * bounds.minZ
-                    + (double) f10 * bounds.maxY * (1.0D - bounds.minZ)
-                    + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.minZ)
-                    + (double) f8 * (1.0D - bounds.maxY) * bounds.minZ);
-            f5 = (float) ((double) f9 * bounds.minY * bounds.minZ
-                    + (double) f10 * bounds.minY * (1.0D - bounds.minZ)
-                    + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.minZ)
-                    + (double) f8 * (1.0D - bounds.minY) * bounds.minZ);
-            f6 = (float) ((double) f9 * bounds.minY * bounds.maxZ
-                    + (double) f10 * bounds.minY * (1.0D - bounds.maxZ)
-                    + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.maxZ)
-                    + (double) f8 * (1.0D - bounds.minY) * bounds.maxZ);
+            f7 = world.getBlock(x - 1, y, z)
+                .getAmbientOcclusionLightValue();
+            f8 = (lightingInfo.aoLightValueScratchXYNN + lightingInfo.aoLightValueScratchXYZNNP
+                + f7
+                + lightingInfo.aoLightValueScratchXZNP) / 4.0F;
+            f9 = (f7 + lightingInfo.aoLightValueScratchXZNP
+                + lightingInfo.aoLightValueScratchXYNP
+                + lightingInfo.aoLightValueScratchXYZNPP) / 4.0F;
+            f10 = (lightingInfo.aoLightValueScratchXZNN + f7
+                + lightingInfo.aoLightValueScratchXYZNPN
+                + lightingInfo.aoLightValueScratchXYNP) / 4.0F;
+            f11 = (lightingInfo.aoLightValueScratchXYZNNN + lightingInfo.aoLightValueScratchXYNN
+                + lightingInfo.aoLightValueScratchXZNN
+                + f7) / 4.0F;
+            f3 = (float) ((double) f9 * bounds.maxY * bounds.maxZ + (double) f10 * bounds.maxY * (1.0D - bounds.maxZ)
+                + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.maxZ)
+                + (double) f8 * (1.0D - bounds.maxY) * bounds.maxZ);
+            f4 = (float) ((double) f9 * bounds.maxY * bounds.minZ + (double) f10 * bounds.maxY * (1.0D - bounds.minZ)
+                + (double) f11 * (1.0D - bounds.maxY) * (1.0D - bounds.minZ)
+                + (double) f8 * (1.0D - bounds.maxY) * bounds.minZ);
+            f5 = (float) ((double) f9 * bounds.minY * bounds.minZ + (double) f10 * bounds.minY * (1.0D - bounds.minZ)
+                + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.minZ)
+                + (double) f8 * (1.0D - bounds.minY) * bounds.minZ);
+            f6 = (float) ((double) f9 * bounds.minY * bounds.maxZ + (double) f10 * bounds.minY * (1.0D - bounds.maxZ)
+                + (double) f11 * (1.0D - bounds.minY) * (1.0D - bounds.maxZ)
+                + (double) f8 * (1.0D - bounds.minY) * bounds.maxZ);
             j1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYNN, lightingInfo.aoBrightnessXYZNNP, lightingInfo.aoBrightnessXZNP, i1);
+                lightingInfo.aoBrightnessXYNN,
+                lightingInfo.aoBrightnessXYZNNP,
+                lightingInfo.aoBrightnessXZNP,
+                i1);
             k1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXZNP, lightingInfo.aoBrightnessXYNP, lightingInfo.aoBrightnessXYZNPP, i1);
+                lightingInfo.aoBrightnessXZNP,
+                lightingInfo.aoBrightnessXYNP,
+                lightingInfo.aoBrightnessXYZNPP,
+                i1);
             l1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXZNN, lightingInfo.aoBrightnessXYZNPN, lightingInfo.aoBrightnessXYNP, i1);
+                lightingInfo.aoBrightnessXZNN,
+                lightingInfo.aoBrightnessXYZNPN,
+                lightingInfo.aoBrightnessXYNP,
+                i1);
             i2 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYZNNN, lightingInfo.aoBrightnessXYNN, lightingInfo.aoBrightnessXZNN, i1);
+                lightingInfo.aoBrightnessXYZNNN,
+                lightingInfo.aoBrightnessXYNN,
+                lightingInfo.aoBrightnessXZNN,
+                i1);
             lightingInfo.brightnessTopLeft = lightingInfo.mixAoBrightness(
-                    k1,
-                    l1,
-                    i2,
-                    j1,
-                    bounds.maxY * bounds.maxZ,
-                    bounds.maxY * (1.0D - bounds.maxZ),
-                    (1.0D - bounds.maxY) * (1.0D - bounds.maxZ),
-                    (1.0D - bounds.maxY) * bounds.maxZ);
+                k1,
+                l1,
+                i2,
+                j1,
+                bounds.maxY * bounds.maxZ,
+                bounds.maxY * (1.0D - bounds.maxZ),
+                (1.0D - bounds.maxY) * (1.0D - bounds.maxZ),
+                (1.0D - bounds.maxY) * bounds.maxZ);
             lightingInfo.brightnessBottomLeft = lightingInfo.mixAoBrightness(
-                    k1,
-                    l1,
-                    i2,
-                    j1,
-                    bounds.maxY * bounds.minZ,
-                    bounds.maxY * (1.0D - bounds.minZ),
-                    (1.0D - bounds.maxY) * (1.0D - bounds.minZ),
-                    (1.0D - bounds.maxY) * bounds.minZ);
+                k1,
+                l1,
+                i2,
+                j1,
+                bounds.maxY * bounds.minZ,
+                bounds.maxY * (1.0D - bounds.minZ),
+                (1.0D - bounds.maxY) * (1.0D - bounds.minZ),
+                (1.0D - bounds.maxY) * bounds.minZ);
             lightingInfo.brightnessBottomRight = lightingInfo.mixAoBrightness(
-                    k1,
-                    l1,
-                    i2,
-                    j1,
-                    bounds.minY * bounds.minZ,
-                    bounds.minY * (1.0D - bounds.minZ),
-                    (1.0D - bounds.minY) * (1.0D - bounds.minZ),
-                    (1.0D - bounds.minY) * bounds.minZ);
+                k1,
+                l1,
+                i2,
+                j1,
+                bounds.minY * bounds.minZ,
+                bounds.minY * (1.0D - bounds.minZ),
+                (1.0D - bounds.minY) * (1.0D - bounds.minZ),
+                (1.0D - bounds.minY) * bounds.minZ);
             lightingInfo.brightnessTopRight = lightingInfo.mixAoBrightness(
-                    k1,
-                    l1,
-                    i2,
-                    j1,
-                    bounds.minY * bounds.maxZ,
-                    bounds.minY * (1.0D - bounds.maxZ),
-                    (1.0D - bounds.minY) * (1.0D - bounds.maxZ),
-                    (1.0D - bounds.minY) * bounds.maxZ);
+                k1,
+                l1,
+                i2,
+                j1,
+                bounds.minY * bounds.maxZ,
+                bounds.minY * (1.0D - bounds.maxZ),
+                (1.0D - bounds.minY) * (1.0D - bounds.maxZ),
+                (1.0D - bounds.minY) * bounds.maxZ);
 
-            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft =
-                    lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR * 0.6f;
-            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft =
-                    lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG * 0.6f;
-            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft =
-                    lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB * 0.6f;
+            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft = lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR
+                * 0.6f;
+            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft = lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG
+                * 0.6f;
+            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft = lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB
+                * 0.6f;
 
             lightingInfo.colorRedTopLeft *= f3;
             lightingInfo.colorGreenTopLeft *= f3;
@@ -2381,31 +2413,39 @@ public class ClientUtils {
         }
 
         if (side == 5)
-        //		if (lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x + 1, y, z, 5))
+        // if (lightingInfo.renderAllFaces || block.shouldSideBeRendered(world, x + 1, y, z, 5))
         {
             if (bounds.maxX >= 1.0D) {
                 ++x;
             }
 
-            lightingInfo.aoLightValueScratchXYPN = world.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXZPN = world.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXZPP = world.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-            lightingInfo.aoLightValueScratchXYPP = world.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXYPN = world.getBlock(x, y - 1, z)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXZPN = world.getBlock(x, y, z - 1)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXZPP = world.getBlock(x, y, z + 1)
+                .getAmbientOcclusionLightValue();
+            lightingInfo.aoLightValueScratchXYPP = world.getBlock(x, y + 1, z)
+                .getAmbientOcclusionLightValue();
             lightingInfo.aoBrightnessXYPN = block.getMixedBrightnessForBlock(world, x, y - 1, z);
             lightingInfo.aoBrightnessXZPN = block.getMixedBrightnessForBlock(world, x, y, z - 1);
             lightingInfo.aoBrightnessXZPP = block.getMixedBrightnessForBlock(world, x, y, z + 1);
             lightingInfo.aoBrightnessXYPP = block.getMixedBrightnessForBlock(world, x, y + 1, z);
-            flag2 = world.getBlock(x + 1, y + 1, z).getCanBlockGrass();
-            flag3 = world.getBlock(x + 1, y - 1, z).getCanBlockGrass();
-            flag4 = world.getBlock(x + 1, y, z + 1).getCanBlockGrass();
-            flag5 = world.getBlock(x + 1, y, z - 1).getCanBlockGrass();
+            flag2 = world.getBlock(x + 1, y + 1, z)
+                .getCanBlockGrass();
+            flag3 = world.getBlock(x + 1, y - 1, z)
+                .getCanBlockGrass();
+            flag4 = world.getBlock(x + 1, y, z + 1)
+                .getCanBlockGrass();
+            flag5 = world.getBlock(x + 1, y, z - 1)
+                .getCanBlockGrass();
 
             if (!flag3 && !flag5) {
                 lightingInfo.aoLightValueScratchXYZPNN = lightingInfo.aoLightValueScratchXZPN;
                 lightingInfo.aoBrightnessXYZPNN = lightingInfo.aoBrightnessXZPN;
             } else {
-                lightingInfo.aoLightValueScratchXYZPNN =
-                        world.getBlock(x, y - 1, z - 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPNN = world.getBlock(x, y - 1, z - 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPNN = block.getMixedBrightnessForBlock(world, x, y - 1, z - 1);
             }
 
@@ -2413,8 +2453,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPNP = lightingInfo.aoLightValueScratchXZPP;
                 lightingInfo.aoBrightnessXYZPNP = lightingInfo.aoBrightnessXZPP;
             } else {
-                lightingInfo.aoLightValueScratchXYZPNP =
-                        world.getBlock(x, y - 1, z + 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPNP = world.getBlock(x, y - 1, z + 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPNP = block.getMixedBrightnessForBlock(world, x, y - 1, z + 1);
             }
 
@@ -2422,8 +2462,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPPN = lightingInfo.aoLightValueScratchXZPN;
                 lightingInfo.aoBrightnessXYZPPN = lightingInfo.aoBrightnessXZPN;
             } else {
-                lightingInfo.aoLightValueScratchXYZPPN =
-                        world.getBlock(x, y + 1, z - 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPPN = world.getBlock(x, y + 1, z - 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPPN = block.getMixedBrightnessForBlock(world, x, y + 1, z - 1);
             }
 
@@ -2431,8 +2471,8 @@ public class ClientUtils {
                 lightingInfo.aoLightValueScratchXYZPPP = lightingInfo.aoLightValueScratchXZPP;
                 lightingInfo.aoBrightnessXYZPPP = lightingInfo.aoBrightnessXZPP;
             } else {
-                lightingInfo.aoLightValueScratchXYZPPP =
-                        world.getBlock(x, y + 1, z + 1).getAmbientOcclusionLightValue();
+                lightingInfo.aoLightValueScratchXYZPPP = world.getBlock(x, y + 1, z + 1)
+                    .getAmbientOcclusionLightValue();
                 lightingInfo.aoBrightnessXYZPPP = block.getMixedBrightnessForBlock(world, x, y + 1, z + 1);
             }
 
@@ -2442,98 +2482,104 @@ public class ClientUtils {
 
             i1 = l;
 
-            if (bounds.maxX >= 1.0D || !world.getBlock(x + 1, y, z).isOpaqueCube()) {
+            if (bounds.maxX >= 1.0D || !world.getBlock(x + 1, y, z)
+                .isOpaqueCube()) {
                 i1 = block.getMixedBrightnessForBlock(world, x + 1, y, z);
             }
 
-            f7 = world.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-            f8 = (lightingInfo.aoLightValueScratchXYPN
-                            + lightingInfo.aoLightValueScratchXYZPNP
-                            + f7
-                            + lightingInfo.aoLightValueScratchXZPP)
-                    / 4.0F;
-            f9 = (lightingInfo.aoLightValueScratchXYZPNN
-                            + lightingInfo.aoLightValueScratchXYPN
-                            + lightingInfo.aoLightValueScratchXZPN
-                            + f7)
-                    / 4.0F;
-            f10 = (lightingInfo.aoLightValueScratchXZPN
-                            + f7
-                            + lightingInfo.aoLightValueScratchXYZPPN
-                            + lightingInfo.aoLightValueScratchXYPP)
-                    / 4.0F;
-            f11 = (f7
-                            + lightingInfo.aoLightValueScratchXZPP
-                            + lightingInfo.aoLightValueScratchXYPP
-                            + lightingInfo.aoLightValueScratchXYZPPP)
-                    / 4.0F;
+            f7 = world.getBlock(x + 1, y, z)
+                .getAmbientOcclusionLightValue();
+            f8 = (lightingInfo.aoLightValueScratchXYPN + lightingInfo.aoLightValueScratchXYZPNP
+                + f7
+                + lightingInfo.aoLightValueScratchXZPP) / 4.0F;
+            f9 = (lightingInfo.aoLightValueScratchXYZPNN + lightingInfo.aoLightValueScratchXYPN
+                + lightingInfo.aoLightValueScratchXZPN
+                + f7) / 4.0F;
+            f10 = (lightingInfo.aoLightValueScratchXZPN + f7
+                + lightingInfo.aoLightValueScratchXYZPPN
+                + lightingInfo.aoLightValueScratchXYPP) / 4.0F;
+            f11 = (f7 + lightingInfo.aoLightValueScratchXZPP
+                + lightingInfo.aoLightValueScratchXYPP
+                + lightingInfo.aoLightValueScratchXYZPPP) / 4.0F;
             f3 = (float) ((double) f8 * (1.0D - bounds.minY) * bounds.maxZ
-                    + (double) f9 * (1.0D - bounds.minY) * (1.0D - bounds.maxZ)
-                    + (double) f10 * bounds.minY * (1.0D - bounds.maxZ)
-                    + (double) f11 * bounds.minY * bounds.maxZ);
+                + (double) f9 * (1.0D - bounds.minY) * (1.0D - bounds.maxZ)
+                + (double) f10 * bounds.minY * (1.0D - bounds.maxZ)
+                + (double) f11 * bounds.minY * bounds.maxZ);
             f4 = (float) ((double) f8 * (1.0D - bounds.minY) * bounds.minZ
-                    + (double) f9 * (1.0D - bounds.minY) * (1.0D - bounds.minZ)
-                    + (double) f10 * bounds.minY * (1.0D - bounds.minZ)
-                    + (double) f11 * bounds.minY * bounds.minZ);
+                + (double) f9 * (1.0D - bounds.minY) * (1.0D - bounds.minZ)
+                + (double) f10 * bounds.minY * (1.0D - bounds.minZ)
+                + (double) f11 * bounds.minY * bounds.minZ);
             f5 = (float) ((double) f8 * (1.0D - bounds.maxY) * bounds.minZ
-                    + (double) f9 * (1.0D - bounds.maxY) * (1.0D - bounds.minZ)
-                    + (double) f10 * bounds.maxY * (1.0D - bounds.minZ)
-                    + (double) f11 * bounds.maxY * bounds.minZ);
+                + (double) f9 * (1.0D - bounds.maxY) * (1.0D - bounds.minZ)
+                + (double) f10 * bounds.maxY * (1.0D - bounds.minZ)
+                + (double) f11 * bounds.maxY * bounds.minZ);
             f6 = (float) ((double) f8 * (1.0D - bounds.maxY) * bounds.maxZ
-                    + (double) f9 * (1.0D - bounds.maxY) * (1.0D - bounds.maxZ)
-                    + (double) f10 * bounds.maxY * (1.0D - bounds.maxZ)
-                    + (double) f11 * bounds.maxY * bounds.maxZ);
+                + (double) f9 * (1.0D - bounds.maxY) * (1.0D - bounds.maxZ)
+                + (double) f10 * bounds.maxY * (1.0D - bounds.maxZ)
+                + (double) f11 * bounds.maxY * bounds.maxZ);
             j1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYPN, lightingInfo.aoBrightnessXYZPNP, lightingInfo.aoBrightnessXZPP, i1);
+                lightingInfo.aoBrightnessXYPN,
+                lightingInfo.aoBrightnessXYZPNP,
+                lightingInfo.aoBrightnessXZPP,
+                i1);
             k1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXZPP, lightingInfo.aoBrightnessXYPP, lightingInfo.aoBrightnessXYZPPP, i1);
+                lightingInfo.aoBrightnessXZPP,
+                lightingInfo.aoBrightnessXYPP,
+                lightingInfo.aoBrightnessXYZPPP,
+                i1);
             l1 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXZPN, lightingInfo.aoBrightnessXYZPPN, lightingInfo.aoBrightnessXYPP, i1);
+                lightingInfo.aoBrightnessXZPN,
+                lightingInfo.aoBrightnessXYZPPN,
+                lightingInfo.aoBrightnessXYPP,
+                i1);
             i2 = lightingInfo.getAoBrightness(
-                    lightingInfo.aoBrightnessXYZPNN, lightingInfo.aoBrightnessXYPN, lightingInfo.aoBrightnessXZPN, i1);
+                lightingInfo.aoBrightnessXYZPNN,
+                lightingInfo.aoBrightnessXYPN,
+                lightingInfo.aoBrightnessXZPN,
+                i1);
             lightingInfo.brightnessTopLeft = lightingInfo.mixAoBrightness(
-                    j1,
-                    i2,
-                    l1,
-                    k1,
-                    (1.0D - bounds.minY) * bounds.maxZ,
-                    (1.0D - bounds.minY) * (1.0D - bounds.maxZ),
-                    bounds.minY * (1.0D - bounds.maxZ),
-                    bounds.minY * bounds.maxZ);
+                j1,
+                i2,
+                l1,
+                k1,
+                (1.0D - bounds.minY) * bounds.maxZ,
+                (1.0D - bounds.minY) * (1.0D - bounds.maxZ),
+                bounds.minY * (1.0D - bounds.maxZ),
+                bounds.minY * bounds.maxZ);
             lightingInfo.brightnessBottomLeft = lightingInfo.mixAoBrightness(
-                    j1,
-                    i2,
-                    l1,
-                    k1,
-                    (1.0D - bounds.minY) * bounds.minZ,
-                    (1.0D - bounds.minY) * (1.0D - bounds.minZ),
-                    bounds.minY * (1.0D - bounds.minZ),
-                    bounds.minY * bounds.minZ);
+                j1,
+                i2,
+                l1,
+                k1,
+                (1.0D - bounds.minY) * bounds.minZ,
+                (1.0D - bounds.minY) * (1.0D - bounds.minZ),
+                bounds.minY * (1.0D - bounds.minZ),
+                bounds.minY * bounds.minZ);
             lightingInfo.brightnessBottomRight = lightingInfo.mixAoBrightness(
-                    j1,
-                    i2,
-                    l1,
-                    k1,
-                    (1.0D - bounds.maxY) * bounds.minZ,
-                    (1.0D - bounds.maxY) * (1.0D - bounds.minZ),
-                    bounds.maxY * (1.0D - bounds.minZ),
-                    bounds.maxY * bounds.minZ);
+                j1,
+                i2,
+                l1,
+                k1,
+                (1.0D - bounds.maxY) * bounds.minZ,
+                (1.0D - bounds.maxY) * (1.0D - bounds.minZ),
+                bounds.maxY * (1.0D - bounds.minZ),
+                bounds.maxY * bounds.minZ);
             lightingInfo.brightnessTopRight = lightingInfo.mixAoBrightness(
-                    j1,
-                    i2,
-                    l1,
-                    k1,
-                    (1.0D - bounds.maxY) * bounds.maxZ,
-                    (1.0D - bounds.maxY) * (1.0D - bounds.maxZ),
-                    bounds.maxY * (1.0D - bounds.maxZ),
-                    bounds.maxY * bounds.maxZ);
+                j1,
+                i2,
+                l1,
+                k1,
+                (1.0D - bounds.maxY) * bounds.maxZ,
+                (1.0D - bounds.maxY) * (1.0D - bounds.maxZ),
+                bounds.maxY * (1.0D - bounds.maxZ),
+                bounds.maxY * bounds.maxZ);
 
-            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft =
-                    lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR * 0.6f;
-            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft =
-                    lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG * 0.6f;
-            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft =
-                    lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB * 0.6f;
+            lightingInfo.colorRedTopLeft = lightingInfo.colorRedBottomLeft = lightingInfo.colorRedBottomRight = lightingInfo.colorRedTopRight = colR
+                * 0.6f;
+            lightingInfo.colorGreenTopLeft = lightingInfo.colorGreenBottomLeft = lightingInfo.colorGreenBottomRight = lightingInfo.colorGreenTopRight = colG
+                * 0.6f;
+            lightingInfo.colorBlueTopLeft = lightingInfo.colorBlueBottomLeft = lightingInfo.colorBlueBottomRight = lightingInfo.colorBlueTopRight = colB
+                * 0.6f;
 
             lightingInfo.colorRedTopLeft *= f3;
             lightingInfo.colorGreenTopLeft *= f3;
@@ -2553,47 +2599,47 @@ public class ClientUtils {
 
     public static boolean drawWorldBlock(IBlockAccess world, Block block, int x, int y, int z, int meta) {
         return drawWorldBlock(
-                world,
-                block,
-                x,
-                y,
-                z,
-                meta,
-                AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 1, 1).getOffsetBoundingBox(x, y, z));
+            world,
+            block,
+            x,
+            y,
+            z,
+            meta,
+            AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 1, 1)
+                .getOffsetBoundingBox(x, y, z));
     }
 
-    public static boolean drawWorldBlock(
-            IBlockAccess world, Block block, int x, int y, int z, int meta, AxisAlignedBB aabb) {
+    public static boolean drawWorldBlock(IBlockAccess world, Block block, int x, int y, int z, int meta,
+        AxisAlignedBB aabb) {
         IIcon iBot = block.getIcon(0, meta);
         IIcon iTop = block.getIcon(1, meta);
         IIcon iNorth = block.getIcon(2, meta);
         IIcon iSouth = block.getIcon(3, meta);
         IIcon iWest = block.getIcon(4, meta);
         IIcon iEast = block.getIcon(5, meta);
-        double[][] uv = {
-            {iBot.getMinU(), iBot.getMaxU(), iBot.getMinV(), iBot.getMaxV()},
-            {iTop.getMinU(), iTop.getMaxU(), iTop.getMinV(), iTop.getMaxV()},
-            {iNorth.getMinU(), iNorth.getMaxU(), iNorth.getMinV(), iNorth.getMaxV()},
-            {iSouth.getMinU(), iSouth.getMaxU(), iSouth.getMinV(), iSouth.getMaxV()},
-            {iWest.getMinU(), iWest.getMaxU(), iWest.getMinV(), iWest.getMaxV()},
-            {iEast.getMinU(), iEast.getMaxU(), iEast.getMinV(), iEast.getMaxV()}
-        };
+        double[][] uv = { { iBot.getMinU(), iBot.getMaxU(), iBot.getMinV(), iBot.getMaxV() },
+            { iTop.getMinU(), iTop.getMaxU(), iTop.getMinV(), iTop.getMaxV() },
+            { iNorth.getMinU(), iNorth.getMaxU(), iNorth.getMinV(), iNorth.getMaxV() },
+            { iSouth.getMinU(), iSouth.getMaxU(), iSouth.getMinV(), iSouth.getMaxV() },
+            { iWest.getMinU(), iWest.getMaxU(), iWest.getMinV(), iWest.getMaxV() },
+            { iEast.getMinU(), iEast.getMaxU(), iEast.getMinV(), iEast.getMaxV() } };
         return drawWorldBlock(world, block, x, y, z, uv, aabb);
     }
 
     public static boolean drawWorldBlock(IBlockAccess world, Block block, int x, int y, int z, double[][] uv) {
         return drawWorldBlock(
-                world,
-                block,
-                x,
-                y,
-                z,
-                uv,
-                AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 1, 1).getOffsetBoundingBox(x, y, z));
+            world,
+            block,
+            x,
+            y,
+            z,
+            uv,
+            AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 1, 1)
+                .getOffsetBoundingBox(x, y, z));
     }
 
-    public static boolean drawWorldBlock(
-            IBlockAccess world, Block block, int x, int y, int z, double[][] uv, AxisAlignedBB bounds) {
+    public static boolean drawWorldBlock(IBlockAccess world, Block block, int x, int y, int z, double[][] uv,
+        AxisAlignedBB bounds) {
         Tessellator tes = tes();
         boolean flag = false;
         BlockLightingInfo info;
@@ -2706,25 +2752,24 @@ public class ClientUtils {
     /**
      * @param vs 000,001,100,101, 010,011,110,111
      */
-    public static boolean drawWorldSubBlock(
-            RenderBlocks renderer, IBlockAccess world, Block block, int x, int y, int z, Vec3[] vs) {
+    public static boolean drawWorldSubBlock(RenderBlocks renderer, IBlockAccess world, Block block, int x, int y, int z,
+        Vec3[] vs) {
         Tessellator tes = tes();
         boolean flag = false;
         AxisAlignedBB bounds = AxisAlignedBB.getBoundingBox(
-                Math.min(Math.min(vs[0].xCoord, vs[1].xCoord), Math.min(vs[4].xCoord, vs[5].xCoord)),
-                Math.min(Math.min(vs[0].yCoord, vs[1].yCoord), Math.min(vs[2].yCoord, vs[3].yCoord)),
-                Math.min(Math.min(vs[0].zCoord, vs[2].zCoord), Math.min(vs[4].zCoord, vs[6].zCoord)),
-                Math.min(Math.min(vs[2].xCoord, vs[3].xCoord), Math.min(vs[6].xCoord, vs[7].xCoord)),
-                Math.min(Math.min(vs[4].yCoord, vs[5].yCoord), Math.min(vs[6].yCoord, vs[7].yCoord)),
-                Math.min(Math.min(vs[1].zCoord, vs[3].zCoord), Math.min(vs[5].zCoord, vs[7].zCoord)));
+            Math.min(Math.min(vs[0].xCoord, vs[1].xCoord), Math.min(vs[4].xCoord, vs[5].xCoord)),
+            Math.min(Math.min(vs[0].yCoord, vs[1].yCoord), Math.min(vs[2].yCoord, vs[3].yCoord)),
+            Math.min(Math.min(vs[0].zCoord, vs[2].zCoord), Math.min(vs[4].zCoord, vs[6].zCoord)),
+            Math.min(Math.min(vs[2].xCoord, vs[3].xCoord), Math.min(vs[6].xCoord, vs[7].xCoord)),
+            Math.min(Math.min(vs[4].yCoord, vs[5].yCoord), Math.min(vs[6].yCoord, vs[7].yCoord)),
+            Math.min(Math.min(vs[1].zCoord, vs[3].zCoord), Math.min(vs[5].zCoord, vs[7].zCoord)));
 
         BlockLightingInfo info;
         IIcon icon;
         // SIDE 0
         if (block.shouldSideBeRendered(world, x, y, z, 0)) {
-            icon = renderer.hasOverrideBlockTexture()
-                    ? renderer.overrideBlockTexture
-                    : block.getIcon(world, x, y, z, 0);
+            icon = renderer.hasOverrideBlockTexture() ? renderer.overrideBlockTexture
+                : block.getIcon(world, x, y, z, 0);
             info = calculateBlockLighting(0, world, block, x, y, z, 1, 1, 1, bounds);
 
             double d3 = icon.getInterpolatedU(Math.min(16, Math.max(0, vs[0].xCoord * 16)));
@@ -2793,9 +2838,8 @@ public class ClientUtils {
         }
         // SIDE 1
         if (block.shouldSideBeRendered(world, x, y, z, 1)) {
-            icon = renderer.hasOverrideBlockTexture()
-                    ? renderer.overrideBlockTexture
-                    : block.getIcon(world, x, y, z, 1);
+            icon = renderer.hasOverrideBlockTexture() ? renderer.overrideBlockTexture
+                : block.getIcon(world, x, y, z, 1);
             info = calculateBlockLighting(1, world, block, x, y, z, 1, 1, 1, bounds);
             tes.setBrightness(983055);
 
@@ -2865,9 +2909,8 @@ public class ClientUtils {
         }
         // SIDE 2
         if (block.shouldSideBeRendered(world, x, y, z, 2)) {
-            icon = renderer.hasOverrideBlockTexture()
-                    ? renderer.overrideBlockTexture
-                    : block.getIcon(world, x, y, z, 2);
+            icon = renderer.hasOverrideBlockTexture() ? renderer.overrideBlockTexture
+                : block.getIcon(world, x, y, z, 2);
             info = calculateBlockLighting(2, world, block, x, y, z, 1, 1, 1, bounds);
             tes.setBrightness(983055);
 
@@ -2938,9 +2981,8 @@ public class ClientUtils {
         }
         // SIDE 3
         if (block.shouldSideBeRendered(world, x, y, z, 3)) {
-            icon = renderer.hasOverrideBlockTexture()
-                    ? renderer.overrideBlockTexture
-                    : block.getIcon(world, x, y, z, 3);
+            icon = renderer.hasOverrideBlockTexture() ? renderer.overrideBlockTexture
+                : block.getIcon(world, x, y, z, 3);
             info = calculateBlockLighting(3, world, block, x, y, z, 1, 1, 1, bounds);
             tes.setBrightness(983055);
 
@@ -3010,9 +3052,8 @@ public class ClientUtils {
         }
         // SIDE 4
         if (block.shouldSideBeRendered(world, x, y, z, 4)) {
-            icon = renderer.hasOverrideBlockTexture()
-                    ? renderer.overrideBlockTexture
-                    : block.getIcon(world, x, y, z, 4);
+            icon = renderer.hasOverrideBlockTexture() ? renderer.overrideBlockTexture
+                : block.getIcon(world, x, y, z, 4);
             info = calculateBlockLighting(4, world, block, x, y, z, 1, 1, 1, bounds);
             tes.setBrightness(983055);
 
@@ -3082,9 +3123,8 @@ public class ClientUtils {
         }
         // SIDE 5
         if (block.shouldSideBeRendered(world, x, y, z, 5)) {
-            icon = renderer.hasOverrideBlockTexture()
-                    ? renderer.overrideBlockTexture
-                    : block.getIcon(world, x, y, z, 5);
+            icon = renderer.hasOverrideBlockTexture() ? renderer.overrideBlockTexture
+                : block.getIcon(world, x, y, z, 5);
             info = calculateBlockLighting(5, world, block, x, y, z, 1, 1, 1, bounds);
             tes.setBrightness(983055);
 

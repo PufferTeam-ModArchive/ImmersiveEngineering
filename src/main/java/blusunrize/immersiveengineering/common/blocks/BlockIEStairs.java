@@ -1,7 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.util.AxisAlignedBB;
@@ -9,7 +7,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import cpw.mods.fml.common.registry.GameRegistry;
+
 public class BlockIEStairs extends BlockStairs {
+
     public boolean hasFlavour = false;
     public boolean isFlammable = false;
     public String name;

@@ -1,17 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.crafting.MetalPressRecipe;
-import blusunrize.immersiveengineering.client.render.BlockRenderMetalMultiblocks;
-import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICustomBoundingboxes;
-import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -34,7 +25,19 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidContainerItem;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.api.crafting.MetalPressRecipe;
+import blusunrize.immersiveengineering.client.render.BlockRenderMetalMultiblocks;
+import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICustomBoundingboxes;
+import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundingboxes {
+
     public static final int META_lightningRod = 0;
     public static final int META_dieselGenerator = 1;
     public static final int META_squeezer = 2;
@@ -52,24 +55,24 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
 
     public BlockMetalMultiblocks() {
         super(
-                "metalMultiblock",
-                Material.iron,
-                4,
-                ItemBlockIEBase.class,
-                "lightningRod",
-                "dieselGenerator",
-                "industrialSqueezer",
-                "fermenter",
-                "refinery",
-                "crusher",
-                "bucketWheel",
-                "excavator",
-                "arcFurnace",
-                "tank",
-                "silo",
-                "assembler",
-                "bottlingMachine",
-                "metalPress");
+            "metalMultiblock",
+            Material.iron,
+            4,
+            ItemBlockIEBase.class,
+            "lightningRod",
+            "dieselGenerator",
+            "industrialSqueezer",
+            "fermenter",
+            "refinery",
+            "crusher",
+            "bucketWheel",
+            "excavator",
+            "arcFurnace",
+            "tank",
+            "silo",
+            "assembler",
+            "bottlingMachine",
+            "metalPress");
         setHardness(3.0F);
         setResistance(15.0F);
     }
@@ -106,15 +109,15 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
         icons[3][2] = iconRegister.registerIcon("immersiveengineering:metal_multiblockFermenter0");
         icons[3][3] = iconRegister.registerIcon("immersiveengineering:metal_multiblockFermenter1");
         // all others
-        icons[META_dieselGenerator][0] =
-                iconRegister.registerIcon("immersiveengineering:metal_multiblock_dieselGenerator");
+        icons[META_dieselGenerator][0] = iconRegister
+            .registerIcon("immersiveengineering:metal_multiblock_dieselGenerator");
         icons[META_refinery][0] = iconRegister.registerIcon("immersiveengineering:metal_multiblock_refinery");
         icons[META_crusher][0] = iconRegister.registerIcon("immersiveengineering:metal_multiblock_crusher");
         icons[META_excavator][0] = iconRegister.registerIcon("immersiveengineering:metal_multiblock_excavator");
         icons[META_arcFurnace][0] = iconRegister.registerIcon("immersiveengineering:metal_multiblock_arcFurnace");
         icons[META_assembler][0] = iconRegister.registerIcon("immersiveengineering:metal_multiblock_assembler");
-        icons[META_bottlingMachine][0] =
-                iconRegister.registerIcon("immersiveengineering:metal_multiblock_bottlingMachine");
+        icons[META_bottlingMachine][0] = iconRegister
+            .registerIcon("immersiveengineering:metal_multiblock_bottlingMachine");
         icons[META_metalPress][0] = iconRegister.registerIcon("immersiveengineering:metal_multiblock_metalPress");
         for (int i = 0; i < 4; i++) {
             icons[6][i] = iconRegister.registerIcon("immersiveengineering:storage_Steel");
@@ -129,20 +132,20 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
         TileEntity te = world.getTileEntity(x, y, z);
         if (world.getBlockMetadata(x, y, z) == META_squeezer) {
             if (te instanceof TileEntitySqueezer && ((TileEntitySqueezer) te).formed)
-                return icons[META_squeezer][
-                        side == 0 || side == 1 ? 1 : ((TileEntitySqueezer) te).facing == side ? 2 : 3];
+                return icons[META_squeezer][side == 0 || side == 1 ? 1
+                    : ((TileEntitySqueezer) te).facing == side ? 2 : 3];
             return icons[META_squeezer][0];
         }
         if (world.getBlockMetadata(x, y, z) == META_fermenter) {
             if (te instanceof TileEntityFermenter && ((TileEntityFermenter) te).formed)
-                return icons[META_fermenter][
-                        side == 0 || side == 1 ? 1 : ((TileEntityFermenter) te).facing == side ? 2 : 3];
+                return icons[META_fermenter][side == 0 || side == 1 ? 1
+                    : ((TileEntityFermenter) te).facing == side ? 2 : 3];
             return icons[META_fermenter][0];
         }
         if (world.getBlockMetadata(x, y, z) == META_refinery) {
             if (te instanceof TileEntityRefinery && ((TileEntityRefinery) te).formed)
-                return icons[META_refinery][
-                        side == 0 || side == 1 ? 1 : ((TileEntityRefinery) te).facing == side ? 2 : 3];
+                return icons[META_refinery][side == 0 || side == 1 ? 1
+                    : ((TileEntityRefinery) te).facing == side ? 2 : 3];
             return icons[META_refinery][0];
         }
         return super.getIcon(world, x, y, z, side);
@@ -166,12 +169,17 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
     @Override
     public void breakBlock(World world, int x, int y, int z, Block par5, int par6) {
         TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity instanceof TileEntityMultiblockPart
-                && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+        if (tileEntity instanceof TileEntityMultiblockPart && world.getGameRules()
+            .getGameRuleBooleanValue("doTileDrops")) {
             TileEntityMultiblockPart tile = (TileEntityMultiblockPart) tileEntity;
-            if (!tile.formed && tile.pos == -1 && tile.getOriginalBlock() != null)
-                world.spawnEntityInWorld(new EntityItem(
-                        world, x + .5, y + .5, z + .5, tile.getOriginalBlock().copy()));
+            if (!tile.formed && tile.pos == -1 && tile.getOriginalBlock() != null) world.spawnEntityInWorld(
+                new EntityItem(
+                    world,
+                    x + .5,
+                    y + .5,
+                    z + .5,
+                    tile.getOriginalBlock()
+                        .copy()));
 
             if (tileEntity instanceof IInventory) {
                 if (!world.isRemote && ((TileEntityMultiblockPart) tileEntity).formed) {
@@ -187,9 +195,10 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                             entityitem.motionX = world.rand.nextGaussian() * .05;
                             entityitem.motionY = world.rand.nextGaussian() * .05 + .2;
                             entityitem.motionZ = world.rand.nextGaussian() * .05;
-                            if (stack.hasTagCompound())
-                                entityitem.getEntityItem().setTagCompound((NBTTagCompound)
-                                        stack.getTagCompound().copy());
+                            if (stack.hasTagCompound()) entityitem.getEntityItem()
+                                .setTagCompound(
+                                    (NBTTagCompound) stack.getTagCompound()
+                                        .copy());
                             world.spawnEntityInWorld(entityitem);
                         }
                     }
@@ -216,34 +225,36 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
     }
 
     @Override
-    public boolean onBlockActivated(
-            World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
+        float hitY, float hitZ) {
         TileEntity curr = world.getTileEntity(x, y, z);
         if (curr instanceof TileEntitySqueezer) {
             if (!player.isSneaking() && ((TileEntitySqueezer) curr).formed) {
                 TileEntitySqueezer te = ((TileEntitySqueezer) curr).master();
                 if (te == null) te = ((TileEntitySqueezer) curr);
-                if (!world.isRemote)
-                    player.openGui(
-                            ImmersiveEngineering.instance, Lib.GUIID_Squeezer, world, te.xCoord, te.yCoord, te.zCoord);
+                if (!world.isRemote) player
+                    .openGui(ImmersiveEngineering.instance, Lib.GUIID_Squeezer, world, te.xCoord, te.yCoord, te.zCoord);
                 return true;
             }
         } else if (curr instanceof TileEntityFermenter) {
             if (!player.isSneaking() && ((TileEntityFermenter) curr).formed) {
                 TileEntityFermenter te = ((TileEntityFermenter) curr).master();
                 if (te == null) te = ((TileEntityFermenter) curr);
-                if (!world.isRemote)
-                    player.openGui(
-                            ImmersiveEngineering.instance, Lib.GUIID_Fermenter, world, te.xCoord, te.yCoord, te.zCoord);
+                if (!world.isRemote) player.openGui(
+                    ImmersiveEngineering.instance,
+                    Lib.GUIID_Fermenter,
+                    world,
+                    te.xCoord,
+                    te.yCoord,
+                    te.zCoord);
                 return true;
             }
         } else if (curr instanceof TileEntityRefinery) {
             if (!player.isSneaking() && ((TileEntityRefinery) curr).formed) {
                 TileEntityRefinery te = ((TileEntityRefinery) curr).master();
                 if (te == null) te = ((TileEntityRefinery) curr);
-                if (!world.isRemote)
-                    player.openGui(
-                            ImmersiveEngineering.instance, Lib.GUIID_Refinery, world, te.xCoord, te.yCoord, te.zCoord);
+                if (!world.isRemote) player
+                    .openGui(ImmersiveEngineering.instance, Lib.GUIID_Refinery, world, te.xCoord, te.yCoord, te.zCoord);
                 return true;
             }
         } else if (curr instanceof TileEntityDieselGenerator) {
@@ -257,24 +268,24 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                 if (dir == ForgeDirection.EAST || dir == ForgeDirection.WEST) axis = 2;
                 else axis = 0;
                 ChunkCoordinates gen = new ChunkCoordinates(
-                        master.xCoord + (axis == 0 ? 1 : -dir.offsetX),
-                        master.yCoord,
-                        master.zCoord + (axis == 2 ? 1 : -dir.offsetZ));
+                    master.xCoord + (axis == 0 ? 1 : -dir.offsetX),
+                    master.yCoord,
+                    master.zCoord + (axis == 2 ? 1 : -dir.offsetZ));
                 ChunkCoordinates adapter = new ChunkCoordinates(
-                        master.xCoord + (axis == 0 ? 2 : -dir.offsetX),
-                        master.yCoord,
-                        master.zCoord + (axis == 2 ? 2 : -dir.offsetZ));
+                    master.xCoord + (axis == 0 ? 2 : -dir.offsetX),
+                    master.yCoord,
+                    master.zCoord + (axis == 2 ? 2 : -dir.offsetZ));
                 Block b = world.getBlock(adapter.posX, adapter.posY, adapter.posZ);
                 if (b != null)
                     b.onNeighborChange(world, adapter.posX, adapter.posY, adapter.posZ, gen.posX, gen.posY, gen.posZ);
                 gen = new ChunkCoordinates(
-                        master.xCoord - (axis == 0 ? 1 : -dir.offsetX),
-                        master.yCoord,
-                        master.zCoord - (axis == 2 ? 1 : dir.offsetZ));
+                    master.xCoord - (axis == 0 ? 1 : -dir.offsetX),
+                    master.yCoord,
+                    master.zCoord - (axis == 2 ? 1 : dir.offsetZ));
                 adapter = new ChunkCoordinates(
-                        master.xCoord - (axis == 0 ? 2 : -dir.offsetX),
-                        master.yCoord,
-                        master.zCoord - (axis == 2 ? 2 : dir.offsetZ));
+                    master.xCoord - (axis == 0 ? 2 : -dir.offsetX),
+                    master.yCoord,
+                    master.zCoord - (axis == 2 ? 2 : dir.offsetZ));
                 b = world.getBlock(adapter.posX, adapter.posY, adapter.posZ);
                 if (b != null)
                     b.onNeighborChange(world, adapter.posX, adapter.posY, adapter.posZ, gen.posX, gen.posY, gen.posZ);
@@ -282,35 +293,33 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                 master.markDirty();
                 world.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);
             } else if (!world.isRemote
-                    && (((TileEntityDieselGenerator) curr).pos == 36 || ((TileEntityDieselGenerator) curr).pos == 38)) {
-                if (Utils.fillFluidHandlerWithPlayerItem(world, master, player)) {
-                    master.markDirty();
-                    world.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);
-                    return true;
+                && (((TileEntityDieselGenerator) curr).pos == 36 || ((TileEntityDieselGenerator) curr).pos == 38)) {
+                    if (Utils.fillFluidHandlerWithPlayerItem(world, master, player)) {
+                        master.markDirty();
+                        world.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);
+                        return true;
+                    }
+                    if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
+                        .getItem() instanceof IFluidContainerItem) {
+                        master.markDirty();
+                        world.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);
+                        return true;
+                    }
                 }
-                if (player.getCurrentEquippedItem() != null
-                        && player.getCurrentEquippedItem().getItem() instanceof IFluidContainerItem) {
-                    master.markDirty();
-                    world.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);
-                    return true;
-                }
-            }
         } else if (curr instanceof TileEntityArcFurnace) {
             if (!player.isSneaking() && ((TileEntityArcFurnace) curr).formed) {
                 TileEntityArcFurnace te = ((TileEntityArcFurnace) curr);
-                if (te.pos == 2
-                        || te.pos == 25
-                        || (te.pos > 25 && te.pos % 5 > 0 && te.pos % 5 < 4 && te.pos % 25 / 5 < 4)) {
+                if (te.pos == 2 || te.pos == 25
+                    || (te.pos > 25 && te.pos % 5 > 0 && te.pos % 5 < 4 && te.pos % 25 / 5 < 4)) {
                     TileEntityArcFurnace master = te.master();
                     if (master == null) master = te;
-                    if (!world.isRemote)
-                        player.openGui(
-                                ImmersiveEngineering.instance,
-                                Lib.GUIID_ArcFurnace,
-                                world,
-                                master.xCoord,
-                                master.yCoord,
-                                master.zCoord);
+                    if (!world.isRemote) player.openGui(
+                        ImmersiveEngineering.instance,
+                        Lib.GUIID_ArcFurnace,
+                        world,
+                        master.xCoord,
+                        master.yCoord,
+                        master.zCoord);
                     return true;
                 }
             }
@@ -328,8 +337,8 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                 world.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);
                 return true;
             }
-            if (player.getCurrentEquippedItem() != null
-                    && player.getCurrentEquippedItem().getItem() instanceof IFluidContainerItem) {
+            if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
+                .getItem() instanceof IFluidContainerItem) {
                 master.markDirty();
                 world.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);
                 return true;
@@ -339,14 +348,13 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                 TileEntityAssembler te = ((TileEntityAssembler) curr);
                 TileEntityAssembler master = te.master();
                 if (master == null) master = te;
-                if (!world.isRemote)
-                    player.openGui(
-                            ImmersiveEngineering.instance,
-                            Lib.GUIID_Assembler,
-                            world,
-                            master.xCoord,
-                            master.yCoord,
-                            master.zCoord);
+                if (!world.isRemote) player.openGui(
+                    ImmersiveEngineering.instance,
+                    Lib.GUIID_Assembler,
+                    world,
+                    master.xCoord,
+                    master.yCoord,
+                    master.zCoord);
                 return true;
             }
         } else if (curr instanceof TileEntityMetalPress) {
@@ -365,7 +373,7 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                     player.inventory.decrStackSize(player.inventory.currentItem, 1);
                     if (tempMould != null)
                         if (player.getCurrentEquippedItem() == null) player.setCurrentItemOrArmor(0, tempMould);
-                        else if (!world.isRemote) player.entityDropItem(tempMould, 0);
+                    else if (!world.isRemote) player.entityDropItem(tempMould, 0);
                     return true;
                 }
             }
@@ -397,21 +405,19 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
             if (tile.pos == 2 || tile.pos == 25 || tile.pos == 52)
                 return side.ordinal() == tile.facing || (tile.pos == 52 ? side == ForgeDirection.UP : false);
             if (tile.pos == 82 || tile.pos == 86 || tile.pos == 88 || tile.pos == 112) return side == ForgeDirection.UP;
-            if ((tile.pos >= 21 && tile.pos <= 23)
-                    || (tile.pos >= 46 && tile.pos <= 48)
-                    || (tile.pos >= 71 && tile.pos <= 73))
-                return side.getOpposite().ordinal() == tile.facing;
+            if ((tile.pos >= 21 && tile.pos <= 23) || (tile.pos >= 46 && tile.pos <= 48)
+                || (tile.pos >= 71 && tile.pos <= 73))
+                return side.getOpposite()
+                    .ordinal() == tile.facing;
         } else if (te instanceof TileEntitySheetmetalTank || te instanceof TileEntitySilo) {
             TileEntityMultiblockPart tile = (TileEntityMultiblockPart) te;
-            return tile.pos == 4
-                    || tile.pos == (tile instanceof TileEntitySilo ? 58 : 40)
-                    || (tile.pos >= 18 && tile.pos < (tile instanceof TileEntitySilo ? 54 : 36));
+            return tile.pos == 4 || tile.pos == (tile instanceof TileEntitySilo ? 58 : 40)
+                || (tile.pos >= 18 && tile.pos < (tile instanceof TileEntitySilo ? 54 : 36));
         } else if (te instanceof TileEntityFermenter || te instanceof TileEntitySqueezer) return true;
         else if (te instanceof TileEntityAssembler) return ((TileEntityAssembler) te).offset[1] == -1;
         else if (te instanceof TileEntityBottlingMachine)
-            return ((TileEntityBottlingMachine) te).offset[1] == 0
-                    && ((TileEntityBottlingMachine) te).pos != 0
-                    && ((TileEntityBottlingMachine) te).pos != 2;
+            return ((TileEntityBottlingMachine) te).offset[1] == 0 && ((TileEntityBottlingMachine) te).pos != 0
+                && ((TileEntityBottlingMachine) te).pos != 2;
         else if (te instanceof TileEntityMetalPress) {
             TileEntityMetalPress tile = (TileEntityMetalPress) te;
             return tile.pos > 2 ? side == ForgeDirection.UP : side == ForgeDirection.DOWN;
@@ -459,70 +465,70 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                 if (pos / 15 == 0 && (pos % 5 == 1 || pos % 5 == 3)) {
                     if (pos % 5 == 1) {
                         this.setBlockBounds(
-                                fl == 4 || fw == 3 ? .1875f : fw == 2 ? .5625f : 0,
-                                0,
-                                fl == 2 || fw == 4 ? .1875f : fw == 5 ? .5625f : 0,
-                                fl == 5 || fw == 2 ? .8125f : fw == 3 ? .4375f : 1,
-                                1,
-                                fl == 3 || fw == 5 ? .8125f : fw == 4 ? .4375f : 1);
+                            fl == 4 || fw == 3 ? .1875f : fw == 2 ? .5625f : 0,
+                            0,
+                            fl == 2 || fw == 4 ? .1875f : fw == 5 ? .5625f : 0,
+                            fl == 5 || fw == 2 ? .8125f : fw == 3 ? .4375f : 1,
+                            1,
+                            fl == 3 || fw == 5 ? .8125f : fw == 4 ? .4375f : 1);
                         addCollisionBox(world, x, y, z, aabb, list, ent);
                         this.setBlockBounds(
-                                fl == 4 || fw == 3 ? .1875f : fl == 5 ? .5625f : 0,
-                                0,
-                                fl == 2 || fw == 4 ? .1875f : fl == 3 ? .5625f : 0,
-                                fl == 5 || fw == 2 ? .8125f : fl == 4 ? .4375f : 1,
-                                1,
-                                fl == 3 || fw == 5 ? .8125f : fl == 2 ? .4375f : 1);
+                            fl == 4 || fw == 3 ? .1875f : fl == 5 ? .5625f : 0,
+                            0,
+                            fl == 2 || fw == 4 ? .1875f : fl == 3 ? .5625f : 0,
+                            fl == 5 || fw == 2 ? .8125f : fl == 4 ? .4375f : 1,
+                            1,
+                            fl == 3 || fw == 5 ? .8125f : fl == 2 ? .4375f : 1);
                     } else {
                         this.setBlockBounds(
-                                fl == 4 || fw == 2 ? .1875f : fw == 3 ? .5625f : 0,
-                                0,
-                                fl == 2 || fw == 5 ? .1875f : fw == 4 ? .5625f : 0,
-                                fl == 5 || fw == 3 ? .8125f : fw == 2 ? .4375f : 1,
-                                1,
-                                fl == 3 || fw == 4 ? .8125f : fw == 5 ? .4375f : 1);
+                            fl == 4 || fw == 2 ? .1875f : fw == 3 ? .5625f : 0,
+                            0,
+                            fl == 2 || fw == 5 ? .1875f : fw == 4 ? .5625f : 0,
+                            fl == 5 || fw == 3 ? .8125f : fw == 2 ? .4375f : 1,
+                            1,
+                            fl == 3 || fw == 4 ? .8125f : fw == 5 ? .4375f : 1);
                         super.addCollisionBoxesToList(world, x, y, z, aabb, list, ent);
                         this.setBlockBounds(
-                                fl == 4 || fw == 2 ? .1875f : fl == 5 ? .5625f : 0,
-                                0,
-                                fl == 2 || fw == 5 ? .1875f : fl == 3 ? .5625f : 0,
-                                fl == 5 || fw == 3 ? .8125f : fl == 4 ? .4375f : 1,
-                                1,
-                                fl == 3 || fw == 4 ? .8125f : fl == 2 ? .4375f : 1);
+                            fl == 4 || fw == 2 ? .1875f : fl == 5 ? .5625f : 0,
+                            0,
+                            fl == 2 || fw == 5 ? .1875f : fl == 3 ? .5625f : 0,
+                            fl == 5 || fw == 3 ? .8125f : fl == 4 ? .4375f : 1,
+                            1,
+                            fl == 3 || fw == 4 ? .8125f : fl == 2 ? .4375f : 1);
                     }
                 } else if (pos / 15 == 2 && (pos % 5 == 1 || pos % 5 == 3)) {
                     if (pos % 5 == 1) {
                         this.setBlockBounds(
-                                fl == 5 || fw == 3 ? .1875f : fw == 2 ? .5625f : 0,
-                                0,
-                                fl == 3 || fw == 4 ? .1875f : fw == 5 ? .5625f : 0,
-                                fl == 4 || fw == 2 ? .8125f : fw == 3 ? .4375f : 1,
-                                1,
-                                fl == 2 || fw == 5 ? .8125f : fw == 4 ? .4375f : 1);
+                            fl == 5 || fw == 3 ? .1875f : fw == 2 ? .5625f : 0,
+                            0,
+                            fl == 3 || fw == 4 ? .1875f : fw == 5 ? .5625f : 0,
+                            fl == 4 || fw == 2 ? .8125f : fw == 3 ? .4375f : 1,
+                            1,
+                            fl == 2 || fw == 5 ? .8125f : fw == 4 ? .4375f : 1);
                         addCollisionBox(world, x, y, z, aabb, list, ent);
                         this.setBlockBounds(
-                                fl == 5 || fw == 3 ? .1875f : fl == 4 ? .5625f : 0,
-                                0,
-                                fl == 3 || fw == 4 ? .1875f : fl == 2 ? .5625f : 0,
-                                fl == 4 || fw == 2 ? .8125f : fl == 5 ? .4375f : 1,
-                                1,
-                                fl == 2 || fw == 5 ? .8125f : fl == 3 ? .4375f : 1);
+                            fl == 5 || fw == 3 ? .1875f : fl == 4 ? .5625f : 0,
+                            0,
+                            fl == 3 || fw == 4 ? .1875f : fl == 2 ? .5625f : 0,
+                            fl == 4 || fw == 2 ? .8125f : fl == 5 ? .4375f : 1,
+                            1,
+                            fl == 2 || fw == 5 ? .8125f : fl == 3 ? .4375f : 1);
                     } else {
                         this.setBlockBounds(
-                                fl == 5 || fw == 2 ? .1875f : fw == 3 ? .5625f : 0,
-                                0,
-                                fl == 3 || fw == 5 ? .1875f : fw == 4 ? .5625f : 0,
-                                fl == 4 || fw == 3 ? .8125f : fw == 2 ? .4375f : 1,
-                                1,
-                                fl == 2 || fw == 4 ? .8125f : fw == 5 ? .4375f : 1);
+                            fl == 5 || fw == 2 ? .1875f : fw == 3 ? .5625f : 0,
+                            0,
+                            fl == 3 || fw == 5 ? .1875f : fw == 4 ? .5625f : 0,
+                            fl == 4 || fw == 3 ? .8125f : fw == 2 ? .4375f : 1,
+                            1,
+                            fl == 2 || fw == 4 ? .8125f : fw == 5 ? .4375f : 1);
                         addCollisionBox(world, x, y, z, aabb, list, ent);
                         this.setBlockBounds(
-                                fl == 5 || fw == 2 ? .1875f : fl == 4 ? .5625f : 0,
-                                0,
-                                fl == 3 || fw == 5 ? .1875f : fl == 2 ? .5625f : 0,
-                                fl == 4 || fw == 3 ? .8125f : fl == 5 ? .4375f : 1,
-                                1,
-                                fl == 2 || fw == 4 ? .8125f : fl == 3 ? .4375f : 1);
+                            fl == 5 || fw == 2 ? .1875f : fl == 4 ? .5625f : 0,
+                            0,
+                            fl == 3 || fw == 5 ? .1875f : fl == 2 ? .5625f : 0,
+                            fl == 4 || fw == 3 ? .8125f : fl == 5 ? .4375f : 1,
+                            1,
+                            fl == 2 || fw == 4 ? .8125f : fl == 3 ? .4375f : 1);
                     }
                 }
             }
@@ -543,14 +549,16 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                 if (tile.mirrored) fw = ForgeDirection.OPPOSITES[fw];
                 if (pos / 15 == 0 && (pos % 5 == 1 || pos % 5 == 3)) {
                     if (pos % 5 == 1) {
-                        list.add(AxisAlignedBB.getBoundingBox(
+                        list.add(
+                            AxisAlignedBB.getBoundingBox(
                                 fl == 4 ? .4375f : fw == 3 ? .1875f : fw == 2 ? .5625f : 0,
                                 0,
                                 fl == 2 ? .4375f : fw == 4 ? .1875f : fw == 5 ? .5625f : 0,
                                 fl == 5 ? .5625f : fw == 2 ? .8125f : fw == 3 ? .4375f : 1,
                                 1,
                                 fl == 3 ? .5625f : fw == 5 ? .8125f : fw == 4 ? .4375f : 1));
-                        list.add(AxisAlignedBB.getBoundingBox(
+                        list.add(
+                            AxisAlignedBB.getBoundingBox(
                                 fl == 4 || fw == 3 ? .1875f : fl == 5 ? .5625f : 0,
                                 0,
                                 fl == 2 || fw == 4 ? .1875f : fl == 3 ? .5625f : 0,
@@ -558,14 +566,16 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                                 1,
                                 fl == 3 || fw == 5 ? .8125f : fl == 2 ? .4375f : 1));
                     } else {
-                        list.add(AxisAlignedBB.getBoundingBox(
+                        list.add(
+                            AxisAlignedBB.getBoundingBox(
                                 fl == 4 ? .4375f : fw == 2 ? .1875f : fw == 3 ? .5625f : 0,
                                 0,
                                 fl == 2 ? .4375f : fw == 5 ? .1875f : fw == 4 ? .5625f : 0,
                                 fl == 5 ? .5625f : fw == 3 ? .8125f : fw == 2 ? .4375f : 1,
                                 1,
                                 fl == 3 ? .5625f : fw == 4 ? .8125f : fw == 5 ? .4375f : 1));
-                        list.add(AxisAlignedBB.getBoundingBox(
+                        list.add(
+                            AxisAlignedBB.getBoundingBox(
                                 fl == 4 || fw == 2 ? .1875f : fl == 5 ? .5625f : 0,
                                 0,
                                 fl == 2 || fw == 5 ? .1875f : fl == 3 ? .5625f : 0,
@@ -575,14 +585,16 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                     }
                 } else if (pos / 15 == 2 && (pos % 5 == 1 || pos % 5 == 3)) {
                     if (pos % 5 == 1) {
-                        list.add(AxisAlignedBB.getBoundingBox(
+                        list.add(
+                            AxisAlignedBB.getBoundingBox(
                                 fl == 5 ? .4375f : fw == 3 ? .1875f : fw == 2 ? .5625f : 0,
                                 0,
                                 fl == 3 ? .4375f : fw == 4 ? .1875f : fw == 5 ? .5625f : 0,
                                 fl == 4 ? .5625f : fw == 2 ? .8125f : fw == 3 ? .4375f : 1,
                                 1,
                                 fl == 2 ? .5625f : fw == 5 ? .8125f : fw == 4 ? .4375f : 1));
-                        list.add(AxisAlignedBB.getBoundingBox(
+                        list.add(
+                            AxisAlignedBB.getBoundingBox(
                                 fl == 5 || fw == 3 ? .1875f : fl == 4 ? .5625f : 0,
                                 0,
                                 fl == 3 || fw == 4 ? .1875f : fl == 2 ? .5625f : 0,
@@ -590,14 +602,16 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                                 1,
                                 fl == 2 || fw == 5 ? .8125f : fl == 3 ? .4375f : 1));
                     } else {
-                        list.add(AxisAlignedBB.getBoundingBox(
+                        list.add(
+                            AxisAlignedBB.getBoundingBox(
                                 fl == 5 ? .4375f : fw == 2 ? .1875f : fw == 3 ? .5625f : 0,
                                 0,
                                 fl == 3 ? .4375f : fw == 5 ? .1875f : fw == 4 ? .5625f : 0,
                                 fl == 4 ? .5625f : fw == 3 ? .8125f : fw == 2 ? .4375f : 1,
                                 1,
                                 fl == 2 ? .5625f : fw == 4 ? .8125f : fw == 5 ? .4375f : 1));
-                        list.add(AxisAlignedBB.getBoundingBox(
+                        list.add(
+                            AxisAlignedBB.getBoundingBox(
                                 fl == 5 || fw == 2 ? .1875f : fl == 4 ? .5625f : 0,
                                 0,
                                 fl == 3 || fw == 5 ? .1875f : fl == 2 ? .5625f : 0,
@@ -611,7 +625,8 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                 int fw = tile.facing;
                 if (tile.mirrored) fw = ForgeDirection.OPPOSITES[fw];
                 list.add(AxisAlignedBB.getBoundingBox(0, 0, 0, 1, .5, 1));
-                list.add(AxisAlignedBB.getBoundingBox(
+                list.add(
+                    AxisAlignedBB.getBoundingBox(
                         fw == (pos % 30 == 1 ? 2 : 3) || fl == (pos < 30 ? 5 : 4) ? .5 : .25,
                         .5,
                         fl == (pos < 30 ? 3 : 2) || fw == (pos % 30 == 1 ? 5 : 4) ? .5 : .25,
@@ -620,9 +635,8 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
                         fl == (pos < 30 ? 3 : 2) || fw == (pos % 30 == 1 ? 5 : 4) ? .75 : .5));
             } else {
                 float[] bounds = ((TileEntityMultiblockPart) tileEntity).getBlockBounds();
-                if (bounds != null && bounds.length > 5)
-                    list.add(AxisAlignedBB.getBoundingBox(
-                            bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]));
+                if (bounds != null && bounds.length > 5) list.add(
+                    AxisAlignedBB.getBoundingBox(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]));
                 else list.add(AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 1, 1));
             }
         }
@@ -630,15 +644,8 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
     }
 
     @Override
-    public boolean addSpecifiedSubBox(
-            World world,
-            int x,
-            int y,
-            int z,
-            EntityPlayer player,
-            AxisAlignedBB box,
-            Vec3 hitVec,
-            ArrayList<AxisAlignedBB> list) {
+    public boolean addSpecifiedSubBox(World world, int x, int y, int z, EntityPlayer player, AxisAlignedBB box,
+        Vec3 hitVec, ArrayList<AxisAlignedBB> list) {
         return false;
     }
 
@@ -709,13 +716,12 @@ public class BlockMetalMultiblocks extends BlockIEBase implements ICustomBoundin
     public void onEntityCollidedWithBlock(World w, int x, int y, int z, Entity e) {
         if (w.isRemote || !(e instanceof EntityItem)) return;
         TileEntity te = w.getTileEntity(x, y, z);
-        if (te instanceof TileEntityMetalPress
-                && ((TileEntityMetalPress) te).pos == 3
-                && w.getTotalWorldTime() % 10 == (x ^ z) % 10) {
+        if (te instanceof TileEntityMetalPress && ((TileEntityMetalPress) te).pos == 3
+            && w.getTotalWorldTime() % 10 == (x ^ z) % 10) {
             ItemStack s = Utils.insertStackIntoInventory(
-                    (IInventory) te,
-                    ((EntityItem) e).getEntityItem(),
-                    ForgeDirection.OPPOSITES[((TileEntityMetalPress) te).facing]);
+                (IInventory) te,
+                ((EntityItem) e).getEntityItem(),
+                ForgeDirection.OPPOSITES[((TileEntityMetalPress) te).facing]);
             if (s == null || s.stackSize == 0) e.setDead();
             else if (s.stackSize != ((EntityItem) e).getEntityItem().stackSize) ((EntityItem) e).setEntityItemStack(s);
         }

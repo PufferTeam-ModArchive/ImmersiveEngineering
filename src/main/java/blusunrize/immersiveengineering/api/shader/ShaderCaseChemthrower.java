@@ -5,19 +5,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
 public class ShaderCaseChemthrower extends ShaderCase {
+
     public String additionalTexture = null;
     public int glowLayer = -1;
     public boolean renderCageOnBase = true;
     public boolean tanksUncoloured = true;
 
-    public ShaderCaseChemthrower(
-            String overlayType,
-            int[] colourGrip,
-            int[] colourPrimary,
-            int[] colourSecondary,
-            boolean cageOnBase,
-            boolean tanksUncoloured,
-            String additionalTexture) {
+    public ShaderCaseChemthrower(String overlayType, int[] colourGrip, int[] colourPrimary, int[] colourSecondary,
+        boolean cageOnBase, boolean tanksUncoloured, String additionalTexture) {
         super(overlayType, colourGrip, colourPrimary, colourSecondary, "immersiveengineering:shaders/chemthrower_");
         this.additionalTexture = additionalTexture;
         this.renderCageOnBase = cageOnBase;
@@ -43,7 +38,7 @@ public class ShaderCaseChemthrower extends ShaderCase {
         int maxPass = getPasses(shader, item, modelPart);
         boolean hasUncoloured = modelPart.equals("base") || (tanksUncoloured && modelPart.equals("tanks"));
         if (pass == maxPass - 1 && hasUncoloured) // uncoloured
-        return i_chemthrowerUncoloured;
+            return i_chemthrowerUncoloured;
         if (pass == maxPass - (hasUncoloured ? 2 : 1) && i_chemthrowerAdditional != null)
             return i_chemthrowerAdditional;
 
@@ -56,7 +51,7 @@ public class ShaderCaseChemthrower extends ShaderCase {
         int maxPass = getPasses(shader, item, modelPart);
         boolean hasUncoloured = modelPart.equals("base") || (tanksUncoloured && modelPart.equals("tanks"));
         if (pass == maxPass - 1 && hasUncoloured) // uncoloured
-        return defaultWhite;
+            return defaultWhite;
         if (pass == maxPass - (hasUncoloured ? 2 : 1) && i_chemthrowerAdditional != null) return colourOverlay;
 
         int i = getTextureType(modelPart, pass); // 0 == grip, 1==main, 2==detail
@@ -89,6 +84,6 @@ public class ShaderCaseChemthrower extends ShaderCase {
     }
 
     @Override
-    public void modifyRender(
-            ItemStack shader, ItemStack item, String modelPart, int pass, boolean pre, boolean inventory) {}
+    public void modifyRender(ItemStack shader, ItemStack item, String modelPart, int pass, boolean pre,
+        boolean inventory) {}
 }

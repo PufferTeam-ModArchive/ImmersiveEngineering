@@ -1,12 +1,12 @@
 {
 	"modListVersion": 2,
 	"modList": [{
-		"modid": "${modId}",
-		"name": "${modName}",
+		"modid": "ImmersiveEngineering",
+		"name": "Immersive Engineering",
 		"description": "Immersive Engineering is a tech mod with a certain charm, based on the ideas and concepts, and with most assets created by Damien Hazard.",
 		"version": "${modVersion}",
-		"mcversion": "${minecraftVersion}",
-		"url": "https://github.com/TeloDev/ImmersiveEngineering",
+		"mcversion": "1.7.10",
+		"url": "https://github.com/PufferTeam-ModArchive/ImmersiveEngineering",
 		"updateUrl": "",
 		"authorList": ["BluSunrize","Damien A.W. Hazard"],
 		"credits": "TTFTCUTS for the catenary rendering code",

@@ -1,42 +1,45 @@
 package blusunrize.immersiveengineering.common.items;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
+
+import com.google.common.collect.ImmutableSet;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.tool.IUpgrade;
 import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
 import blusunrize.immersiveengineering.common.util.Lib;
-import com.google.common.collect.ImmutableSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
 
 public class ItemToolUpgrade extends ItemIEBase implements IUpgrade {
 
     public ItemToolUpgrade() {
         super(
-                "toolupgrade",
-                1,
-                "drillWaterproof",
-                "drillSpeed",
-                "drillDamage",
-                "drillCapacity",
-                "revolverBayonet",
-                "revolverMagazine",
-                "revolverElectro",
-                "chemthrowerFocus",
-                "railgunScope",
-                "railgunCapacitors");
+            "toolupgrade",
+            1,
+            "drillWaterproof",
+            "drillSpeed",
+            "drillDamage",
+            "drillCapacity",
+            "revolverBayonet",
+            "revolverMagazine",
+            "revolverElectro",
+            "chemthrowerFocus",
+            "railgunScope",
+            "railgunCapacitors");
     }
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean adv) {
         if (stack.getItemDamage() < getSubNames().length) {
             String[] flavour = ImmersiveEngineering.proxy.splitStringOnWidth(
-                    StatCollector.translateToLocal(
-                            Lib.DESC_FLAVOUR + "toolupgrade." + this.getSubNames()[stack.getItemDamage()]),
-                    200);
+                StatCollector
+                    .translateToLocal(Lib.DESC_FLAVOUR + "toolupgrade." + this.getSubNames()[stack.getItemDamage()]),
+                200);
             for (String s : flavour) list.add(s);
         }
     }
@@ -59,7 +62,8 @@ public class ItemToolUpgrade extends ItemIEBase implements IUpgrade {
     @Override
     public boolean canApplyUpgrades(ItemStack target, ItemStack upgrade) {
         if (upgrade.getItemDamage() == 5 && target.getItem() instanceof IUpgradeableTool)
-            return !((IUpgradeableTool) target.getItem()).getUpgrades(target).hasKey("bullets");
+            return !((IUpgradeableTool) target.getItem()).getUpgrades(target)
+                .hasKey("bullets");
         return true;
     }
 

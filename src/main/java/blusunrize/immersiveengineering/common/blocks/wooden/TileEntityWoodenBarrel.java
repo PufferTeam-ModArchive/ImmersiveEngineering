@@ -1,10 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.wooden;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -17,8 +12,15 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class TileEntityWoodenBarrel extends TileEntityIEBase implements IFluidHandler, IBlockOverlayText {
-    public int[] sideConfig = {1, 0};
+
+    public int[] sideConfig = { 1, 0 };
     public FluidTank tank = new FluidTank(12000);
     public static final int IGNITION_TEMPERATURE = 573;
 
@@ -42,25 +44,27 @@ public class TileEntityWoodenBarrel extends TileEntityIEBase implements IFluidHa
         if (worldObj.isRemote) return;
 
         boolean update = false;
-        for (int i = 0; i < 2; i++)
-            if (tank.getFluidAmount() > 0 && sideConfig[i] == 1) {
-                ForgeDirection f = ForgeDirection.getOrientation(i);
-                int out = Math.min(40, tank.getFluidAmount());
-                TileEntity te = worldObj.getTileEntity(xCoord, yCoord + f.offsetY, zCoord);
-                if (te != null
-                        && te instanceof IFluidHandler
-                        && ((IFluidHandler) te)
-                                .canFill(f.getOpposite(), tank.getFluid().getFluid())) {
-                    int accepted = ((IFluidHandler) te)
-                            .fill(
-                                    f.getOpposite(),
-                                    new FluidStack(tank.getFluid().getFluid(), out),
-                                    false);
-                    FluidStack drained = this.tank.drain(accepted, true);
-                    ((IFluidHandler) te).fill(f.getOpposite(), drained, true);
-                    update = true;
-                }
+        for (int i = 0; i < 2; i++) if (tank.getFluidAmount() > 0 && sideConfig[i] == 1) {
+            ForgeDirection f = ForgeDirection.getOrientation(i);
+            int out = Math.min(40, tank.getFluidAmount());
+            TileEntity te = worldObj.getTileEntity(xCoord, yCoord + f.offsetY, zCoord);
+            if (te != null && te instanceof IFluidHandler
+                && ((IFluidHandler) te).canFill(
+                    f.getOpposite(),
+                    tank.getFluid()
+                        .getFluid())) {
+                int accepted = ((IFluidHandler) te).fill(
+                    f.getOpposite(),
+                    new FluidStack(
+                        tank.getFluid()
+                            .getFluid(),
+                        out),
+                    false);
+                FluidStack drained = this.tank.drain(accepted, true);
+                ((IFluidHandler) te).fill(f.getOpposite(), drained, true);
+                update = true;
             }
+        }
         if (update) {
             this.markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -71,19 +75,21 @@ public class TileEntityWoodenBarrel extends TileEntityIEBase implements IFluidHa
     public String[] getOverlayText(EntityPlayer player, MovingObjectPosition mop, boolean hammer) {
         if (Utils.isFluidRelatedItemStack(player.getCurrentEquippedItem())) {
             String s = null;
-            if (tank.getFluid() != null) s = tank.getFluid().getLocalizedName() + ": " + tank.getFluidAmount() + "mB";
+            if (tank.getFluid() != null) s = tank.getFluid()
+                .getLocalizedName() + ": "
+                + tank.getFluidAmount()
+                + "mB";
             else s = StatCollector.translateToLocal(Lib.GUI + "empty");
-            return new String[] {s};
+            return new String[] { s };
         }
         if (hammer && Config.getBoolean("colourblindSupport") && mop.sideHit < 2) {
             int i = sideConfig[Math.min(sideConfig.length - 1, mop.sideHit)];
             int j = sideConfig[Math.min(sideConfig.length - 1, ForgeDirection.OPPOSITES[mop.sideHit])];
             return new String[] {
                 StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.facing") + ": "
-                        + StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.connectFluid." + i),
+                    + StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.connectFluid." + i),
                 StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.opposite") + ": "
-                        + StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.connectFluid." + j)
-            };
+                    + StatCollector.translateToLocal(Lib.DESC_INFO + "blockSide.connectFluid." + j) };
         }
         return null;
     }
@@ -96,7 +102,7 @@ public class TileEntityWoodenBarrel extends TileEntityIEBase implements IFluidHa
     @Override
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
         sideConfig = nbt.getIntArray("sideConfig");
-        if (sideConfig == null || sideConfig.length < 2) sideConfig = new int[] {-1, 0};
+        if (sideConfig == null || sideConfig.length < 2) sideConfig = new int[] { -1, 0 };
         this.readTank(nbt);
     }
 
@@ -130,10 +136,11 @@ public class TileEntityWoodenBarrel extends TileEntityIEBase implements IFluidHa
     }
 
     public boolean isFluidValid(FluidStack fluid) {
-        return fluid != null
-                && fluid.getFluid() != null
-                && fluid.getFluid().getTemperature(fluid) < IGNITION_TEMPERATURE
-                && !fluid.getFluid().isGaseous(fluid);
+        return fluid != null && fluid.getFluid() != null
+            && fluid.getFluid()
+                .getTemperature(fluid) < IGNITION_TEMPERATURE
+            && !fluid.getFluid()
+                .isGaseous(fluid);
     }
 
     @Override
@@ -167,7 +174,7 @@ public class TileEntityWoodenBarrel extends TileEntityIEBase implements IFluidHa
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
         if (from != ForgeDirection.UNKNOWN && from.ordinal() < 2 && sideConfig[from.ordinal()] != -1)
-            return new FluidTankInfo[] {tank.getInfo()};
+            return new FluidTankInfo[] { tank.getInfo() };
         return new FluidTankInfo[0];
     }
 }

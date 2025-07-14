@@ -1,9 +1,5 @@
 package blusunrize.immersiveengineering.api.energy;
 
-import blusunrize.immersiveengineering.api.TargetingInfo;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.common.util.IELogger;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -11,7 +7,13 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.api.TargetingInfo;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.common.util.IELogger;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class IICProxy implements IImmersiveConnectable {
+
     private boolean canEnergyPass;
     private int dim;
     private ChunkCoordinates cc;
@@ -46,7 +48,8 @@ public class IICProxy implements IImmersiveConnectable {
     @Override
     public void removeCable(Connection connection) {
         // this will load the chunk the TE is in for 1 tick since it needs to be notified about removed wires
-        World w = MinecraftServer.getServer().worldServerForDimension(dim);
+        World w = MinecraftServer.getServer()
+            .worldServerForDimension(dim);
         if (w == null) {
             IELogger.warn("Tried to remove a wire in dimension " + dim + " which does not exist");
             return;
@@ -99,9 +102,9 @@ public class IICProxy implements IImmersiveConnectable {
 
     public static IICProxy readFromNBT(NBTTagCompound nbt) {
         return new IICProxy(
-                nbt.getBoolean("pass"),
-                nbt.getInteger("dim"),
-                new ChunkCoordinates(nbt.getInteger("x"), nbt.getInteger("y"), nbt.getInteger("z")));
+            nbt.getBoolean("pass"),
+            nbt.getInteger("dim"),
+            new ChunkCoordinates(nbt.getInteger("x"), nbt.getInteger("y"), nbt.getInteger("z")));
     }
 
     public NBTTagCompound writeToNBT() {

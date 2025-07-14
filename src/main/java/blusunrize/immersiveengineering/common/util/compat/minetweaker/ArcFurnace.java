@@ -1,27 +1,24 @@
 package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 
-import blusunrize.immersiveengineering.api.crafting.ArcFurnaceRecipe;
 import java.util.List;
+
+import net.minecraft.item.ItemStack;
+
+import blusunrize.immersiveengineering.api.crafting.ArcFurnaceRecipe;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
 import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
-import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersiveengineering.ArcFurnace")
 public class ArcFurnace {
+
     @ZenMethod
-    public static void addRecipe(
-            IItemStack output,
-            IIngredient input,
-            IItemStack slag,
-            int time,
-            int energyPerTick,
-            @Optional IIngredient[] additives,
-            @Optional String specialRecipeType) {
+    public static void addRecipe(IItemStack output, IIngredient input, IItemStack slag, int time, int energyPerTick,
+        @Optional IIngredient[] additives, @Optional String specialRecipeType) {
         Object oInput = MTHelper.toObject(input);
         if (oInput == null) return;
         Object[] adds = null;
@@ -30,12 +27,18 @@ public class ArcFurnace {
             for (int i = 0; i < additives.length; i++) adds[i] = MTHelper.toObject(additives[i]);
         }
         ArcFurnaceRecipe r = new ArcFurnaceRecipe(
-                MTHelper.toStack(output), oInput, MTHelper.toStack(slag), time, energyPerTick, adds);
+            MTHelper.toStack(output),
+            oInput,
+            MTHelper.toStack(slag),
+            time,
+            energyPerTick,
+            adds);
         if (specialRecipeType != null) r.setSpecialRecipeType(specialRecipeType);
         MineTweakerAPI.apply(new Add(r));
     }
 
     private static class Add implements IUndoableAction {
+
         private final ArcFurnaceRecipe recipe;
 
         public Add(ArcFurnaceRecipe recipe) {
@@ -79,6 +82,7 @@ public class ArcFurnace {
     }
 
     private static class Remove implements IUndoableAction {
+
         private final ItemStack output;
         List<ArcFurnaceRecipe> removedRecipes;
 
@@ -93,9 +97,8 @@ public class ArcFurnace {
 
         @Override
         public void undo() {
-            if (removedRecipes != null)
-                for (ArcFurnaceRecipe recipe : removedRecipes)
-                    if (recipe != null) ArcFurnaceRecipe.recipeList.add(recipe);
+            if (removedRecipes != null) for (ArcFurnaceRecipe recipe : removedRecipes)
+                if (recipe != null) ArcFurnaceRecipe.recipeList.add(recipe);
         }
 
         @Override

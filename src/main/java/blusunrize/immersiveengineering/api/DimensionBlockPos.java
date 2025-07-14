@@ -3,6 +3,7 @@ package blusunrize.immersiveengineering.api;
 import net.minecraft.tileentity.TileEntity;
 
 public class DimensionBlockPos {
+
     public int dim, posX, posY, posZ;
 
     public DimensionBlockPos(int d, int x, int y, int z) {

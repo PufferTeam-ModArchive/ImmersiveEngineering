@@ -1,9 +1,11 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import net.minecraft.nbt.NBTTagCompound;
 
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+
 public class TileEntityLantern extends TileEntityIEBase {
+
     public int facing = 1;
 
     @Override

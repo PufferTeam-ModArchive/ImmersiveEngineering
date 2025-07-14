@@ -1,13 +1,15 @@
 package blusunrize.immersiveengineering.common.gui;
 
-import blusunrize.immersiveengineering.api.tool.IInternalStorageItem;
-import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
+import blusunrize.immersiveengineering.api.tool.IInternalStorageItem;
+import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
+
 public class InventoryStorageItem implements IInventory {
+
     private ItemStack itemStack;
     private Container container;
     public ItemStack[] stackList;

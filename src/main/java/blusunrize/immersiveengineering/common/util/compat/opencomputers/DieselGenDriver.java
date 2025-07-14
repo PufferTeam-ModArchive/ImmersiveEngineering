@@ -1,5 +1,8 @@
 package blusunrize.immersiveengineering.common.util.compat.opencomputers;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityDieselGenerator;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
@@ -7,8 +10,6 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.prefab.DriverTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class DieselGenDriver extends DriverTileEntity {
 
@@ -43,12 +44,12 @@ public class DieselGenDriver extends DriverTileEntity {
 
         @Callback(doc = "function():boolean -- get whether the generator is currently producing energy")
         public Object[] isActive(Context context, Arguments args) {
-            return new Object[] {getTileEntity().active};
+            return new Object[] { getTileEntity().active };
         }
 
         @Callback(doc = "function():table -- get information about the internal fuel tank")
         public Object[] getTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().tank.getInfo()};
+            return new Object[] { getTileEntity().tank.getInfo() };
         }
 
         @Override

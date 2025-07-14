@@ -1,5 +1,20 @@
 package blusunrize.immersiveengineering;
 
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Arrays;
+
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonStreamParser;
+
 import blusunrize.immersiveengineering.api.IEApi;
 import blusunrize.immersiveengineering.api.energy.WireType;
 import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
@@ -24,9 +39,6 @@ import blusunrize.immersiveengineering.common.util.network.MessageSkyhookSync;
 import blusunrize.immersiveengineering.common.util.network.MessageSpeedloaderSync;
 import blusunrize.immersiveengineering.common.util.network.MessageTileSync;
 import blusunrize.immersiveengineering.common.world.IEWorldGen;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonStreamParser;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -41,33 +53,25 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Arrays;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 @Mod(
-        modid = ImmersiveEngineering.MODID,
-        name = ImmersiveEngineering.MODNAME,
-        version = ImmersiveEngineering.VERSION,
-        dependencies = "after:Railcraft;before:TConstruct;after:ThermalFoundation;after:Avaritia")
+    modid = ImmersiveEngineering.MODID,
+    name = ImmersiveEngineering.MODNAME,
+    version = ImmersiveEngineering.VERSION,
+    dependencies = "after:Railcraft;before:TConstruct;after:ThermalFoundation;after:Avaritia")
 public class ImmersiveEngineering {
+
     public static final String MODID = "ImmersiveEngineering";
     public static final String MODNAME = "Immersive Engineering";
-    public static final String VERSION = "GRADLETOKEN_VERSION";
+    public static final String VERSION = Tags.VERSION;
     public static final double VERSION_D = .71;
 
     @Mod.Instance(MODID)
     public static ImmersiveEngineering instance = new ImmersiveEngineering();
 
     @SidedProxy(
-            clientSide = "blusunrize.immersiveengineering.client.ClientProxy",
-            serverSide = "blusunrize.immersiveengineering.common.CommonProxy")
+        clientSide = "blusunrize.immersiveengineering.client.ClientProxy",
+        serverSide = "blusunrize.immersiveengineering.common.CommonProxy")
     public static CommonProxy proxy;
 
     public static final SimpleNetworkWrapper packetHandler = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
@@ -85,13 +89,13 @@ public class ImmersiveEngineering {
 
         for (int b : Config.getIntArray("oreDimBlacklist")) IEWorldGen.oreDimBlacklist.add(b);
         IEApi.modPreference = Arrays.asList(Config.getStringArray("preferredOres"));
-        IEApi.prefixToIngotMap.put("ingot", new Integer[] {1, 1});
-        IEApi.prefixToIngotMap.put("nugget", new Integer[] {1, 9});
-        IEApi.prefixToIngotMap.put("block", new Integer[] {9, 1});
-        IEApi.prefixToIngotMap.put("plate", new Integer[] {1, 1});
-        IEApi.prefixToIngotMap.put("gear", new Integer[] {4, 1});
-        IEApi.prefixToIngotMap.put("rod", new Integer[] {2, 1});
-        IEApi.prefixToIngotMap.put("fence", new Integer[] {3, 2});
+        IEApi.prefixToIngotMap.put("ingot", new Integer[] { 1, 1 });
+        IEApi.prefixToIngotMap.put("nugget", new Integer[] { 1, 9 });
+        IEApi.prefixToIngotMap.put("block", new Integer[] { 9, 1 });
+        IEApi.prefixToIngotMap.put("plate", new Integer[] { 1, 1 });
+        IEApi.prefixToIngotMap.put("gear", new Integer[] { 4, 1 });
+        IEApi.prefixToIngotMap.put("rod", new Integer[] { 2, 1 });
+        IEApi.prefixToIngotMap.put("fence", new Integer[] { 3, 2 });
         IECompatModule.doModulesPreInit();
     }
 
@@ -101,7 +105,9 @@ public class ImmersiveEngineering {
 
         GameRegistry.registerWorldGenerator(new IEWorldGen(), 0);
         MinecraftForge.EVENT_BUS.register(new EventHandler());
-        FMLCommonHandler.instance().bus().register(new EventHandler());
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new EventHandler());
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
         proxy.init();
 
@@ -112,24 +118,33 @@ public class ImmersiveEngineering {
         IECompatModule.doModulesInit();
         int messageId = 0;
         packetHandler.registerMessage(
-                MessageMineralListSync.Handler.class, MessageMineralListSync.class, messageId++, Side.CLIENT);
+            MessageMineralListSync.Handler.class,
+            MessageMineralListSync.class,
+            messageId++,
+            Side.CLIENT);
         packetHandler.registerMessage(MessageTileSync.Handler.class, MessageTileSync.class, messageId++, Side.SERVER);
         packetHandler.registerMessage(
-                MessageSpeedloaderSync.Handler.class, MessageSpeedloaderSync.class, messageId++, Side.CLIENT);
+            MessageSpeedloaderSync.Handler.class,
+            MessageSpeedloaderSync.class,
+            messageId++,
+            Side.CLIENT);
+        packetHandler
+            .registerMessage(MessageSkyhookSync.Handler.class, MessageSkyhookSync.class, messageId++, Side.CLIENT);
         packetHandler.registerMessage(
-                MessageSkyhookSync.Handler.class, MessageSkyhookSync.class, messageId++, Side.CLIENT);
+            MessageMinecartShaderSync.HandlerServer.class,
+            MessageMinecartShaderSync.class,
+            messageId++,
+            Side.SERVER);
         packetHandler.registerMessage(
-                MessageMinecartShaderSync.HandlerServer.class,
-                MessageMinecartShaderSync.class,
-                messageId++,
-                Side.SERVER);
+            MessageMinecartShaderSync.HandlerClient.class,
+            MessageMinecartShaderSync.class,
+            messageId++,
+            Side.CLIENT);
         packetHandler.registerMessage(
-                MessageMinecartShaderSync.HandlerClient.class,
-                MessageMinecartShaderSync.class,
-                messageId++,
-                Side.CLIENT);
-        packetHandler.registerMessage(
-                MessageRequestBlockUpdate.Handler.class, MessageRequestBlockUpdate.class, messageId++, Side.SERVER);
+            MessageRequestBlockUpdate.Handler.class,
+            MessageRequestBlockUpdate.class,
+            messageId++,
+            Side.SERVER);
         packetHandler.registerMessage(MessageDrill.Handler.class, MessageDrill.class, messageId++, Side.CLIENT);
     }
 
@@ -157,8 +172,10 @@ public class ImmersiveEngineering {
 
     @Mod.EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            World world = MinecraftServer.getServer().getEntityWorld();
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) {
+            World world = MinecraftServer.getServer()
+                .getEntityWorld();
             if (!world.isRemote) {
                 IELogger.info("WorldData loading");
                 IESaveData worldData = (IESaveData) world.loadItemData(IESaveData.class, IESaveData.dataName);
@@ -174,6 +191,7 @@ public class ImmersiveEngineering {
     }
 
     public static CreativeTabs creativeTab = new CreativeTabs(MODID) {
+
         @Override
         public Item getTabIconItem() {
             return null;
@@ -186,6 +204,7 @@ public class ImmersiveEngineering {
     };
 
     public static class ThreadContributorSpecialsDownloader extends Thread {
+
         public static ThreadContributorSpecialsDownloader activeThread;
 
         public ThreadContributorSpecialsDownloader() {
@@ -201,7 +220,7 @@ public class ImmersiveEngineering {
             try {
                 IELogger.info("Attempting to download special revolvers from GitHub");
                 URL url = new URL(
-                        "https://raw.githubusercontent.com/TeloDev/ImmersiveEngineering/master/contributorRevolvers.json");
+                    "https://raw.githubusercontent.com/PufferTeam-ModArchive/ImmersiveEngineering/master/contributorRevolvers.json");
                 JsonStreamParser parser = new JsonStreamParser(new InputStreamReader(url.openStream()));
                 while (parser.hasNext()) {
                     try {
@@ -210,8 +229,8 @@ public class ImmersiveEngineering {
                         if (revolver != null) {
                             if (revolver.uuid != null)
                                 for (String uuid : revolver.uuid) ItemRevolver.specialRevolvers.put(uuid, revolver);
-                            ItemRevolver.specialRevolversByTag.put(
-                                    !revolver.tag.isEmpty() ? revolver.tag : revolver.flavour, revolver);
+                            ItemRevolver.specialRevolversByTag
+                                .put(!revolver.tag.isEmpty() ? revolver.tag : revolver.flavour, revolver);
                         }
                     } catch (Exception excepParse) {
                         IELogger.warn("Error on parsing a SpecialRevolver");

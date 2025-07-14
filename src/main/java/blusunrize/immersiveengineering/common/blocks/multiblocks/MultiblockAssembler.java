@@ -1,5 +1,15 @@
 package blusunrize.immersiveengineering.common.blocks.multiblocks;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.IEContent;
@@ -10,46 +20,43 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityAssembler;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityStructuralArm;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import org.lwjgl.opengl.GL11;
 
 public class MultiblockAssembler implements IMultiblock {
+
     public static MultiblockAssembler instance = new MultiblockAssembler();
     static ItemStack[][][] structure = new ItemStack[3][3][3];
     private static final TileEntityAssembler assemble = new TileEntityAssembler();
 
     static {
-        for (int h = 0; h < 3; h++)
-            for (int l = 0; l < 3; l++)
-                for (int w = 0; w < 3; w++) {
-                    if (h == 0)
-                        structure[h][l][w] =
-                                new ItemStack(IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_scaffolding);
-                    else if (h == 1) {
-                        if (w == 0 || w == 2)
-                            structure[h][l][w] = new ItemStack(
-                                    IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_sheetMetal);
-                        else if (l == 1)
-                            structure[h][l][w] = new ItemStack(
-                                    IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_lightEngineering);
-                        else
-                            structure[h][l][w] =
-                                    new ItemStack(IEContent.blockMetalDevice, 1, BlockMetalDevices.META_conveyorBelt);
-                    } else if (h == 2) {
-                        if (w == 1)
-                            structure[h][l][w] = new ItemStack(
-                                    IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_lightEngineering);
-                        else
-                            structure[h][l][w] = new ItemStack(
-                                    IEContent.blockMetalDecoration, 1, BlockMetalDecoration.META_structuralArm);
-                    }
-                }
+        for (int h = 0; h < 3; h++) for (int l = 0; l < 3; l++) for (int w = 0; w < 3; w++) {
+            if (h == 0) structure[h][l][w] = new ItemStack(
+                IEContent.blockMetalDecoration,
+                1,
+                BlockMetalDecoration.META_scaffolding);
+            else if (h == 1) {
+                if (w == 0 || w == 2) structure[h][l][w] = new ItemStack(
+                    IEContent.blockMetalDecoration,
+                    1,
+                    BlockMetalDecoration.META_sheetMetal);
+                else if (l == 1) structure[h][l][w] = new ItemStack(
+                    IEContent.blockMetalDecoration,
+                    1,
+                    BlockMetalDecoration.META_lightEngineering);
+                else structure[h][l][w] = new ItemStack(
+                    IEContent.blockMetalDevice,
+                    1,
+                    BlockMetalDevices.META_conveyorBelt);
+            } else if (h == 2) {
+                if (w == 1) structure[h][l][w] = new ItemStack(
+                    IEContent.blockMetalDecoration,
+                    1,
+                    BlockMetalDecoration.META_lightEngineering);
+                else structure[h][l][w] = new ItemStack(
+                    IEContent.blockMetalDecoration,
+                    1,
+                    BlockMetalDecoration.META_structuralArm);
+            }
+        }
     }
 
     @Override
@@ -77,11 +84,15 @@ public class MultiblockAssembler implements IMultiblock {
     @SideOnly(Side.CLIENT)
     public void renderFormedStructure() {
         ClientUtils.bindAtlas(0);
-        ClientUtils.tes().startDrawingQuads();
-        ClientUtils.tes().setTranslation(-.5f, -1.5f, -.5f);
+        ClientUtils.tes()
+            .startDrawingQuads();
+        ClientUtils.tes()
+            .setTranslation(-.5f, -1.5f, -.5f);
         ClientUtils.handleStaticTileRenderer(assemble, false);
-        ClientUtils.tes().draw();
-        ClientUtils.tes().setTranslation(0, 0, 0);
+        ClientUtils.tes()
+            .draw();
+        ClientUtils.tes()
+            .setTranslation(0, 0, 0);
     }
 
     @Override
@@ -109,73 +120,66 @@ public class MultiblockAssembler implements IMultiblock {
         int startX = x;
         int startY = y;
         int startZ = z;
-        for (int l = 0; l < 3; l++)
-            for (int h = -1; h <= 1; h++)
-                for (int w = -1; w <= 1; w++) {
-                    int xx = startX + (side == 4 ? l : side == 5 ? -l : side == 2 ? -w : w);
-                    int yy = startY + h;
-                    int zz = startZ + (side == 2 ? l : side == 3 ? -l : side == 5 ? -w : w);
+        for (int l = 0; l < 3; l++) for (int h = -1; h <= 1; h++) for (int w = -1; w <= 1; w++) {
+            int xx = startX + (side == 4 ? l : side == 5 ? -l : side == 2 ? -w : w);
+            int yy = startY + h;
+            int zz = startZ + (side == 2 ? l : side == 3 ? -l : side == 5 ? -w : w);
 
-                    if (h == -1) {
-                        if (!(world.getBlock(xx, yy, zz).equals(IEContent.blockMetalDecoration)
-                                && world.getBlockMetadata(xx, yy, zz) == BlockMetalDecoration.META_scaffolding))
-                            return false;
-                    } else if (h == 0) {
-                        if (w == -1 || w == 1) {
-                            if (!(world.getBlock(xx, yy, zz).equals(IEContent.blockMetalDecoration)
-                                    && world.getBlockMetadata(xx, yy, zz) == BlockMetalDecoration.META_sheetMetal))
-                                return false;
-                        } else if (l == 1) {
-                            if (!(world.getBlock(xx, yy, zz).equals(IEContent.blockMetalDecoration)
-                                    && world.getBlockMetadata(xx, yy, zz)
-                                            == BlockMetalDecoration.META_lightEngineering)) return false;
-                        } else {
-                            if (!(world.getBlock(xx, yy, zz).equals(IEContent.blockMetalDevice)
-                                    && world.getBlockMetadata(xx, yy, zz) == BlockMetalDevices.META_conveyorBelt))
-                                return false;
-                        }
-                    } else if (h == 1) {
-                        if (w == 0) {
-                            if (!(world.getBlock(xx, yy, zz).equals(IEContent.blockMetalDecoration)
-                                    && world.getBlockMetadata(xx, yy, zz)
-                                            == BlockMetalDecoration.META_lightEngineering)) return false;
-                        } else {
-                            if (!(world.getBlock(xx, yy, zz).equals(IEContent.blockMetalDecoration)
-                                    && world.getBlockMetadata(xx, yy, zz) == BlockMetalDecoration.META_structuralArm))
-                                return false;
-                            TileEntity tile = world.getTileEntity(xx, yy, zz);
-                            int f = tile instanceof TileEntityStructuralArm
-                                            && !((TileEntityStructuralArm) tile).inverted
-                                    ? ((TileEntityStructuralArm) tile).facing
-                                    : -1;
-                            if (f != ForgeDirection.ROTATION_MATRIX[w == -1 ? 1 : 0][side]) return false;
-                        }
-                    }
+            if (h == -1) {
+                if (!(world.getBlock(xx, yy, zz)
+                    .equals(IEContent.blockMetalDecoration)
+                    && world.getBlockMetadata(xx, yy, zz) == BlockMetalDecoration.META_scaffolding)) return false;
+            } else if (h == 0) {
+                if (w == -1 || w == 1) {
+                    if (!(world.getBlock(xx, yy, zz)
+                        .equals(IEContent.blockMetalDecoration)
+                        && world.getBlockMetadata(xx, yy, zz) == BlockMetalDecoration.META_sheetMetal)) return false;
+                } else if (l == 1) {
+                    if (!(world.getBlock(xx, yy, zz)
+                        .equals(IEContent.blockMetalDecoration)
+                        && world.getBlockMetadata(xx, yy, zz) == BlockMetalDecoration.META_lightEngineering))
+                        return false;
+                } else {
+                    if (!(world.getBlock(xx, yy, zz)
+                        .equals(IEContent.blockMetalDevice)
+                        && world.getBlockMetadata(xx, yy, zz) == BlockMetalDevices.META_conveyorBelt)) return false;
                 }
-
-        for (int l = 0; l < 3; l++)
-            for (int h = -1; h <= 1; h++)
-                for (int w = -1; w <= 1; w++) {
-                    int xx = startX + (side == 4 ? l : side == 5 ? -l : side == 2 ? -w : w);
-                    int yy = startY + h;
-                    int zz = startZ + (side == 2 ? l : side == 3 ? -l : side == 5 ? -w : w);
-
-                    world.setBlock(
-                            xx, yy, zz, IEContent.blockMetalMultiblocks, BlockMetalMultiblocks.META_assembler, 0x3);
-                    TileEntity curr = world.getTileEntity(xx, yy, zz);
-                    if (curr instanceof TileEntityAssembler) {
-                        TileEntityAssembler tile = (TileEntityAssembler) curr;
-                        tile.facing = side;
-                        tile.formed = true;
-                        tile.pos = (h + 1) * 9 + l * 3 + (w + 1);
-                        tile.offset = new int[] {
-                            (side == 4 ? l - 1 : side == 5 ? 1 - l : side == 2 ? -w : w),
-                            h,
-                            (side == 2 ? l - 1 : side == 3 ? 1 - l : side == 5 ? -w : w)
-                        };
-                    }
+            } else if (h == 1) {
+                if (w == 0) {
+                    if (!(world.getBlock(xx, yy, zz)
+                        .equals(IEContent.blockMetalDecoration)
+                        && world.getBlockMetadata(xx, yy, zz) == BlockMetalDecoration.META_lightEngineering))
+                        return false;
+                } else {
+                    if (!(world.getBlock(xx, yy, zz)
+                        .equals(IEContent.blockMetalDecoration)
+                        && world.getBlockMetadata(xx, yy, zz) == BlockMetalDecoration.META_structuralArm)) return false;
+                    TileEntity tile = world.getTileEntity(xx, yy, zz);
+                    int f = tile instanceof TileEntityStructuralArm && !((TileEntityStructuralArm) tile).inverted
+                        ? ((TileEntityStructuralArm) tile).facing
+                        : -1;
+                    if (f != ForgeDirection.ROTATION_MATRIX[w == -1 ? 1 : 0][side]) return false;
                 }
-        //			player.triggerAchievement(IEAchievements.mbCrusher);
+            }
+        }
+
+        for (int l = 0; l < 3; l++) for (int h = -1; h <= 1; h++) for (int w = -1; w <= 1; w++) {
+            int xx = startX + (side == 4 ? l : side == 5 ? -l : side == 2 ? -w : w);
+            int yy = startY + h;
+            int zz = startZ + (side == 2 ? l : side == 3 ? -l : side == 5 ? -w : w);
+
+            world.setBlock(xx, yy, zz, IEContent.blockMetalMultiblocks, BlockMetalMultiblocks.META_assembler, 0x3);
+            TileEntity curr = world.getTileEntity(xx, yy, zz);
+            if (curr instanceof TileEntityAssembler) {
+                TileEntityAssembler tile = (TileEntityAssembler) curr;
+                tile.facing = side;
+                tile.formed = true;
+                tile.pos = (h + 1) * 9 + l * 3 + (w + 1);
+                tile.offset = new int[] { (side == 4 ? l - 1 : side == 5 ? 1 - l : side == 2 ? -w : w), h,
+                    (side == 2 ? l - 1 : side == 3 ? 1 - l : side == 5 ? -w : w) };
+            }
+        }
+        // player.triggerAchievement(IEAchievements.mbCrusher);
         return true;
     }
 
@@ -186,7 +190,6 @@ public class MultiblockAssembler implements IMultiblock {
             new ItemStack(IEContent.blockMetalDecoration, 4, BlockMetalDecoration.META_lightEngineering),
             new ItemStack(IEContent.blockMetalDecoration, 6, BlockMetalDecoration.META_sheetMetal),
             new ItemStack(IEContent.blockMetalDecoration, 6, BlockMetalDecoration.META_structuralArm),
-            new ItemStack(IEContent.blockMetalDevice, 2, BlockMetalDevices.META_conveyorBelt)
-        };
+            new ItemStack(IEContent.blockMetalDevice, 2, BlockMetalDevices.META_conveyorBelt) };
     }
 }

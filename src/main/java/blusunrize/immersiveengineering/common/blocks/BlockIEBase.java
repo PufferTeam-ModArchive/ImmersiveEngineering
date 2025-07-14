@@ -1,14 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IColouredTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICustomBoundingboxes;
-import blusunrize.immersiveengineering.common.util.Lib;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -28,7 +22,16 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IColouredTile;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ICustomBoundingboxes;
+import blusunrize.immersiveengineering.common.util.Lib;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public abstract class BlockIEBase extends BlockContainer {
+
     public String name;
     public String[] subNames;
     public final IIcon[][] icons;
@@ -37,12 +40,8 @@ public abstract class BlockIEBase extends BlockContainer {
     public boolean isFlammable = false;
     public int[] lightOpacities;
 
-    protected BlockIEBase(
-            String name,
-            Material mat,
-            int iconDimensions,
-            Class<? extends ItemBlockIEBase> itemBlock,
-            String... subNames) {
+    protected BlockIEBase(String name, Material mat, int iconDimensions, Class<? extends ItemBlockIEBase> itemBlock,
+        String... subNames) {
         super(mat);
         this.adjustSound();
         this.subNames = subNames;
@@ -76,10 +75,9 @@ public abstract class BlockIEBase extends BlockContainer {
             this.stepSound = Block.soundTypeCloth;
         else if (this.blockMaterial == Material.glass || this.blockMaterial == Material.ice)
             this.stepSound = Block.soundTypeGlass;
-        else if (this.blockMaterial == Material.grass
-                || this.blockMaterial == Material.tnt
-                || this.blockMaterial == Material.plants
-                || this.blockMaterial == Material.vine) this.stepSound = Block.soundTypeGrass;
+        else if (this.blockMaterial == Material.grass || this.blockMaterial == Material.tnt
+            || this.blockMaterial == Material.plants
+            || this.blockMaterial == Material.vine) this.stepSound = Block.soundTypeGrass;
         else if (this.blockMaterial == Material.ground) this.stepSound = Block.soundTypeGravel;
         else if (this.blockMaterial == Material.iron) this.stepSound = Block.soundTypeMetal;
         else if (this.blockMaterial == Material.sand) this.stepSound = Block.soundTypeSand;
@@ -167,12 +165,14 @@ public abstract class BlockIEBase extends BlockContainer {
 
     @Override
     public boolean canHarvestBlock(EntityPlayer player, int meta) {
-        if (this.getMaterial().isToolNotRequired()) return true;
+        if (this.getMaterial()
+            .isToolNotRequired()) return true;
         ItemStack stack = player.inventory.getCurrentItem();
-        if (stack != null
-                && stack.getItem().getToolClasses(stack).contains(Lib.TOOL_HAMMER)
-                && this.allowHammerHarvest(meta))
-            return this.getHarvestLevel(meta) < stack.getItem().getHarvestLevel(stack, Lib.TOOL_HAMMER);
+        if (stack != null && stack.getItem()
+            .getToolClasses(stack)
+            .contains(Lib.TOOL_HAMMER) && this.allowHammerHarvest(meta))
+            return this.getHarvestLevel(meta) < stack.getItem()
+                .getHarvestLevel(stack, Lib.TOOL_HAMMER);
         return super.canHarvestBlock(player, meta);
     }
 
@@ -184,9 +184,14 @@ public abstract class BlockIEBase extends BlockContainer {
         vec1 = vec1.addVector((double) (-x), (double) (-y), (double) (-z));
         if (this instanceof ICustomBoundingboxes) {
             ArrayList<AxisAlignedBB> list = ((ICustomBoundingboxes) this).addCustomSelectionBoxesToList(world, x, y, z);
-            if (list.isEmpty())
-                return this.doRayTraceOnBox(
-                        world, x, y, z, vec0, vec1, AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
+            if (list.isEmpty()) return this.doRayTraceOnBox(
+                world,
+                x,
+                y,
+                z,
+                vec0,
+                vec1,
+                AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
             MovingObjectPosition hit = null;
             double dist = 0;
             for (AxisAlignedBB aabb : list) {
@@ -200,13 +205,18 @@ public abstract class BlockIEBase extends BlockContainer {
                 }
             }
             return hit;
-        } else
-            return this.doRayTraceOnBox(
-                    world, x, y, z, vec0, vec1, AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
+        } else return this.doRayTraceOnBox(
+            world,
+            x,
+            y,
+            z,
+            vec0,
+            vec1,
+            AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ));
     }
 
-    protected MovingObjectPosition doRayTraceOnBox(
-            World world, int x, int y, int z, Vec3 vec0, Vec3 vec1, AxisAlignedBB box) {
+    protected MovingObjectPosition doRayTraceOnBox(World world, int x, int y, int z, Vec3 vec0, Vec3 vec1,
+        AxisAlignedBB box) {
         Vec3 vecMinX = vec0.getIntermediateWithXValue(vec1, box.minX);
         Vec3 vecMaxX = vec0.getIntermediateWithXValue(vec1, box.maxX);
         Vec3 vecMinY = vec0.getIntermediateWithYValue(vec1, box.minY);
@@ -250,32 +260,30 @@ public abstract class BlockIEBase extends BlockContainer {
     }
 
     protected boolean isVecInsideYZBounds(World world, int x, int y, int z, Vec3 vec, AxisAlignedBB box) {
-        return vec == null
-                ? false
-                : vec.yCoord >= box.minY && vec.yCoord <= box.maxY && vec.zCoord >= box.minZ && vec.zCoord <= box.maxZ;
+        return vec == null ? false
+            : vec.yCoord >= box.minY && vec.yCoord <= box.maxY && vec.zCoord >= box.minZ && vec.zCoord <= box.maxZ;
     }
 
     protected boolean isVecInsideXZBounds(World world, int x, int y, int z, Vec3 vec, AxisAlignedBB box) {
-        return vec == null
-                ? false
-                : vec.xCoord >= box.minX && vec.xCoord <= box.maxX && vec.zCoord >= box.minZ && vec.zCoord <= box.maxZ;
+        return vec == null ? false
+            : vec.xCoord >= box.minX && vec.xCoord <= box.maxX && vec.zCoord >= box.minZ && vec.zCoord <= box.maxZ;
     }
 
     protected boolean isVecInsideXYBounds(World world, int x, int y, int z, Vec3 vec, AxisAlignedBB box) {
-        return vec == null
-                ? false
-                : vec.xCoord >= box.minX && vec.xCoord <= box.maxX && vec.yCoord >= box.minY && vec.yCoord <= box.maxY;
+        return vec == null ? false
+            : vec.xCoord >= box.minX && vec.xCoord <= box.maxX && vec.yCoord >= box.minY && vec.yCoord <= box.maxY;
     }
 
     protected void addCollisionBox(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity ent) {
-        AxisAlignedBB box = AxisAlignedBB.getBoundingBox(
-                x + this.minX, y + this.minY, z + this.minZ, x + this.maxX, y + this.maxY, z + this.maxZ);
+        AxisAlignedBB box = AxisAlignedBB
+            .getBoundingBox(x + this.minX, y + this.minY, z + this.minZ, x + this.maxX, y + this.maxY, z + this.maxZ);
         if (box != null && aabb.intersectsWith(box)) list.add(box);
     }
 
     public static class BlockIESimple extends BlockIEBase {
-        public BlockIESimple(
-                String name, Material mat, Class<? extends ItemBlockIEBase> itemBlock, String... subNames) {
+
+        public BlockIESimple(String name, Material mat, Class<? extends ItemBlockIEBase> itemBlock,
+            String... subNames) {
             super(name, mat, 1, itemBlock, subNames);
             for (int i = 0; i < subNames.length; i++) this.setMetaLightOpacity(i, 255);
         }

@@ -1,8 +1,5 @@
 package blusunrize.lib.manual;
 
-import blusunrize.immersiveengineering.common.util.IELogger;
-import blusunrize.lib.manual.ManualPages.PositionedItemStack;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -21,10 +19,16 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.common.util.IELogger;
+import blusunrize.lib.manual.ManualPages.PositionedItemStack;
+import cpw.mods.fml.relauncher.ReflectionHelper;
+
 public class ManualUtils {
+
     public static boolean stackMatchesObject(ItemStack stack, Object o) {
         if (o instanceof String) return compareToOreName(stack, (String) o);
         if (o instanceof ItemStack) return OreDictionary.itemMatches((ItemStack) o, stack, false);
@@ -32,14 +36,15 @@ public class ManualUtils {
     }
 
     public static boolean compareToOreName(ItemStack stack, String oreName) {
-        for (int oid : OreDictionary.getOreIDs(stack))
-            if (OreDictionary.getOreName(oid).equals(oreName)) return true;
+        for (int oid : OreDictionary.getOreIDs(stack)) if (OreDictionary.getOreName(oid)
+            .equals(oreName)) return true;
         return false;
     }
 
     public static boolean isExistingOreName(String name) {
         if (!OreDictionary.doesOreNameExist(name)) return false;
-        else return !OreDictionary.getOres(name).isEmpty();
+        else return !OreDictionary.getOres(name)
+            .isEmpty();
     }
 
     public static void drawTexturedRect(int x, int y, int w, int h, double... uv) {
@@ -54,11 +59,11 @@ public class ManualUtils {
 
     public static ArrayList<String> getPrimitiveSpellingCorrections(String query, String[] valid, int maxDistance) {
         ArrayList<String> list = new ArrayList<String>();
-        for (String s : valid)
-            if (s != null && !s.trim().isEmpty())
-                if (getSpellingDistanceBetweenStrings(query, s) < maxDistance) list.add(s);
+        for (String s : valid) if (s != null && !s.trim()
+            .isEmpty()) if (getSpellingDistanceBetweenStrings(query, s) < maxDistance) list.add(s);
 
         Collections.sort(list, new Comparator<String>() {
+
             @Override
             public int compare(String s0, String s1) {
                 return getSpellingDistanceBetweenStrings(s1, s0);
@@ -84,9 +89,8 @@ public class ManualUtils {
                     else {
                         if (queryWords[iWord].charAt(iChar) != targetWords[iWord].charAt(iChar)) {
                             wordDistance++;
-                            if (iChar > 0
-                                    && queryWords[iWord].charAt(iChar - 1) == targetWords[iWord].charAt(iChar)
-                                    && queryWords[iWord].charAt(iChar) == targetWords[iWord].charAt(iChar - 1))
+                            if (iChar > 0 && queryWords[iWord].charAt(iChar - 1) == targetWords[iWord].charAt(iChar)
+                                && queryWords[iWord].charAt(iChar) == targetWords[iWord].charAt(iChar - 1))
                                 wordDistance -= 2; // switched letters don't increase distance
                         }
                     }
@@ -112,8 +116,8 @@ public class ManualUtils {
             // Resetting colour if GL colour differs from textColor
             // that case happens because the formatting reset does not reset textColor
             if (!(currentGLColor.get(0) == (currentColour >> 16 & 255) / 255f
-                    && currentGLColor.get(1) == (currentColour >> 8 & 255) / 255f
-                    && currentGLColor.get(2) == (currentColour & 255) / 255f)) fontRenderer.textColor = colour;
+                && currentGLColor.get(1) == (currentColour >> 8 & 255) / 255f
+                && currentGLColor.get(2) == (currentColour & 255) / 255f)) fontRenderer.textColor = colour;
             fontRenderer.drawString(next, x, y, fontRenderer.textColor, false);
         }
     }
@@ -129,7 +133,8 @@ public class ManualUtils {
     }
 
     public static void bindTexture(String path) {
-        mc().getTextureManager().bindTexture(getResource(path));
+        mc().getTextureManager()
+            .bindTexture(getResource(path));
     }
 
     public static ResourceLocation getResource(String path) {
@@ -137,12 +142,13 @@ public class ManualUtils {
         if (!resourceMap.containsKey(path)) resourceMap.put(path, rl);
         return rl;
     }
+
     /**
      *
      * @return either null (unknown recipe type) or an Object[] with content as follows
-     * 			index 0: width of the recipe
-     * 			index 1: height of the recipe
-     * 			index 2: recipe as PositionedItemStack[]
+     *         index 0: width of the recipe
+     *         index 1: height of the recipe
+     *         index 2: recipe as PositionedItemStack[]
      */
     public static Object[] getRecipeForDisplay(IRecipe rec) {
         Object[] ingredientsPre = null;
@@ -153,7 +159,8 @@ public class ManualUtils {
             w = ingredientsPre.length > 6 ? 3 : ingredientsPre.length > 1 ? 2 : 1;
             h = ingredientsPre.length > 4 ? 3 : ingredientsPre.length > 2 ? 2 : 1;
         } else if (rec instanceof ShapelessOreRecipe) {
-            ingredientsPre = ((ShapelessOreRecipe) rec).getInput().toArray();
+            ingredientsPre = ((ShapelessOreRecipe) rec).getInput()
+                .toArray();
             w = ingredientsPre.length > 6 ? 3 : ingredientsPre.length > 1 ? 2 : 1;
             h = ingredientsPre.length > 4 ? 3 : ingredientsPre.length > 2 ? 2 : 1;
         } else if (rec instanceof ShapedOreRecipe) {
@@ -186,13 +193,10 @@ public class ManualUtils {
         }
         PositionedItemStack[] pIngredients = new PositionedItemStack[ingredients.length + 1];
         int xBase = (120 - (w + 2) * 18) / 2;
-        for (int hh = 0; hh < h; hh++)
-            for (int ww = 0; ww < w; ww++)
-                if (hh * w + ww < ingredients.length)
-                    pIngredients[hh * w + ww] =
-                            new PositionedItemStack(ingredients[hh * w + ww], xBase + ww * 18, hh * 18);
-        pIngredients[pIngredients.length - 1] =
-                new PositionedItemStack(rec.getRecipeOutput(), xBase + w * 18 + 18, (int) (h / 2f * 18) - 8);
-        return new Object[] {w, h, pIngredients};
+        for (int hh = 0; hh < h; hh++) for (int ww = 0; ww < w; ww++) if (hh * w + ww < ingredients.length)
+            pIngredients[hh * w + ww] = new PositionedItemStack(ingredients[hh * w + ww], xBase + ww * 18, hh * 18);
+        pIngredients[pIngredients.length
+            - 1] = new PositionedItemStack(rec.getRecipeOutput(), xBase + w * 18 + 18, (int) (h / 2f * 18) - 8);
+        return new Object[] { w, h, pIngredients };
     }
 }

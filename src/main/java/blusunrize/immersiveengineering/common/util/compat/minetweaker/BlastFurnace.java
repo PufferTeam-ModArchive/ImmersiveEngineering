@@ -1,23 +1,26 @@
 package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.crafting.BlastFurnaceRecipe;
-import blusunrize.immersiveengineering.common.util.Utils;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import net.minecraft.item.ItemStack;
+
+import blusunrize.immersiveengineering.api.ApiUtils;
+import blusunrize.immersiveengineering.api.crafting.BlastFurnaceRecipe;
+import blusunrize.immersiveengineering.common.util.Utils;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
 import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
-import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersiveengineering.BlastFurnace")
 public class BlastFurnace {
+
     @ZenMethod
     public static void addRecipe(IItemStack output, IIngredient input, int time, @Optional IItemStack slag) {
         Object oInput = MTHelper.toObject(input);
@@ -28,6 +31,7 @@ public class BlastFurnace {
     }
 
     private static class Add implements IUndoableAction {
+
         private final BlastFurnaceRecipe recipe;
 
         public Add(BlastFurnaceRecipe recipe) {
@@ -71,6 +75,7 @@ public class BlastFurnace {
     }
 
     private static class Remove implements IUndoableAction {
+
         private final ItemStack output;
         List<BlastFurnaceRecipe> removedRecipes;
 
@@ -85,9 +90,8 @@ public class BlastFurnace {
 
         @Override
         public void undo() {
-            if (removedRecipes != null)
-                for (BlastFurnaceRecipe recipe : removedRecipes)
-                    if (recipe != null) BlastFurnaceRecipe.recipeList.add(recipe);
+            if (removedRecipes != null) for (BlastFurnaceRecipe recipe : removedRecipes)
+                if (recipe != null) BlastFurnaceRecipe.recipeList.add(recipe);
         }
 
         @Override
@@ -120,6 +124,7 @@ public class BlastFurnace {
     }
 
     private static class AddFuel implements IUndoableAction {
+
         private final Object fuel;
         private final int burnTime;
 
@@ -148,13 +153,13 @@ public class BlastFurnace {
         @Override
         public String describe() {
             return "Adding " + (fuel instanceof ItemStack ? ((ItemStack) fuel).getDisplayName() : (String) fuel)
-                    + " as Blast Furnace Fuel";
+                + " as Blast Furnace Fuel";
         }
 
         @Override
         public String describeUndo() {
             return "Removing " + (fuel instanceof ItemStack ? ((ItemStack) fuel).getDisplayName() : (String) fuel)
-                    + " as Blast Furnace Fuel";
+                + " as Blast Furnace Fuel";
         }
 
         @Override
@@ -169,6 +174,7 @@ public class BlastFurnace {
     }
 
     private static class RemoveFuel implements IUndoableAction {
+
         private final ItemStack stack;
         Object ident;
         int removedTime;

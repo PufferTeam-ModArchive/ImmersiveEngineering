@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 5.0.0
  */
 public class ModelRefinery extends ModelBase {
+
     public ModelRenderer tank1;
     public ModelRenderer pipe4;
     public ModelRenderer input1;

@@ -1,5 +1,11 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import blusunrize.immersiveengineering.api.tool.ExcavatorHandler;
 import blusunrize.immersiveengineering.api.tool.ExcavatorHandler.MineralWorldInfo;
 import blusunrize.immersiveengineering.common.Config;
@@ -9,13 +15,9 @@ import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntitySampleDrill extends TileEntityIEBase implements IEnergyReceiver {
+
     public EnergyStorage energyStorage = new EnergyStorage(8000);
     public int pos = 0;
     public int process = 0;
@@ -29,17 +31,17 @@ public class TileEntitySampleDrill extends TileEntityIEBase implements IEnergyRe
         if (pos != 0 || worldObj.isRemote || worldObj.isAirBlock(xCoord, yCoord - 1, zCoord)) return;
         if (process < Config.getInt("coredrill_time"))
             if (energyStorage.extractEnergy(Config.getInt("coredrill_consumption"), false)
-                    == Config.getInt("coredrill_consumption")) {
-                process++;
-                this.markDirty();
-                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-            }
+                == Config.getInt("coredrill_consumption")) {
+                    process++;
+                    this.markDirty();
+                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                }
     }
 
     /*
-    CAUTION: all these getters will not check whether or not they belong to the master!
-    Check this.pos and call them on the master TileEntity (pos==0) to avoid incorrect data.
-    They will also provide information at all times and ignore the sampling progress.
+     * CAUTION: all these getters will not check whether or not they belong to the master!
+     * Check this.pos and call them on the master TileEntity (pos==0) to avoid incorrect data.
+     * They will also provide information at all times and ignore the sampling progress.
      */
     public float getSampleProgress() {
         return process / (float) Config.getInt("coredrill_time");
@@ -67,9 +69,8 @@ public class TileEntitySampleDrill extends TileEntityIEBase implements IEnergyRe
         MineralWorldInfo info = ExcavatorHandler.getMineralWorldInfo(worldObj, (xCoord >> 4), (zCoord >> 4));
         if (ExcavatorHandler.mineralVeinCapacity < 0 || info.depletion < 0) return -1;
         else if (info.mineralOverride == null && info.mineral == null) return 0;
-        else
-            return (Config.getInt("excavator_depletion") - info.depletion)
-                    / (float) Config.getInt("excavator_depletion");
+        else return (Config.getInt("excavator_depletion") - info.depletion)
+            / (float) Config.getInt("excavator_depletion");
     }
 
     @Override
@@ -90,10 +91,9 @@ public class TileEntitySampleDrill extends TileEntityIEBase implements IEnergyRe
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            if (pos == 0)
-                renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 3, zCoord + 1);
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (pos == 0)
+            renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 3, zCoord + 1);
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 

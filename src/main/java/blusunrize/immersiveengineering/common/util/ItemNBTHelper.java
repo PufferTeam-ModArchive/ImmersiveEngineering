@@ -9,6 +9,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class ItemNBTHelper {
+
     public static NBTTagCompound getTag(ItemStack stack) {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         return stack.getTagCompound();
@@ -89,15 +90,8 @@ public class ItemNBTHelper {
         return hasTag(stack) ? getTag(stack).getCompoundTag(key) : new NBTTagCompound();
     }
 
-    public static void setDelayedSoundsForStack(
-            ItemStack stack,
-            String nbtKey,
-            String sound,
-            float volume,
-            float pitch,
-            int amount,
-            int baseDelay,
-            int iDelay) {
+    public static void setDelayedSoundsForStack(ItemStack stack, String nbtKey, String sound, float volume, float pitch,
+        int amount, int baseDelay, int iDelay) {
         int[] delayedSounds = new int[amount];
         for (int i = 0; i < delayedSounds.length; i++) delayedSounds[i] = baseDelay + i * iDelay;
 
@@ -115,11 +109,11 @@ public class ItemNBTHelper {
             --delayedSounds[i];
             if (delayedSounds[i] <= 0) {
                 ent.worldObj.playSoundAtEntity(
-                        ent,
-                        getString(stack, "delayedSound_" + nbtKey + "_sound"),
-                        getFloat(stack, "delayedSound_" + nbtKey + "_volume"),
-                        getFloat(stack, "delayedSound_" + nbtKey + "_pitch"));
-            } else ++l;
+                    ent,
+                    getString(stack, "delayedSound_" + nbtKey + "_sound"),
+                    getFloat(stack, "delayedSound_" + nbtKey + "_volume"),
+                    getFloat(stack, "delayedSound_" + nbtKey + "_pitch"));
+            } else++l;
         }
         if (l > 0) {
             ItemNBTHelper.setIntArray(stack, "delayedSound_" + nbtKey + "_delay", delayedSounds);
@@ -135,7 +129,10 @@ public class ItemNBTHelper {
     public static void setFluidStack(ItemStack stack, String key, FluidStack val) {
         if (val != null && val.getFluid() != null) {
             NBTTagCompound tag = getTagCompound(stack, key);
-            tag.setString("fluid", val.getFluid().getName());
+            tag.setString(
+                "fluid",
+                val.getFluid()
+                    .getName());
             tag.setInteger("amount", val.amount);
             setTagCompound(stack, key, tag);
         } else remove(stack, "fluid");

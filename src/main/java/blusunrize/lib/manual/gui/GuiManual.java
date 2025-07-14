@@ -1,12 +1,9 @@
 package blusunrize.lib.manual.gui;
 
-import blusunrize.lib.manual.IManualPage;
-import blusunrize.lib.manual.ManualInstance;
-import blusunrize.lib.manual.ManualInstance.ManualEntry;
-import blusunrize.lib.manual.ManualUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -15,11 +12,18 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.lib.manual.IManualPage;
+import blusunrize.lib.manual.ManualInstance;
+import blusunrize.lib.manual.ManualInstance.ManualEntry;
+import blusunrize.lib.manual.ManualUtils;
+
 public class GuiManual extends GuiScreen {
+
     int xSize = 186;
     int ySize = 198;
     int guiLeft;
@@ -130,14 +134,14 @@ public class GuiManual extends GuiScreen {
         ManualUtils.bindTexture(texture);
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         if (this.searchField != null) {
-            int l = searchField.getText() != null ? searchField.getText().length() * 6 : 0;
+            int l = searchField.getText() != null ? searchField.getText()
+                .length() * 6 : 0;
             if (l > 20) this.drawTexturedModalRect(guiLeft + 166, guiTop + 74, 136 + (120 - l), 238, l, 18);
             if (this.hasSuggestions != -1 && this.hasSuggestions < this.buttonList.size()) {
                 this.drawTexturedModalRect(guiLeft + 174, guiTop + 100, 214, 212, 16, 26);
-                int h = ((GuiClickableList) this.buttonList.get(hasSuggestions)).getFontHeight()
-                        * Math.min(
-                                ((GuiClickableList) this.buttonList.get(hasSuggestions)).perPage,
-                                ((GuiClickableList) this.buttonList.get(hasSuggestions)).entries.length);
+                int h = ((GuiClickableList) this.buttonList.get(hasSuggestions)).getFontHeight() * Math.min(
+                    ((GuiClickableList) this.buttonList.get(hasSuggestions)).perPage,
+                    ((GuiClickableList) this.buttonList.get(hasSuggestions)).entries.length);
                 int w = 76;
                 this.drawTexturedModalRect(guiLeft + 174, guiTop + 116, 230, 212, 16, 16); // Top Left
                 this.drawTexturedModalRect(guiLeft + 174, guiTop + 132 + h, 230, 228, 16, 10); // Bottom Left
@@ -170,30 +174,30 @@ public class GuiManual extends GuiScreen {
 
             // Title
             this.drawCenteredStringScaled(
-                    manual.fontRenderer,
-                    EnumChatFormatting.BOLD + manual.formatEntryName(entry.getName()),
-                    guiLeft + xSize / 2,
-                    guiTop + 14,
-                    manual.getTitleColour(),
-                    1,
-                    true);
+                manual.fontRenderer,
+                EnumChatFormatting.BOLD + manual.formatEntryName(entry.getName()),
+                guiLeft + xSize / 2,
+                guiTop + 14,
+                manual.getTitleColour(),
+                1,
+                true);
             this.drawCenteredStringScaled(
-                    manual.fontRenderer,
-                    manual.formatEntrySubtext(entry.getName()),
-                    guiLeft + xSize / 2,
-                    guiTop + 22,
-                    manual.getSubTitleColour(),
-                    1,
-                    true);
+                manual.fontRenderer,
+                manual.formatEntrySubtext(entry.getName()),
+                guiLeft + xSize / 2,
+                guiTop + 22,
+                manual.getSubTitleColour(),
+                1,
+                true);
             // Page Number
             this.drawCenteredStringScaled(
-                    manual.fontRenderer,
-                    EnumChatFormatting.BOLD.toString() + (page + 1),
-                    guiLeft + xSize / 2,
-                    guiTop + 183,
-                    manual.getPagenumberColour(),
-                    1,
-                    false);
+                manual.fontRenderer,
+                EnumChatFormatting.BOLD.toString() + (page + 1),
+                guiLeft + xSize / 2,
+                guiTop + 183,
+                manual.getPagenumberColour(),
+                1,
+                false);
 
             GL11.glColor3f(1, 1, 1);
             IManualPage mPage = (page < 0 || page >= entry.getPages().length) ? null : entry.getPages()[page];
@@ -203,23 +207,22 @@ public class GuiManual extends GuiScreen {
             my += guiTop;
         } else {
             String title = manual.manualContents.containsKey(selectedCategory)
-                    ? manual.formatCategoryName(selectedCategory)
-                    : manual.getManualName();
+                ? manual.formatCategoryName(selectedCategory)
+                : manual.getManualName();
             this.drawCenteredStringScaled(
-                    manual.fontRenderer,
-                    EnumChatFormatting.BOLD + title,
-                    guiLeft + xSize / 2,
-                    guiTop + 12,
-                    manual.getTitleColour(),
-                    1,
-                    true);
+                manual.fontRenderer,
+                EnumChatFormatting.BOLD + title,
+                guiLeft + xSize / 2,
+                guiTop + 12,
+                manual.getTitleColour(),
+                1,
+                true);
         }
         if (this.searchField != null) {
             manual.fontRenderer.setUnicodeFlag(true);
             this.searchField.drawTextBox();
-            if (this.hasSuggestions != -1 && this.hasSuggestions < this.buttonList.size())
-                manual.fontRenderer.drawString(
-                        "It looks like you meant:", guiLeft + 180, guiTop + 128, manual.getTextColour(), false);
+            if (this.hasSuggestions != -1 && this.hasSuggestions < this.buttonList.size()) manual.fontRenderer
+                .drawString("It looks like you meant:", guiLeft + 180, guiTop + 128, manual.getTextColour(), false);
         }
         manual.fontRenderer.setUnicodeFlag(uni);
         super.drawScreen(mx, my, f);
@@ -267,8 +270,8 @@ public class GuiManual extends GuiScreen {
         }
     }
 
-    public void drawCenteredStringScaled(
-            FontRenderer fr, String s, int x, int y, int colour, float scale, boolean shadow) {
+    public void drawCenteredStringScaled(FontRenderer fr, String s, int x, int y, int colour, float scale,
+        boolean shadow) {
         int xx = (int) Math.floor(x / scale - (fr.getStringWidth(s) / 2));
         int yy = (int) Math.floor(y / scale - (fr.FONT_HEIGHT / 2));
         if (scale != 1) GL11.glScalef(scale, scale, scale);
@@ -325,9 +328,10 @@ public class GuiManual extends GuiScreen {
             }
 
         } else if (button == 1) {
-            if (searchField != null
-                    && searchField.getText() != null
-                    && !searchField.getText().isEmpty()) searchField.setText("");
+            if (searchField != null && searchField.getText() != null
+                && !searchField.getText()
+                    .isEmpty())
+                searchField.setText("");
             else if (selectedEntry != null) {
                 if (previousSelectedEntry.size() > 0) {
                     selectedEntry = previousSelectedEntry.get(0);
@@ -337,7 +341,7 @@ public class GuiManual extends GuiScreen {
             page = 0;
             this.initGui();
         }
-        lastClick = new int[] {mx, my};
+        lastClick = new int[] { mx, my };
         if (this.searchField != null) this.searchField.mouseClicked(mx, my, button);
     }
 
@@ -351,22 +355,22 @@ public class GuiManual extends GuiScreen {
 
     @Override
     protected void mouseClickMove(int mx, int my, int button, long time) {
-        if (lastClick != null
-                && manual.getEntry(selectedEntry) != null
-                && page < manual.getEntry(selectedEntry).getPages().length) {
+        if (lastClick != null && manual.getEntry(selectedEntry) != null
+            && page < manual.getEntry(selectedEntry)
+                .getPages().length) {
             ManualEntry entry = manual.getEntry(selectedEntry);
-            if (lastDrag == null) lastDrag = new int[] {mx - guiLeft, my - guiTop};
+            if (lastDrag == null) lastDrag = new int[] { mx - guiLeft, my - guiTop };
             entry.getPages()[page].mouseDragged(
-                    guiLeft + 32,
-                    guiTop + 28,
-                    lastClick[0],
-                    lastClick[1],
-                    mx - guiLeft,
-                    my - guiTop,
-                    lastDrag[0],
-                    lastDrag[1],
-                    button);
-            lastDrag = new int[] {mx - guiLeft, my - guiTop};
+                guiLeft + 32,
+                guiTop + 28,
+                lastClick[0],
+                lastClick[1],
+                mx - guiLeft,
+                my - guiTop,
+                lastDrag[0],
+                lastDrag[1],
+                button);
+            lastDrag = new int[] { mx - guiLeft, my - guiTop };
         }
     }
 
@@ -374,7 +378,8 @@ public class GuiManual extends GuiScreen {
     protected void keyTyped(char c, int i) {
         if (this.searchField != null && this.searchField.textboxKeyTyped(c, i)) {
             String search = searchField.getText();
-            if (search == null || search.trim().isEmpty()) {
+            if (search == null || search.trim()
+                .isEmpty()) {
                 if (categoryBeforeSearch != null) {
                     selectedCategory = categoryBeforeSearch;
                     categoryBeforeSearch = null;
@@ -389,41 +394,41 @@ public class GuiManual extends GuiScreen {
                 HashMap<String, String> lSpellcheck = new HashMap<String, String>();
                 for (ManualEntry e : manual.manualContents.values()) {
                     if (manual.showEntryInList(e)) {
-                        if (manual.formatEntryName(e.getName()).toLowerCase().contains(search))
-                            lHeaders.add(e.getName());
+                        if (manual.formatEntryName(e.getName())
+                            .toLowerCase()
+                            .contains(search)) lHeaders.add(e.getName());
                         else lSpellcheck.put(manual.formatEntryName(e.getName()), e.getName());
                     }
                 }
                 ArrayList<String> lCorrections = ManualUtils.getPrimitiveSpellingCorrections(
-                        search,
-                        lSpellcheck
-                                .keySet()
-                                .toArray(new String[lSpellcheck.keySet().size()]),
-                        4);
-                for (String key : lSpellcheck.keySet())
-                    if (!lCorrections.contains(key)) {
-                        ManualEntry e = manual.getEntry(lSpellcheck.get(key));
-                        for (IManualPage page : e.getPages())
-                            if (page.listForSearch(search)) {
-                                lHeaders.add(e.getName());
-                                break;
-                            }
+                    search,
+                    lSpellcheck.keySet()
+                        .toArray(
+                            new String[lSpellcheck.keySet()
+                                .size()]),
+                    4);
+                for (String key : lSpellcheck.keySet()) if (!lCorrections.contains(key)) {
+                    ManualEntry e = manual.getEntry(lSpellcheck.get(key));
+                    for (IManualPage page : e.getPages()) if (page.listForSearch(search)) {
+                        lHeaders.add(e.getName());
+                        break;
                     }
+                }
 
                 headers = lHeaders.toArray(new String[lHeaders.size()]);
-                this.buttonList.set(
-                        0, new GuiClickableList(this, 0, guiLeft + 40, guiTop + 20, 100, 148, 1f, 1, headers));
+                this.buttonList
+                    .set(0, new GuiClickableList(this, 0, guiLeft + 40, guiTop + 20, 100, 148, 1f, 1, headers));
                 if (!lCorrections.isEmpty()) {
                     GuiClickableList suggestions = new GuiClickableList(
-                            this,
-                            11,
-                            guiLeft + 180,
-                            guiTop + 138,
-                            100,
-                            80,
-                            1f,
-                            -1,
-                            lCorrections.toArray(new String[0]));
+                        this,
+                        11,
+                        guiLeft + 180,
+                        guiTop + 138,
+                        100,
+                        80,
+                        1f,
+                        -1,
+                        lCorrections.toArray(new String[0]));
                     if (hasSuggestions != -1) this.buttonList.set(hasSuggestions, suggestions);
                     else {
                         hasSuggestions = this.buttonList.size();

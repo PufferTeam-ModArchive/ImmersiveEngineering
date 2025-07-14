@@ -1,13 +1,16 @@
 package blusunrize.immersiveengineering.common.util.compat;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import com.pahimar.ee3.api.exchange.EnergyValueRegistryProxy;
-import com.pahimar.ee3.api.knowledge.AbilityRegistryProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import com.pahimar.ee3.api.exchange.EnergyValueRegistryProxy;
+import com.pahimar.ee3.api.knowledge.AbilityRegistryProxy;
+
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+
 public class EE3Helper extends IECompatModule {
+
     @Override
     public void preInit() {}
 
@@ -41,9 +44,9 @@ public class EE3Helper extends IECompatModule {
         addValue(new ItemStack(IEContent.itemBullet, 1, 1), 96); // Shell
         // All these recipes use gunpowder and casings/shells
         addValue(new ItemStack(IEContent.itemBullet, 1, 2), 213 + 192 + getBulletMetal(512)); // lead
-        addValue(
-                new ItemStack(IEContent.itemBullet, 1, 3),
-                213 + 192 + getBulletMetal(320) + getBulletMetal(576)); // 2 steel+constantan nuggets
+        addValue(new ItemStack(IEContent.itemBullet, 1, 3), 213 + 192 + getBulletMetal(320) + getBulletMetal(576)); // 2
+                                                                                                                    // steel+constantan
+                                                                                                                    // nuggets
         addValue(new ItemStack(IEContent.itemBullet, 1, 4), 96 + 192 + 256); // 1 iron dust
         addValue(new ItemStack(IEContent.itemBullet, 1, 5), 213 + 192 + 964); // 1 TNT
         addValue(new ItemStack(IEContent.itemBullet, 1, 6), 96 + 192 + 192 * 2); // 2 aluminium dust
@@ -52,11 +55,10 @@ public class EE3Helper extends IECompatModule {
         addValue(new ItemStack(IEContent.itemBullet, 1, 8), 96 + 192 + homingVal * 4);
         float silverNugget = (512 / 9f);
         addValue(
-                new ItemStack(IEContent.itemBullet, 1, 9),
-                213
-                        + 192
-                        + getBulletMetal(512)
-                        + (int) (silverNugget * (Config.getBoolean("hardmodeBulletRecipes") ? 3 : 1)));
+            new ItemStack(IEContent.itemBullet, 1, 9),
+            213 + 192
+                + getBulletMetal(512)
+                + (int) (silverNugget * (Config.getBoolean("hardmodeBulletRecipes") ? 3 : 1)));
         addValue(new ItemStack(IEContent.itemBullet, 1, 10), 213 + 192 + 256 + 1); // Quartz+Glass
 
         addValue(IEContent.fluidCreosote, 0.128f);

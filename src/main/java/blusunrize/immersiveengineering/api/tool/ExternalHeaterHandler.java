@@ -1,6 +1,7 @@
 package blusunrize.immersiveengineering.api.tool;
 
 import java.util.HashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.init.Blocks;
@@ -11,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 
 public class ExternalHeaterHandler {
+
     // These are set on IE loading
     public static int defaultFurnaceEnergyCost;
     public static int defaultFurnaceSpeedupCost;
@@ -18,43 +20,52 @@ public class ExternalHeaterHandler {
     /**
      * @author BluSunrize - 09.12.2015
      *
-     * An interface to be implemented by TileEntities that want to allow direct interaction with the external heater
+     *         An interface to be implemented by TileEntities that want to allow direct interaction with the external
+     *         heater
      */
     public static interface IExternalHeatable {
+
         /**
          * Called each tick<br>
          * Handle fueling as well as possible smelting speed increases here
+         * 
          * @param energyAvailable the amount of RF the furnace heater has stored and can supply
-         * @param redstone whether a redstone signal is applied to the furnace heater. To keep the target warm, but not do speed increases
+         * @param redstone        whether a redstone signal is applied to the furnace heater. To keep the target warm,
+         *                        but not do speed increases
          * @return the amount of RF consumed that tick. Should be lower or equal to "energyAvailable", obviously
          */
         public int doHeatTick(int energyAvailable, boolean redstone);
     }
 
-    public static HashMap<Class<? extends TileEntity>, HeatableAdapter> adapterMap =
-            new HashMap<Class<? extends TileEntity>, HeatableAdapter>();
+    public static HashMap<Class<? extends TileEntity>, HeatableAdapter> adapterMap = new HashMap<Class<? extends TileEntity>, HeatableAdapter>();
+
     /**
      * @author BluSunrize - 09.12.2015
      *
-     * An adapter to appyl to TileEntities that can't implement the IExternalHeatable interface
+     *         An adapter to appyl to TileEntities that can't implement the IExternalHeatable interface
      */
     public abstract static class HeatableAdapter<E extends TileEntity> {
+
         /**
          * Called each tick<br>
          * Handle fueling as well as possible smelting speed increases here
+         * 
          * @param energyAvailable the amount of RF the furnace heater has stored and can supply
-         * @param redstone whether a redstone signal is applied to the furnace heater. To keep the target warm, but not do speed increases
+         * @param redstone        whether a redstone signal is applied to the furnace heater. To keep the target warm,
+         *                        but not do speed increases
          * @return the amount of RF consumed that tick. Should be lower or equal to "energyAvailable", obviously
          */
         public abstract int doHeatTick(E tileEntity, int energyAvailable, boolean canHeat);
     }
 
     /**
-     * registers a HeatableAdapter to a TileEnttiy class. Should really only be used when implementing the interface is not an option
+     * registers a HeatableAdapter to a TileEnttiy class. Should really only be used when implementing the interface is
+     * not an option
      */
     public static void registerHeatableAdapter(Class<? extends TileEntity> c, HeatableAdapter adapter) {
         adapterMap.put(c, adapter);
     }
+
     /**
      * @return a HeatableAdapter for the given TileEntity class
      */
@@ -68,10 +79,12 @@ public class ExternalHeaterHandler {
     }
 
     public static class DefaultFurnaceAdapter extends HeatableAdapter<TileEntityFurnace> {
+
         boolean canCook(TileEntityFurnace tileEntity) {
             ItemStack input = tileEntity.getStackInSlot(0);
             if (input == null) return false;
-            ItemStack output = FurnaceRecipes.smelting().getSmeltingResult(input);
+            ItemStack output = FurnaceRecipes.smelting()
+                .getSmeltingResult(input);
             if (output == null) return false;
             ItemStack existingOutput = tileEntity.getStackInSlot(2);
             if (existingOutput == null) return true;
@@ -110,9 +123,12 @@ public class ExternalHeaterHandler {
 
         public void updateFurnace(TileEntity tileEntity, boolean active) {
             Block containing = tileEntity.getBlockType();
-            if (containing == Blocks.furnace || containing == Blocks.lit_furnace)
-                BlockFurnace.updateFurnaceBlockState(
-                        active, tileEntity.getWorldObj(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+            if (containing == Blocks.furnace || containing == Blocks.lit_furnace) BlockFurnace.updateFurnaceBlockState(
+                active,
+                tileEntity.getWorldObj(),
+                tileEntity.xCoord,
+                tileEntity.yCoord,
+                tileEntity.zCoord);
             else {
                 // Fix for Natura, might work on other furnaces that extend the vanilla one and use the variable name
                 // "active". Let's hope. xD
@@ -121,7 +137,8 @@ public class ExternalHeaterHandler {
                 nbt.setBoolean("active", active);
                 nbt.setBoolean("Active", active);
                 tileEntity.readFromNBT(nbt);
-                tileEntity.getWorldObj().markBlockForUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+                tileEntity.getWorldObj()
+                    .markBlockForUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
             }
         }
     }

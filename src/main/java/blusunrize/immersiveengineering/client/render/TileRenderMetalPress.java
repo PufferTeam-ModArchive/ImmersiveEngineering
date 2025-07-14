@@ -1,12 +1,5 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.models.ModelIEObj;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalMultiblocks;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMetalPress;
-import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -14,10 +7,21 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.models.ModelIEObj;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalMultiblocks;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMetalPress;
+import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
+
 public class TileRenderMetalPress extends TileRenderIE {
+
     ModelIEObj model = new ModelIEObj("immersiveengineering:models/metalPress.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             if (groupName.equalsIgnoreCase("conveyors"))
@@ -31,10 +35,10 @@ public class TileRenderMetalPress extends TileRenderIE {
         TileEntityMetalPress press = (TileEntityMetalPress) tile;
         translationMatrix.translate(.5, -1, .5);
         rotationMatrix.rotate(
-                Math.toRadians(press.facing == 2 ? 180 : press.facing == 4 ? -90 : press.facing == 5 ? 90 : 0),
-                0,
-                1,
-                0);
+            Math.toRadians(press.facing == 2 ? 180 : press.facing == 4 ? -90 : press.facing == 5 ? 90 : 0),
+            0,
+            1,
+            0);
         model.render(tile, tes, translationMatrix, rotationMatrix, 0, false, "base", "conveyors");
     }
 
@@ -54,17 +58,18 @@ public class TileRenderMetalPress extends TileRenderIE {
             else shift[i] = .5f + (process - .5625f) / .4375f * .5f;
 
             if (press.mold != null)
-                if (process >= .4375f && process < .5625f)
-                    if (process < .46875f) piston = (process - .4375f) / .03125f;
-                    else if (process < .53125f) piston = 1;
-                    else piston = 1 - (process - .53125f) / .03125f;
+                if (process >= .4375f && process < .5625f) if (process < .46875f) piston = (process - .4375f) / .03125f;
+                else if (process < .53125f) piston = 1;
+                else piston = 1 - (process - .53125f) / .03125f;
         }
 
         ClientUtils.bindAtlas(0);
         GL11.glTranslated(0, -piston * .6875f, 0);
-        ClientUtils.tes().startDrawingQuads();
+        ClientUtils.tes()
+            .startDrawingQuads();
         model.render(tile, ClientUtils.tes(), new Matrix4(), new Matrix4(), 0, false, "piston");
-        ClientUtils.tes().draw();
+        ClientUtils.tes()
+            .draw();
 
         GL11.glDisable(GL11.GL_LIGHTING);
         if (press.mold != null) {
@@ -72,15 +77,22 @@ public class TileRenderMetalPress extends TileRenderIE {
             GL11.glTranslated(0, 1.875, .3125);
             GL11.glRotatef(-90, 1, 0, 0);
             ClientUtils.bindAtlas(1);
-            for (int pass = 0; pass < press.mold.getItem().getRenderPasses(press.mold.getItemDamage()); pass++) {
-                IIcon icon = press.mold.getItem().getIcon(press.mold, pass);
+            for (int pass = 0; pass < press.mold.getItem()
+                .getRenderPasses(press.mold.getItemDamage()); pass++) {
+                IIcon icon = press.mold.getItem()
+                    .getIcon(press.mold, pass);
                 if (icon != null) {
                     float scale = .625f;
                     GL11.glScalef(scale, scale, 1);
-                    int col = press.mold.getItem().getColorFromItemStack(press.mold, pass);
+                    int col = press.mold.getItem()
+                        .getColorFromItemStack(press.mold, pass);
                     GL11.glColor3f((col >> 16 & 255) / 255f, (col >> 8 & 255) / 255f, (col & 255) / 255f);
                     ClientUtils.renderItemIn2D(
-                            icon, new double[] {0, 1, 0, 1}, icon.getIconWidth(), icon.getIconHeight(), .0625f);
+                        icon,
+                        new double[] { 0, 1, 0, 1 },
+                        icon.getIconWidth(),
+                        icon.getIconHeight(),
+                        .0625f);
                     GL11.glColor3f(1, 1, 1);
                     GL11.glScalef(1 / scale, 1 / scale, 1);
                 }

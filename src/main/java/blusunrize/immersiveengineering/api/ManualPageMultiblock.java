@@ -1,13 +1,8 @@
 package blusunrize.immersiveengineering.api;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.lib.manual.ManualInstance;
-import blusunrize.lib.manual.ManualPages;
-import blusunrize.lib.manual.gui.GuiButtonManualNavigation;
-import blusunrize.lib.manual.gui.GuiManual;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -15,10 +10,19 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import blusunrize.immersiveengineering.api.MultiblockHandler.IMultiblock;
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.lib.manual.ManualInstance;
+import blusunrize.lib.manual.ManualPages;
+import blusunrize.lib.manual.gui.GuiButtonManualNavigation;
+import blusunrize.lib.manual.gui.GuiManual;
+
 public class ManualPageMultiblock extends ManualPages {
+
     IMultiblock multiblock;
     boolean canTick = true;
     boolean showCompleted = false;
@@ -63,22 +67,35 @@ public class ManualPageMultiblock extends ManualPages {
             }
             tick = (showLayer == -1 ? blockCount : countPerLevel[showLayer]) * 40;
             boolean canRenderFormed = multiblock.canRenderFormedStructure();
-            //			yOff = (structureHeight-1)*12+structureWidth*5+structureLength*5+16;
-            //			yOff = Math.max(48, yOff);
-            yOff = (int) (multiblock.getManualScale()
-                    * Math.sqrt(structureHeight * structureHeight
-                            + structureWidth * structureWidth
-                            + structureLength * structureLength));
+            // yOff = (structureHeight-1)*12+structureWidth*5+structureLength*5+16;
+            // yOff = Math.max(48, yOff);
+            yOff = (int) (multiblock.getManualScale() * Math.sqrt(
+                structureHeight * structureHeight + structureWidth * structureWidth
+                    + structureLength * structureLength));
             yOff = Math.max(10 + (canRenderFormed ? 12 : 0) + (structureHeight > 1 ? 36 : 0), yOff);
-            pageButtons.add(new GuiButtonManualNavigation(
-                    gui, 100, x + 4, y + yOff / 2 - (canRenderFormed ? 11 : 5), 10, 10, 4));
+            pageButtons.add(
+                new GuiButtonManualNavigation(gui, 100, x + 4, y + yOff / 2 - (canRenderFormed ? 11 : 5), 10, 10, 4));
             if (canRenderFormed)
                 pageButtons.add(new GuiButtonManualNavigation(gui, 103, x + 4, y + yOff / 2 + 1, 10, 10, 6));
             if (structureHeight > 1) {
-                pageButtons.add(new GuiButtonManualNavigation(
-                        gui, 101, x + 4, y + yOff / 2 - (canRenderFormed ? 14 : 8) - 16, 10, 16, 3));
-                pageButtons.add(new GuiButtonManualNavigation(
-                        gui, 102, x + 4, y + yOff / 2 + (canRenderFormed ? 14 : 8), 10, 16, 2));
+                pageButtons.add(
+                    new GuiButtonManualNavigation(
+                        gui,
+                        101,
+                        x + 4,
+                        y + yOff / 2 - (canRenderFormed ? 14 : 8) - 16,
+                        10,
+                        16,
+                        3));
+                pageButtons.add(
+                    new GuiButtonManualNavigation(
+                        gui,
+                        102,
+                        x + 4,
+                        y + yOff / 2 + (canRenderFormed ? 14 : 8),
+                        10,
+                        16,
+                        2));
             }
         }
         super.initPage(gui, x, y + yOff, pageButtons);
@@ -100,27 +117,29 @@ public class ManualPageMultiblock extends ManualPages {
 
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
             GL11.glPushMatrix();
-            //			RenderHelper.enableGUIStandardItemLighting();
+            // RenderHelper.enableGUIStandardItemLighting();
             RenderHelper.disableStandardItemLighting();
-            //			GL11.glEnable(GL11.GL_DEPTH_TEST);
-            //			GL11.glDepthFunc(GL11.GL_ALWAYS);
-            //			GL11.glDisable(GL11.GL_CULL_FACE);
+            // GL11.glEnable(GL11.GL_DEPTH_TEST);
+            // GL11.glDepthFunc(GL11.GL_ALWAYS);
+            // GL11.glDisable(GL11.GL_CULL_FACE);
             int i = 0;
             ItemStack highlighted = null;
             RenderBlocks blockRender = RenderBlocks.getInstance();
 
-            float f = (float) Math.sqrt(structureHeight * structureHeight
-                    + structureWidth * structureWidth
+            float f = (float) Math.sqrt(
+                structureHeight * structureHeight + structureWidth * structureWidth
                     + structureLength * structureLength);
-            //			GL11.glTranslatef(x+(structureWidth/2+structureLength/2)/2*30, y+structureHeight/2*30,
+            // GL11.glTranslatef(x+(structureWidth/2+structureLength/2)/2*30, y+structureHeight/2*30,
             // structureLength);
             float scale = multiblock.getManualScale();
             yOffTotal = Math.max(
-                    10 + (multiblock.canRenderFormedStructure() ? 12 : 0) + (structureHeight > 1 ? 36 : 0),
-                    (int) (f * scale));
+                10 + (multiblock.canRenderFormedStructure() ? 12 : 0) + (structureHeight > 1 ? 36 : 0),
+                (int) (f * scale));
             GL11.glTranslatef(
-                    x + 60, y + f * scale / 2, Math.max(structureHeight, Math.max(structureWidth, structureLength)));
-            //						GL11.glScalef(12,-12,1);
+                x + 60,
+                y + f * scale / 2,
+                Math.max(structureHeight, Math.max(structureWidth, structureLength)));
+            // GL11.glScalef(12,-12,1);
             GL11.glScalef(scale, -scale, 1);
             GL11.glRotatef(rotX, 1, 0, 0);
             GL11.glRotatef(rotY, 0, 1, 0);
@@ -128,73 +147,76 @@ public class ManualPageMultiblock extends ManualPages {
             else {
                 if (structureWidth % 2 == 1) GL11.glTranslatef(-.5f, 0, 0);
                 int iterator = 0;
-                for (int h = 0; h < structure.length; h++)
-                    if (showLayer == -1 || h <= showLayer) {
-                        ItemStack[][] level = structure[h];
-                        for (int l = 0; l < level.length; l++) {
-                            ItemStack[] row = level[l];
-                            for (int w = row.length - 1; w >= 0; w--) {
-                                int xx = 60 + xHalf - 10 * w + 10 * l - 7;
-                                int yy = yOffPartial - 5 * w - 5 * l - 12 * h;
+                for (int h = 0; h < structure.length; h++) if (showLayer == -1 || h <= showLayer) {
+                    ItemStack[][] level = structure[h];
+                    for (int l = 0; l < level.length; l++) {
+                        ItemStack[] row = level[l];
+                        for (int w = row.length - 1; w >= 0; w--) {
+                            int xx = 60 + xHalf - 10 * w + 10 * l - 7;
+                            int yy = yOffPartial - 5 * w - 5 * l - 12 * h;
 
-                                //							GL11.glTranslated(0, 0, 1);
-                                if (row[w] != null && i <= limiter) {
-                                    i++;
-                                    Block b = Block.getBlockFromItem(row[w].getItem());
-                                    if (b != null) {
-                                        ClientUtils.bindAtlas(0);
-                                        GL11.glPushMatrix();
-                                        GL11.glTranslatef(
-                                                w - structureWidth / 2,
-                                                h - structureHeight / 2,
-                                                l - structureLength / 2);
-                                        if (!multiblock.overwriteBlockRender(row[w], iterator++))
-                                            blockRender.renderBlockAsItem(b, row[w].getItemDamage(), 0.8F);
-                                        GL11.glPopMatrix();
-                                    }
-
-                                    //								RenderItem.getInstance().renderItemIntoGUI(manual.fontRenderer,
-                                    // ManualUtils.mc().renderEngine, row[w], x+xx, y+yy);
-                                    if (mx >= x + xx && mx < x + xx + 16 && my >= y + yy && my < y + yy + 16)
-                                        highlighted = row[w];
+                            // GL11.glTranslated(0, 0, 1);
+                            if (row[w] != null && i <= limiter) {
+                                i++;
+                                Block b = Block.getBlockFromItem(row[w].getItem());
+                                if (b != null) {
+                                    ClientUtils.bindAtlas(0);
+                                    GL11.glPushMatrix();
+                                    GL11.glTranslatef(
+                                        w - structureWidth / 2,
+                                        h - structureHeight / 2,
+                                        l - structureLength / 2);
+                                    if (!multiblock.overwriteBlockRender(row[w], iterator++))
+                                        blockRender.renderBlockAsItem(b, row[w].getItemDamage(), 0.8F);
+                                    GL11.glPopMatrix();
                                 }
+
+                                // RenderItem.getInstance().renderItemIntoGUI(manual.fontRenderer,
+                                // ManualUtils.mc().renderEngine, row[w], x+xx, y+yy);
+                                if (mx >= x + xx && mx < x + xx + 16 && my >= y + yy && my < y + yy + 16)
+                                    highlighted = row[w];
                             }
                         }
                     }
+                }
             }
-            //			GL11.glTranslated(0, 0, -i);
+            // GL11.glTranslated(0, 0, -i);
             GL11.glPopMatrix();
 
             RenderHelper.disableStandardItemLighting();
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-            //			GL11.glEnable(GL11.GL_BLEND);
-            //			GL11.glEnable(GL11.GL_DEPTH_TEST);
+            // GL11.glEnable(GL11.GL_BLEND);
+            // GL11.glEnable(GL11.GL_DEPTH_TEST);
 
             manual.fontRenderer.setUnicodeFlag(false);
             if (this.multiblock.getTotalMaterials() != null)
                 manual.fontRenderer.drawString("?", x + 116, y + yOffTotal / 2 - 4, manual.getTextColour(), false);
-            //			if(highlighted!=null)
-            //				gui.renderToolTip(highlighted, mx, my);
-            //			else
-            if (this.multiblock.getTotalMaterials() != null
-                    && mx >= x + 116
-                    && mx < x + 122
-                    && my >= y + yOffTotal / 2 - 4
-                    && my < y + yOffTotal / 2 + 4) {
+            // if(highlighted!=null)
+            // gui.renderToolTip(highlighted, mx, my);
+            // else
+            if (this.multiblock.getTotalMaterials() != null && mx >= x + 116
+                && mx < x + 122
+                && my >= y + yOffTotal / 2 - 4
+                && my < y + yOffTotal / 2 + 4) {
                 ArrayList<String> components = new ArrayList();
                 components.add(StatCollector.translateToLocal("desc.ImmersiveEngineering.info.reqMaterial"));
                 int maxOff = 1;
                 for (ItemStack ss : this.multiblock.getTotalMaterials())
                     if (("" + ss.stackSize).length() > maxOff) maxOff = ("" + ss.stackSize).length();
-                for (ItemStack ss : this.multiblock.getTotalMaterials())
-                    if (ss != null) {
-                        int indent = 0;
-                        if (maxOff > ("" + ss.stackSize).length()) indent = maxOff - ("" + ss.stackSize).length();
-                        String sIndent = "";
-                        if (indent > 0) for (int ii = 0; ii < indent; ii++) sIndent += "0";
-                        components.add("" + EnumChatFormatting.GRAY + sIndent + ss.stackSize + "x "
-                                + EnumChatFormatting.RESET + ss.getRarity().rarityColor + ss.getDisplayName());
-                    }
+                for (ItemStack ss : this.multiblock.getTotalMaterials()) if (ss != null) {
+                    int indent = 0;
+                    if (maxOff > ("" + ss.stackSize).length()) indent = maxOff - ("" + ss.stackSize).length();
+                    String sIndent = "";
+                    if (indent > 0) for (int ii = 0; ii < indent; ii++) sIndent += "0";
+                    components.add(
+                        "" + EnumChatFormatting.GRAY
+                            + sIndent
+                            + ss.stackSize
+                            + "x "
+                            + EnumChatFormatting.RESET
+                            + ss.getRarity().rarityColor
+                            + ss.getDisplayName());
+                }
                 gui.drawHoveringText(components, mx, my, manual.fontRenderer);
             }
             RenderHelper.disableStandardItemLighting();
@@ -208,7 +230,7 @@ public class ManualPageMultiblock extends ManualPages {
     @Override
     public void mouseDragged(int x, int y, int clickX, int clickY, int mx, int my, int lastX, int lastY, int button) {
         if ((clickX >= 40 && clickX < 144 && mx >= 40 && mx < 144)
-                && (clickY >= 30 && clickY < 130 && my >= 30 && my < 130)) {
+            && (clickY >= 30 && clickY < 130 && my >= 30 && my < 130)) {
             int dx = mx - lastX;
             int dy = my - lastY;
             rotY = rotY + (dx / 104f) * 80;

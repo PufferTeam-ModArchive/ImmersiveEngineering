@@ -1,5 +1,14 @@
 package blusunrize.immersiveengineering.client.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalMultiblocks;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityArcFurnace;
@@ -24,15 +33,9 @@ import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockSheet
 import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockSilo;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import org.lwjgl.opengl.GL11;
 
 public class BlockRenderMetalMultiblocks implements ISimpleBlockRenderingHandler {
+
     public static int renderID = RenderingRegistry.getNextAvailableRenderId();
 
     @Override
@@ -40,9 +43,9 @@ public class BlockRenderMetalMultiblocks implements ISimpleBlockRenderingHandler
         GL11.glPushMatrix();
         try {
             if (metadata == BlockMetalMultiblocks.META_lightningRod) {
-                //				block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-                //				renderer.setRenderBoundsFromBlock(block);
-                //				ClientUtils.drawInventoryBlock(block, metadata, renderer);
+                // block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+                // renderer.setRenderBoundsFromBlock(block);
+                // ClientUtils.drawInventoryBlock(block, metadata, renderer);
 
                 Tessellator tes = ClientUtils.tes();
                 IIcon iSide = block.getIcon(2, metadata);
@@ -173,8 +176,8 @@ public class BlockRenderMetalMultiblocks implements ISimpleBlockRenderingHandler
     }
 
     @Override
-    public boolean renderWorldBlock(
-            IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId,
+        RenderBlocks renderer) {
         int metadata = world.getBlockMetadata(x, y, z);
         TileEntity te = world.getTileEntity(x, y, z);
         if (metadata == BlockMetalMultiblocks.META_lightningRod) {
@@ -191,9 +194,8 @@ public class BlockRenderMetalMultiblocks implements ISimpleBlockRenderingHandler
                 uv[i][3] = iTop.getMinV() + ((iTop.getMaxV() - iTop.getMinV()) / 3f) * (pos / 3 + 1);
             }
             for (int i = 2; i < 6; i++) {
-                int off = pos == 1 || pos == 3 || pos == 4 || pos == 5 || pos == 7
-                        ? 1
-                        : i == 2 || i == 3 ? (pos == 0 || pos == 6 ? 0 : 2) : (pos == 0 || pos == 2 ? 0 : 2);
+                int off = pos == 1 || pos == 3 || pos == 4 || pos == 5 || pos == 7 ? 1
+                    : i == 2 || i == 3 ? (pos == 0 || pos == 6 ? 0 : 2) : (pos == 0 || pos == 2 ? 0 : 2);
                 uv[i][0] = iSide.getMinU() + ((iSide.getMaxU() - iSide.getMinU()) / 3f) * (off);
                 uv[i][1] = iSide.getMinU() + ((iSide.getMaxU() - iSide.getMinU()) / 3f) * (off + 1);
                 uv[i][2] = iSide.getMinV();

@@ -1,15 +1,8 @@
 package blusunrize.immersiveengineering.common.items;
 
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.api.tool.ITool;
-import blusunrize.immersiveengineering.common.entities.EntitySkylineHook;
-import blusunrize.immersiveengineering.common.gui.IESlot;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.SkylineHelper;
-import com.google.common.collect.Multimap;
 import java.util.HashMap;
 import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -22,7 +15,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
+import com.google.common.collect.Multimap;
+
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.api.tool.ITool;
+import blusunrize.immersiveengineering.common.entities.EntitySkylineHook;
+import blusunrize.immersiveengineering.common.gui.IESlot;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.SkylineHelper;
+
 public class ItemSkyhook extends ItemUpgradeableTool implements ITool {
+
     public ItemSkyhook() {
         super("skyhook", 1, "SKYHOOK");
     }
@@ -45,8 +49,8 @@ public class ItemSkyhook extends ItemUpgradeableTool implements ITool {
         float dmg = 5 + ItemNBTHelper.getFloat(stack, "fallDamageBoost");
         Multimap multimap = super.getAttributeModifiers(stack);
         multimap.put(
-                SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),
-                new AttributeModifier(field_111210_e, "Weapon modifier", dmg, 0));
+            SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),
+            new AttributeModifier(field_111210_e, "Weapon modifier", dmg, 0));
         return multimap;
     }
 
@@ -58,24 +62,21 @@ public class ItemSkyhook extends ItemUpgradeableTool implements ITool {
         double lastDist = 0;
         Connection line = null;
         double py = player.posY + player.getEyeHeight();
-        for (int xx = -2; xx <= 2; xx++)
-            for (int zz = -2; zz <= 2; zz++)
-                for (int yy = 0; yy <= 3; yy++) {
-                    TileEntity tile =
-                            world.getTileEntity((int) player.posX + xx, (int) py + yy, (int) player.posZ + zz);
-                    if (tile != null) {
-                        Connection con = SkylineHelper.getTargetConnection(
-                                world, tile.xCoord, tile.yCoord, tile.zCoord, player, null);
-                        if (con != null) {
-                            double d = tile.getDistanceFrom(player.posX, py, player.posZ);
-                            if (connector == null || d < lastDist) {
-                                connector = tile;
-                                lastDist = d;
-                                line = con;
-                            }
-                        }
+        for (int xx = -2; xx <= 2; xx++) for (int zz = -2; zz <= 2; zz++) for (int yy = 0; yy <= 3; yy++) {
+            TileEntity tile = world.getTileEntity((int) player.posX + xx, (int) py + yy, (int) player.posZ + zz);
+            if (tile != null) {
+                Connection con = SkylineHelper
+                    .getTargetConnection(world, tile.xCoord, tile.yCoord, tile.zCoord, player, null);
+                if (con != null) {
+                    double d = tile.getDistanceFrom(player.posX, py, player.posZ);
+                    if (connector == null || d < lastDist) {
+                        connector = tile;
+                        lastDist = d;
+                        line = con;
                     }
                 }
+            }
+        }
         if (line != null && connector != null) {
             SkylineHelper.spawnHook(player, connector, line);
             player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
@@ -84,7 +85,8 @@ public class ItemSkyhook extends ItemUpgradeableTool implements ITool {
     }
 
     public float getSkylineSpeed(ItemStack stack) {
-        return 3f + this.getUpgrades(stack).getFloat("speed");
+        return 3f + this.getUpgrades(stack)
+            .getFloat("speed");
     }
 
     @Override
@@ -96,10 +98,10 @@ public class ItemSkyhook extends ItemUpgradeableTool implements ITool {
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityPlayer player, int ticks) {
         if (existingHooks.containsKey(player.getCommandSenderName())) {
             EntitySkylineHook hook = existingHooks.get(player.getCommandSenderName());
-            //			player.motionX = hook.motionX;
-            //			player.motionY = hook.motionY;
-            //			player.motionZ = hook.motionZ;
-            //			IELogger.debug("player motion: "+player.motionX+","+player.motionY+","+player.motionZ);
+            // player.motionX = hook.motionX;
+            // player.motionY = hook.motionY;
+            // player.motionZ = hook.motionZ;
+            // IELogger.debug("player motion: "+player.motionX+","+player.motionY+","+player.motionZ);
             hook.setDead();
             existingHooks.remove(player.getCommandSenderName());
         }
@@ -112,10 +114,8 @@ public class ItemSkyhook extends ItemUpgradeableTool implements ITool {
 
     @Override
     public Slot[] getWorkbenchSlots(Container container, ItemStack stack, IInventory invItem) {
-        return new Slot[] {
-            new IESlot.Upgrades(container, invItem, 0, 102, 42, "SKYHOOK", stack, true),
-            new IESlot.Upgrades(container, invItem, 1, 102, 22, "SKYHOOK", stack, true),
-        };
+        return new Slot[] { new IESlot.Upgrades(container, invItem, 0, 102, 42, "SKYHOOK", stack, true),
+            new IESlot.Upgrades(container, invItem, 1, 102, 22, "SKYHOOK", stack, true), };
     }
 
     @Override

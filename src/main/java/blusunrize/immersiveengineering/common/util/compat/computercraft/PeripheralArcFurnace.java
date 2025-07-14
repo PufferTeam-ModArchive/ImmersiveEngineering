@@ -2,29 +2,22 @@ package blusunrize.immersiveengineering.common.util.compat.computercraft;
 
 import static blusunrize.immersiveengineering.common.util.Utils.saveStack;
 
+import java.util.Map;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityArcFurnace;
 import blusunrize.immersiveengineering.common.items.ItemGraphiteElectrode;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import java.util.Map;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class PeripheralArcFurnace extends IEPeripheral {
-    public static final String[] cmds = {
-        "setEnabled",
-        "isActive",
-        "getInputStack",
-        "getOutputStack",
-        "getAdditiveStack",
-        "getSlagStack",
-        "hasElectrodes",
-        "getElectrode",
-        "getMaxEnergyStored",
-        "getEnergyStored"
-    };
+
+    public static final String[] cmds = { "setEnabled", "isActive", "getInputStack", "getOutputStack",
+        "getAdditiveStack", "getSlagStack", "hasElectrodes", "getElectrode", "getMaxEnergyStored", "getEnergyStored" };
 
     public PeripheralArcFurnace(World w, int _x, int _y, int _z) {
         super(w, _x, _y, _z);
@@ -42,7 +35,7 @@ public class PeripheralArcFurnace extends IEPeripheral {
 
     @Override
     public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments)
-            throws LuaException, InterruptedException {
+        throws LuaException, InterruptedException {
         TileEntityArcFurnace te = (TileEntityArcFurnace) getTileEntity(TileEntityArcFurnace.class);
         if (te == null) throw new LuaException("The arc furnace was removed");
         switch (method) {
@@ -53,7 +46,7 @@ public class PeripheralArcFurnace extends IEPeripheral {
                 te.computerOn = param;
                 return null;
             case 1: // get active
-                return new Object[] {te.active};
+                return new Object[] { te.active };
             case 2: // get input stack (0-11)
                 if (arguments.length != 1 || !(arguments[0] instanceof Integer) && !(arguments[0] instanceof Double))
                     throw new LuaException("Wrong amount of arguments, needs one integer");
@@ -62,23 +55,23 @@ public class PeripheralArcFurnace extends IEPeripheral {
                 Map<String, Object> ret = saveStack(te.getStackInSlot(slot - 1));
                 ret.put("progress", te.process[slot - 1]);
                 ret.put("maxProgress", te.processMax[slot - 1]);
-                return new Object[] {ret};
+                return new Object[] { ret };
             case 3: // get Output stack (16-21)
                 if (arguments.length != 1 || !(arguments[0] instanceof Integer) && !(arguments[0] instanceof Double))
                     throw new LuaException("Wrong amount of arguments, needs one integer");
                 slot = (int) (double) arguments[0];
                 if (slot < 1 || slot > 6) throw new LuaException("Output slots are 1-6");
-                return new Object[] {saveStack(te.getStackInSlot(slot + 15))};
+                return new Object[] { saveStack(te.getStackInSlot(slot + 15)) };
             case 4: // get additives (12-15)
                 if (arguments.length != 1 || !(arguments[0] instanceof Integer) && !(arguments[0] instanceof Double))
                     throw new LuaException("Wrong amount of arguments, needs one integer");
                 slot = (int) (double) arguments[0];
                 if (slot < 1 || slot > 4) throw new LuaException("Additive slots are 1-4");
-                return new Object[] {saveStack(te.getStackInSlot(slot + 11))};
+                return new Object[] { saveStack(te.getStackInSlot(slot + 11)) };
             case 5: // getSlag
-                return new Object[] {saveStack(te.getStackInSlot(22))};
+                return new Object[] { saveStack(te.getStackInSlot(22)) };
             case 6: // hasElectrodes
-                return new Object[] {te.electrodes[0] && te.electrodes[1] && te.electrodes[2]};
+                return new Object[] { te.electrodes[0] && te.electrodes[1] && te.electrodes[2] };
             case 7: // getElectrode
                 if (arguments.length != 1 || !(arguments[0] instanceof Integer) && !(arguments[0] instanceof Double))
                     throw new LuaException("Wrong amount of arguments, needs one integer");
@@ -88,11 +81,11 @@ public class PeripheralArcFurnace extends IEPeripheral {
                 Map<String, Object> map = saveStack(stack);
                 if (stack != null && stack.getItem() instanceof ItemGraphiteElectrode)
                     map.put("damage", ItemNBTHelper.getInt(stack, "graphDmg"));
-                return new Object[] {map};
+                return new Object[] { map };
             case 8: // max energy
-                return new Object[] {te.energyStorage.getMaxEnergyStored()};
+                return new Object[] { te.energyStorage.getMaxEnergyStored() };
             case 9:
-                return new Object[] {te.energyStorage.getEnergyStored()};
+                return new Object[] { te.energyStorage.getEnergyStored() };
         }
         return null;
     }

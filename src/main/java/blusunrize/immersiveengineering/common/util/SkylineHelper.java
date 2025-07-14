@@ -1,11 +1,7 @@
 package blusunrize.immersiveengineering.common.util;
 
-import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.common.entities.EntitySkylineHook;
-import blusunrize.immersiveengineering.common.items.ItemSkyhook;
 import java.util.Set;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -13,9 +9,16 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.common.entities.EntitySkylineHook;
+import blusunrize.immersiveengineering.common.items.ItemSkyhook;
+
 public class SkylineHelper {
-    public static Connection getTargetConnection(
-            World world, int x, int y, int z, EntityLivingBase living, Connection invalidCon) {
+
+    public static Connection getTargetConnection(World world, int x, int y, int z, EntityLivingBase living,
+        Connection invalidCon) {
         if (!(world.getTileEntity(x, y, z) instanceof IImmersiveConnectable)) return null;
 
         Set<Connection> outputs = ImmersiveNetHandler.INSTANCE.getConnections(world, new ChunkCoordinates(x, y, z));
@@ -23,21 +26,24 @@ public class SkylineHelper {
             Vec3 vec = living.getLookVec();
             vec = vec.normalize();
             Connection line = null;
-            for (Connection c : outputs)
-                if (c != null && !c.hasSameConnectors(invalidCon)) {
-                    if (line == null) line = c;
-                    else {
-                        Vec3 lineVec = Vec3.createVectorHelper(
-                                        line.end.posX - line.start.posX,
-                                        line.end.posY - line.start.posY,
-                                        line.end.posZ - line.start.posZ)
-                                .normalize();
-                        Vec3 conVec = Vec3.createVectorHelper(
-                                        c.end.posX - c.start.posX, c.end.posY - c.start.posY, c.end.posZ - c.start.posZ)
-                                .normalize();
-                        if (conVec.distanceTo(vec) < lineVec.distanceTo(vec)) line = c;
-                    }
+            for (Connection c : outputs) if (c != null && !c.hasSameConnectors(invalidCon)) {
+                if (line == null) line = c;
+                else {
+                    Vec3 lineVec = Vec3
+                        .createVectorHelper(
+                            line.end.posX - line.start.posX,
+                            line.end.posY - line.start.posY,
+                            line.end.posZ - line.start.posZ)
+                        .normalize();
+                    Vec3 conVec = Vec3
+                        .createVectorHelper(
+                            c.end.posX - c.start.posX,
+                            c.end.posY - c.start.posY,
+                            c.end.posZ - c.start.posZ)
+                        .normalize();
+                    if (conVec.distanceTo(vec) < lineVec.distanceTo(vec)) line = c;
                 }
+            }
             return line;
         }
         return null;
@@ -60,28 +66,34 @@ public class SkylineHelper {
         double dy = (steps[0].yCoord - vStart.yCoord);
         double dz = (steps[0].zCoord - vStart.zCoord);
         double d = 1; // connection.length;
-        //						Math.sqrt(dx*dx+dz*dz+dy*dy);
+        // Math.sqrt(dx*dx+dz*dz+dy*dy);
 
-        //		Vec3 moveVec = Vec3.createVectorHelper(dx,dy,dz);
-        //		Vec3 moveVec = Vec3.createVectorHelper(dx/d,dy/d,dz/d);
+        // Vec3 moveVec = Vec3.createVectorHelper(dx,dy,dz);
+        // Vec3 moveVec = Vec3.createVectorHelper(dx/d,dy/d,dz/d);
 
         EntitySkylineHook hook = new EntitySkylineHook(
-                player.worldObj, vStart.xCoord, vStart.yCoord, vStart.zCoord, connection, cc0, steps);
+            player.worldObj,
+            vStart.xCoord,
+            vStart.yCoord,
+            vStart.zCoord,
+            connection,
+            cc0,
+            steps);
         float speed = 1;
-        if (player.getCurrentEquippedItem() != null
-                && player.getCurrentEquippedItem().getItem() instanceof ItemSkyhook)
-            speed = ((ItemSkyhook) player.getCurrentEquippedItem().getItem())
-                    .getSkylineSpeed(player.getCurrentEquippedItem());
+        if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
+            .getItem() instanceof ItemSkyhook)
+            speed = ((ItemSkyhook) player.getCurrentEquippedItem()
+                .getItem()).getSkylineSpeed(player.getCurrentEquippedItem());
         Vec3 moveVec = getSubMovementVector(vStart, steps[0], speed);
         hook.motionX = moveVec.xCoord; // *speed;
         hook.motionY = moveVec.yCoord; // *speed;
         hook.motionZ = moveVec.zCoord; // *speed;
-        //		hook.motionX = (steps[0].xCoord-cc1.posX)*.5f;
-        //		hook.motionY = (steps[0].yCoord-cc1.posY)*.5f;
-        //		hook.motionZ = (steps[0].zCoord-cc1.posZ)*.5f;
+        // hook.motionX = (steps[0].xCoord-cc1.posX)*.5f;
+        // hook.motionY = (steps[0].yCoord-cc1.posY)*.5f;
+        // hook.motionZ = (steps[0].zCoord-cc1.posZ)*.5f;
 
-        //		for(Vec3 v : steps)
-        //			living.worldObj.spawnParticle("smoke", v.xCoord,v.yCoord,v.zCoord, 0,0,0 );
+        // for(Vec3 v : steps)
+        // living.worldObj.spawnParticle("smoke", v.xCoord,v.yCoord,v.zCoord, 0,0,0 );
 
         if (!player.worldObj.isRemote) player.worldObj.spawnEntityInWorld(hook);
         ItemSkyhook.existingHooks.put(player.getCommandSenderName(), hook);
@@ -92,7 +104,7 @@ public class SkylineHelper {
     public static Vec3[] getConnectionCatenary(Connection connection, Vec3 start, Vec3 end) {
         boolean vertical = connection.end.posX == connection.start.posX && connection.end.posZ == connection.start.posZ;
 
-        if (vertical) return new Vec3[] {Vec3.createVectorHelper(end.xCoord, end.yCoord, end.zCoord)};
+        if (vertical) return new Vec3[] { Vec3.createVectorHelper(end.xCoord, end.yCoord, end.zCoord) };
 
         double dx = (end.xCoord) - (start.xCoord);
         double dy = (end.yCoord) - (start.yCoord);
@@ -125,9 +137,11 @@ public class SkylineHelper {
 
     public static Vec3 getSubMovementVector(Vec3 start, Vec3 target, float speed) {
         Vec3 movementVec = Vec3.createVectorHelper(
-                target.xCoord - start.xCoord, target.yCoord - start.yCoord, target.zCoord - start.zCoord);
+            target.xCoord - start.xCoord,
+            target.yCoord - start.yCoord,
+            target.zCoord - start.zCoord);
         int lPixel = (int) Math.max(1, (movementVec.lengthVector() / (.125 * speed)));
-        return Vec3.createVectorHelper(
-                movementVec.xCoord / lPixel, movementVec.yCoord / lPixel, movementVec.zCoord / lPixel);
+        return Vec3
+            .createVectorHelper(movementVec.xCoord / lPixel, movementVec.yCoord / lPixel, movementVec.zCoord / lPixel);
     }
 }

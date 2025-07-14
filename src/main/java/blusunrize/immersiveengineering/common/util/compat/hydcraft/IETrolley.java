@@ -1,10 +1,7 @@
 package blusunrize.immersiveengineering.common.util.compat.hydcraft;
 
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.plant.BlockIECrop;
-import cpw.mods.fml.common.Optional;
 import java.util.ArrayList;
-import k4unl.minecraft.Hydraulicraft.api.IHarvesterTrolley;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -12,14 +9,21 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.plant.BlockIECrop;
+import cpw.mods.fml.common.Optional;
+import k4unl.minecraft.Hydraulicraft.api.IHarvesterTrolley;
+
 @Optional.Interface(iface = "k4unl.minecraft.Hydraulicraft.api.IHarvesterTrolley", modid = "HydCraft")
 public class IETrolley implements IHarvesterTrolley {
+
     @Override
     @Optional.Method(modid = "HydCraft")
     public boolean canHarvest(World world, int x, int y, int z) {
-        return world.getBlock(x, y, z).equals(IEContent.blockCrop)
-                && world.getBlockMetadata(x, y, z)
-                        == ((BlockIECrop) IEContent.blockCrop).getMaxMeta(world.getBlockMetadata(x, y, z));
+        return world.getBlock(x, y, z)
+            .equals(IEContent.blockCrop)
+            && world.getBlockMetadata(x, y, z)
+                == ((BlockIECrop) IEContent.blockCrop).getMaxMeta(world.getBlockMetadata(x, y, z));
     }
 
     @Override
@@ -27,8 +31,8 @@ public class IETrolley implements IHarvesterTrolley {
     public boolean canPlant(World world, int x, int y, int z, ItemStack stack) {
         Block soil = world.getBlock(x, y - 1, z);
         return (soil.canSustainPlant(world, x, y - 1, z, ForgeDirection.UP, (IPlantable) IEContent.itemSeeds)
-                && world.isAirBlock(x, y, z)
-                && (soil.isFertile(world, x, y - 1, z)));
+            && world.isAirBlock(x, y, z)
+            && (soil.isFertile(world, x, y - 1, z)));
     }
 
     @Override

@@ -5,10 +5,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import powercrystals.minefactoryreloaded.api.IFactoryPlantable;
 import powercrystals.minefactoryreloaded.api.ReplacementBlock;
 
 public class IEPlantable implements IFactoryPlantable {
+
     protected Item seeds;
     protected Block plant;
 
@@ -27,7 +29,7 @@ public class IEPlantable implements IFactoryPlantable {
         if (!world.isAirBlock(x, y, z)) return false;
         Block ground = world.getBlock(x, y - 1, z);
         return ground != null
-                && (ground.equals(Blocks.dirt) || ground.equals(Blocks.grass) || ground.equals(Blocks.farmland));
+            && (ground.equals(Blocks.dirt) || ground.equals(Blocks.grass) || ground.equals(Blocks.farmland));
     }
 
     @Override

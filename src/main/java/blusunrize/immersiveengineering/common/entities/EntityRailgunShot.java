@@ -1,9 +1,5 @@
 package blusunrize.immersiveengineering.common.entities;
 
-import blusunrize.immersiveengineering.api.tool.RailgunHandler;
-import blusunrize.immersiveengineering.api.tool.RailgunHandler.RailgunProjectileProperties;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.util.IEDamageSources;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -11,7 +7,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.api.tool.RailgunHandler;
+import blusunrize.immersiveengineering.api.tool.RailgunHandler.RailgunProjectileProperties;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.util.IEDamageSources;
+
 public class EntityRailgunShot extends EntityIEProjectile {
+
     private ItemStack ammo;
     static final int dataMarker_ammo = 13;
     private RailgunHandler.RailgunProjectileProperties ammoProperties;
@@ -21,8 +23,8 @@ public class EntityRailgunShot extends EntityIEProjectile {
         this.setSize(.5f, .5f);
     }
 
-    public EntityRailgunShot(
-            World world, double x, double y, double z, double ax, double ay, double az, ItemStack ammo) {
+    public EntityRailgunShot(World world, double x, double y, double z, double ax, double ay, double az,
+        ItemStack ammo) {
         super(world, x, y, z, ax, ay, az);
         this.setSize(.5f, .5f);
         this.ammo = ammo;
@@ -72,10 +74,10 @@ public class EntityRailgunShot extends EntityIEProjectile {
     @Override
     public void onEntityUpdate() {
         // For testign Desync
-        //		if(worldObj instanceof WorldServer)
-        //			((WorldServer)worldObj).func_147487_a("flame", posX,posY,posZ, 0, 0,0,0, 1);
-        //		else
-        //			worldObj.spawnParticle("smoke", posX, posY, posZ, 0, 0, 0);
+        // if(worldObj instanceof WorldServer)
+        // ((WorldServer)worldObj).func_147487_a("flame", posX,posY,posZ, 0, 0,0,0, 1);
+        // else
+        // worldObj.spawnParticle("smoke", posX, posY, posZ, 0, 0, 0);
         if (this.getAmmo() == null && this.worldObj.isRemote) this.ammo = getAmmoSynced();
         super.onEntityUpdate();
     }
@@ -86,8 +88,9 @@ public class EntityRailgunShot extends EntityIEProjectile {
             if (mop.entityHit != null) {
                 if (getAmmoProperties() != null) {
                     if (!getAmmoProperties().overrideHitEntity(mop.entityHit, getShooter()))
-                        mop.entityHit.attackEntityFrom(IEDamageSources.causeRailgunDamage(this, getShooter()), (float)
-                                (getAmmoProperties().damage * Config.getDouble("railgun_damage_multiplier")));
+                        mop.entityHit.attackEntityFrom(
+                            IEDamageSources.causeRailgunDamage(this, getShooter()),
+                            (float) (getAmmoProperties().damage * Config.getDouble("railgun_damage_multiplier")));
                 }
             }
         }
@@ -96,11 +99,15 @@ public class EntityRailgunShot extends EntityIEProjectile {
     @Override
     public void onCollideWithPlayer(EntityPlayer player) {
         if (!this.worldObj.isRemote && this.inGround && this.getAmmo() != null)
-            if (player.inventory.addItemStackToInventory(this.getAmmo().copy())) {
-                this.playSound(
-                        "random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-                this.setDead();
-            }
+            if (player.inventory.addItemStackToInventory(
+                this.getAmmo()
+                    .copy())) {
+                        this.playSound(
+                            "random.pop",
+                            0.2F,
+                            ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                        this.setDead();
+                    }
     }
 
     @Override

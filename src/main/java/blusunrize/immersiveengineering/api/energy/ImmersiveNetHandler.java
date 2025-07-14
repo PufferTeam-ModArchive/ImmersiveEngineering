@@ -6,12 +6,6 @@ import static blusunrize.immersiveengineering.api.ApiUtils.toCC;
 import static blusunrize.immersiveengineering.api.ApiUtils.toIIC;
 import static java.util.Collections.newSetFromMap;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.DimensionBlockPos;
-import blusunrize.immersiveengineering.api.TargetingInfo;
-import blusunrize.immersiveengineering.common.IESaveData;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,26 +14,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
+import blusunrize.immersiveengineering.api.DimensionBlockPos;
+import blusunrize.immersiveengineering.api.TargetingInfo;
+import blusunrize.immersiveengineering.common.IESaveData;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+
 public class ImmersiveNetHandler {
+
     public static ImmersiveNetHandler INSTANCE = new ImmersiveNetHandler();
-    public ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkCoordinates, Set<Connection>>> directConnections =
-            new ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkCoordinates, Set<Connection>>>();
-    public ConcurrentHashMap<ChunkCoordinates, Set<AbstractConnection>> indirectConnections =
-            new ConcurrentHashMap<ChunkCoordinates, Set<AbstractConnection>>();
-    public ConcurrentHashMap<Integer, ConcurrentHashMap<Connection, Integer>> transferPerTick =
-            new ConcurrentHashMap<Integer, ConcurrentHashMap<Connection, Integer>>();
+    public ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkCoordinates, Set<Connection>>> directConnections = new ConcurrentHashMap<Integer, ConcurrentHashMap<ChunkCoordinates, Set<Connection>>>();
+    public ConcurrentHashMap<ChunkCoordinates, Set<AbstractConnection>> indirectConnections = new ConcurrentHashMap<ChunkCoordinates, Set<AbstractConnection>>();
+    public ConcurrentHashMap<Integer, ConcurrentHashMap<Connection, Integer>> transferPerTick = new ConcurrentHashMap<Integer, ConcurrentHashMap<Connection, Integer>>();
     public ConcurrentHashMap<DimensionBlockPos, IICProxy> proxies = new ConcurrentHashMap<>();
 
     private ConcurrentHashMap<ChunkCoordinates, Set<Connection>> getMultimap(int dimension) {
         if (directConnections.get(dimension) == null) {
-            ConcurrentHashMap<ChunkCoordinates, Set<Connection>> mm =
-                    new ConcurrentHashMap<ChunkCoordinates, Set<Connection>>();
+            ConcurrentHashMap<ChunkCoordinates, Set<Connection>> mm = new ConcurrentHashMap<ChunkCoordinates, Set<Connection>>();
             directConnections.put(dimension, mm);
         }
         return directConnections.get(dimension);
@@ -51,47 +50,47 @@ public class ImmersiveNetHandler {
         return transferPerTick.get(dimension);
     }
 
-    public void addConnection(
-            World world, ChunkCoordinates node, ChunkCoordinates connection, int distance, WireType cableType) {
-        if (!getMultimap(world.provider.dimensionId).containsKey(node))
-            getMultimap(world.provider.dimensionId)
-                    .put(node, newSetFromMap(new ConcurrentHashMap<Connection, Boolean>()));
-        getMultimap(world.provider.dimensionId).get(node).add(new Connection(node, connection, cableType, distance));
-        if (!getMultimap(world.provider.dimensionId).containsKey(connection))
-            getMultimap(world.provider.dimensionId)
-                    .put(connection, newSetFromMap(new ConcurrentHashMap<Connection, Boolean>()));
-        getMultimap(world.provider.dimensionId)
-                .get(connection)
-                .add(new Connection(connection, node, cableType, distance));
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) indirectConnections.clear();
-        if (world.blockExists(node.posX, node.posY, node.posZ))
-            world.addBlockEvent(
-                    node.posX, node.posY, node.posZ, world.getBlock(node.posX, node.posY, node.posZ), -1, 0);
-        if (world.blockExists(connection.posX, connection.posY, connection.posZ))
-            world.addBlockEvent(
-                    connection.posX,
-                    connection.posY,
-                    connection.posZ,
-                    world.getBlock(connection.posX, connection.posY, connection.posZ),
-                    -1,
-                    0);
+    public void addConnection(World world, ChunkCoordinates node, ChunkCoordinates connection, int distance,
+        WireType cableType) {
+        if (!getMultimap(world.provider.dimensionId).containsKey(node)) getMultimap(world.provider.dimensionId)
+            .put(node, newSetFromMap(new ConcurrentHashMap<Connection, Boolean>()));
+        getMultimap(world.provider.dimensionId).get(node)
+            .add(new Connection(node, connection, cableType, distance));
+        if (!getMultimap(world.provider.dimensionId).containsKey(connection)) getMultimap(world.provider.dimensionId)
+            .put(connection, newSetFromMap(new ConcurrentHashMap<Connection, Boolean>()));
+        getMultimap(world.provider.dimensionId).get(connection)
+            .add(new Connection(connection, node, cableType, distance));
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) indirectConnections.clear();
+        if (world.blockExists(node.posX, node.posY, node.posZ)) world
+            .addBlockEvent(node.posX, node.posY, node.posZ, world.getBlock(node.posX, node.posY, node.posZ), -1, 0);
+        if (world.blockExists(connection.posX, connection.posY, connection.posZ)) world.addBlockEvent(
+            connection.posX,
+            connection.posY,
+            connection.posZ,
+            world.getBlock(connection.posX, connection.posY, connection.posZ),
+            -1,
+            0);
         IESaveData.setDirty(world.provider.dimensionId);
     }
 
     public void addConnection(World world, ChunkCoordinates node, Connection con) {
-        if (!getMultimap(world.provider.dimensionId).containsKey(node))
-            getMultimap(world.provider.dimensionId)
-                    .put(node, newSetFromMap(new ConcurrentHashMap<Connection, Boolean>()));
-        getMultimap(world.provider.dimensionId).get(node).add(con);
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) indirectConnections.clear();
+        if (!getMultimap(world.provider.dimensionId).containsKey(node)) getMultimap(world.provider.dimensionId)
+            .put(node, newSetFromMap(new ConcurrentHashMap<Connection, Boolean>()));
+        getMultimap(world.provider.dimensionId).get(node)
+            .add(con);
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) indirectConnections.clear();
         IESaveData.setDirty(world.provider.dimensionId);
     }
 
     public void addConnection(int world, ChunkCoordinates node, Connection con) {
         if (!getMultimap(world).containsKey(node))
             getMultimap(world).put(node, newSetFromMap(new ConcurrentHashMap<Connection, Boolean>()));
-        getMultimap(world).get(node).add(con);
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) indirectConnections.clear();
+        getMultimap(world).get(node)
+            .add(con);
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) indirectConnections.clear();
         IESaveData.setDirty(world);
     }
 
@@ -118,26 +117,25 @@ public class ImmersiveNetHandler {
                     remove(itCon.end, world, itCon);
                     remove(itCon.start, world, itCon);
 
-                    if (world.blockExists(itCon.start.posX, itCon.start.posY, itCon.start.posZ))
-                        world.addBlockEvent(
-                                itCon.start.posX,
-                                itCon.start.posY,
-                                itCon.start.posZ,
-                                world.getBlock(itCon.start.posX, itCon.start.posY, itCon.start.posZ),
-                                -1,
-                                0);
-                    if (world.blockExists(itCon.end.posX, itCon.end.posY, itCon.end.posZ))
-                        world.addBlockEvent(
-                                itCon.end.posX,
-                                itCon.end.posY,
-                                itCon.end.posZ,
-                                world.getBlock(itCon.end.posX, itCon.end.posY, itCon.end.posZ),
-                                -1,
-                                0);
+                    if (world.blockExists(itCon.start.posX, itCon.start.posY, itCon.start.posZ)) world.addBlockEvent(
+                        itCon.start.posX,
+                        itCon.start.posY,
+                        itCon.start.posZ,
+                        world.getBlock(itCon.start.posX, itCon.start.posY, itCon.start.posZ),
+                        -1,
+                        0);
+                    if (world.blockExists(itCon.end.posX, itCon.end.posY, itCon.end.posZ)) world.addBlockEvent(
+                        itCon.end.posX,
+                        itCon.end.posY,
+                        itCon.end.posZ,
+                        world.getBlock(itCon.end.posX, itCon.end.posY, itCon.end.posZ),
+                        -1,
+                        0);
                 }
             }
         }
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) indirectConnections.clear();
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) indirectConnections.clear();
         IESaveData.setDirty(world.provider.dimensionId);
     }
 
@@ -146,7 +144,8 @@ public class ImmersiveNetHandler {
         if (iic != null) iic.removeCable(c);
         else {
             DimensionBlockPos pos = new DimensionBlockPos(w.provider.dimensionId, cc.posX, cc.posY, cc.posZ);
-            if (proxies.containsKey(pos)) proxies.get(pos).removeCable(c);
+            if (proxies.containsKey(pos)) proxies.get(pos)
+                .removeCable(c);
         }
     }
 
@@ -179,26 +178,28 @@ public class ImmersiveNetHandler {
     }
 
     public void clearConnectionsOriginatingFrom(ChunkCoordinates node, World world) {
-        if (getMultimap(world.provider.dimensionId).containsKey(node))
-            getMultimap(world.provider.dimensionId).get(node).clear();
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) indirectConnections.clear();
+        if (getMultimap(world.provider.dimensionId).containsKey(node)) getMultimap(world.provider.dimensionId).get(node)
+            .clear();
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) indirectConnections.clear();
     }
 
     public void resetCachedIndirectConnections() {
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) indirectConnections.clear();
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) indirectConnections.clear();
     }
 
     /**
      * Clears all connections to and from this node.
      */
     public void clearAllConnectionsFor(ChunkCoordinates node, World world, boolean doDrops) {
-        if (getMultimap(world.provider.dimensionId).containsKey(node))
-            getMultimap(world.provider.dimensionId).get(node).clear();
+        if (getMultimap(world.provider.dimensionId).containsKey(node)) getMultimap(world.provider.dimensionId).get(node)
+            .clear();
         remove(node, world, null);
-        //		ConcurrentSkipListSet<Connection> itlist = new ConcurrentSkipListSet<Connection>();
-        //		for (ConcurrentSkipListSet<Connection> conl : getMultimap(world.provider.dimensionId).values())
-        //			itlist.addAll(conl);
-        //		Iterator<Connection> it = itlist.iterator();
+        // ConcurrentSkipListSet<Connection> itlist = new ConcurrentSkipListSet<Connection>();
+        // for (ConcurrentSkipListSet<Connection> conl : getMultimap(world.provider.dimensionId).values())
+        // itlist.addAll(conl);
+        // Iterator<Connection> it = itlist.iterator();
 
         for (Set<Connection> conl : getMultimap(world.provider.dimensionId).values()) {
             Iterator<Connection> it = conl.iterator();
@@ -213,32 +214,31 @@ public class ImmersiveNetHandler {
                         double dx = node.posX + .5 + Math.signum(con.start.posX - con.end.posX);
                         double dy = node.posY + .5 + Math.signum(con.start.posY - con.end.posY);
                         double dz = node.posZ + .5 + Math.signum(con.start.posZ - con.end.posZ);
-                        if (doDrops && world.getGameRules().getGameRuleBooleanValue("doTileDrops"))
+                        if (doDrops && world.getGameRules()
+                            .getGameRuleBooleanValue("doTileDrops"))
                             world.spawnEntityInWorld(new EntityItem(world, dx, dy, dz, con.cableType.getWireCoil()));
-                        if (world.blockExists(con.start.posX, con.start.posY, con.start.posZ))
-                            world.addBlockEvent(
-                                    con.start.posX,
-                                    con.start.posY,
-                                    con.start.posZ,
-                                    world.getBlock(con.start.posX, con.start.posY, con.start.posZ),
-                                    -1,
-                                    0);
-                    } else if (world.blockExists(con.end.posX, con.end.posY, con.end.posZ))
-                        world.addBlockEvent(
-                                con.end.posX,
-                                con.end.posY,
-                                con.end.posZ,
-                                world.getBlock(con.end.posX, con.end.posY, con.end.posZ),
-                                -1,
-                                0);
+                        if (world.blockExists(con.start.posX, con.start.posY, con.start.posZ)) world.addBlockEvent(
+                            con.start.posX,
+                            con.start.posY,
+                            con.start.posZ,
+                            world.getBlock(con.start.posX, con.start.posY, con.start.posZ),
+                            -1,
+                            0);
+                    } else if (world.blockExists(con.end.posX, con.end.posY, con.end.posZ)) world.addBlockEvent(
+                        con.end.posX,
+                        con.end.posY,
+                        con.end.posZ,
+                        world.getBlock(con.end.posX, con.end.posY, con.end.posZ),
+                        -1,
+                        0);
                 }
             }
         }
-        if (world.blockExists(node.posX, node.posY, node.posZ))
-            world.addBlockEvent(
-                    node.posX, node.posY, node.posZ, world.getBlock(node.posX, node.posY, node.posZ), -1, 0);
+        if (world.blockExists(node.posX, node.posY, node.posZ)) world
+            .addBlockEvent(node.posX, node.posY, node.posZ, world.getBlock(node.posX, node.posY, node.posZ), -1, 0);
         IESaveData.setDirty(world.provider.dimensionId);
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) indirectConnections.clear();
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) indirectConnections.clear();
     }
 
     /**
@@ -253,108 +253,101 @@ public class ImmersiveNetHandler {
             Iterator<Connection> it = conl.iterator();
             while (it.hasNext()) {
                 Connection con = it.next();
-                if (con.cableType == type)
-                    if (node.equals(con.start) || node.equals(con.end)) {
-                        it.remove();
-                        remove(con.end, world, con);
-                        remove(con.start, world, con);
-                        if (node.equals(con.end)) {
-                            double dx = node.posX + .5 + Math.signum(con.start.posX - con.end.posX);
-                            double dy = node.posY + .5 + Math.signum(con.start.posY - con.end.posY);
-                            double dz = node.posZ + .5 + Math.signum(con.start.posZ - con.end.posZ);
-                            if (world.getGameRules().getGameRuleBooleanValue("doTileDrops"))
-                                world.spawnEntityInWorld(
-                                        new EntityItem(world, dx, dy, dz, con.cableType.getWireCoil()));
-                            if (world.blockExists(con.start.posX, con.start.posY, con.start.posZ))
-                                world.addBlockEvent(
-                                        con.start.posX,
-                                        con.start.posY,
-                                        con.start.posZ,
-                                        world.getBlock(con.start.posX, con.start.posY, con.start.posZ),
-                                        -1,
-                                        0);
-                        } else if (world.blockExists(con.end.posX, con.end.posY, con.end.posZ))
-                            world.addBlockEvent(
-                                    con.end.posX,
-                                    con.end.posY,
-                                    con.end.posZ,
-                                    world.getBlock(con.end.posX, con.end.posY, con.end.posZ),
-                                    -1,
-                                    0);
-                    }
+                if (con.cableType == type) if (node.equals(con.start) || node.equals(con.end)) {
+                    it.remove();
+                    remove(con.end, world, con);
+                    remove(con.start, world, con);
+                    if (node.equals(con.end)) {
+                        double dx = node.posX + .5 + Math.signum(con.start.posX - con.end.posX);
+                        double dy = node.posY + .5 + Math.signum(con.start.posY - con.end.posY);
+                        double dz = node.posZ + .5 + Math.signum(con.start.posZ - con.end.posZ);
+                        if (world.getGameRules()
+                            .getGameRuleBooleanValue("doTileDrops"))
+                            world.spawnEntityInWorld(new EntityItem(world, dx, dy, dz, con.cableType.getWireCoil()));
+                        if (world.blockExists(con.start.posX, con.start.posY, con.start.posZ)) world.addBlockEvent(
+                            con.start.posX,
+                            con.start.posY,
+                            con.start.posZ,
+                            world.getBlock(con.start.posX, con.start.posY, con.start.posZ),
+                            -1,
+                            0);
+                    } else if (world.blockExists(con.end.posX, con.end.posY, con.end.posZ)) world.addBlockEvent(
+                        con.end.posX,
+                        con.end.posY,
+                        con.end.posZ,
+                        world.getBlock(con.end.posX, con.end.posY, con.end.posZ),
+                        -1,
+                        0);
+                }
             }
         }
-        if (world.blockExists(node.posX, node.posY, node.posZ))
-            world.addBlockEvent(
-                    node.posX, node.posY, node.posZ, world.getBlock(node.posX, node.posY, node.posZ), -1, 0);
+        if (world.blockExists(node.posX, node.posY, node.posZ)) world
+            .addBlockEvent(node.posX, node.posY, node.posZ, world.getBlock(node.posX, node.posY, node.posZ), -1, 0);
 
         IESaveData.setDirty(world.provider.dimensionId);
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) indirectConnections.clear();
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) indirectConnections.clear();
     }
 
     /*
-    public static List<IImmersiveConnectable> getValidEnergyOutputs(ChunkCoordinates node, World world)
-    {
-    	List<IImmersiveConnectable> openList = new ArrayList<IImmersiveConnectable>();
-    	List<IImmersiveConnectable> closedList = new ArrayList<IImmersiveConnectable>();
-    	List<ChunkCoordinates> checked = new ArrayList<ChunkCoordinates>();
-    	HashMap<ChunkCoordinates,ChunkCoordinates> backtracker = new HashMap<ChunkCoordinates,ChunkCoordinates>();
-
-    	checked.add(node);
-    	for(Connection con : getConnections(world, node))
-    		if(toIIC(con.end, world)!=null)
-    		{
-    			openList.add(toIIC(con.end, world));
-    			backtracker.put(con.end, node);
-    		}
-
-    	IImmersiveConnectable next = null;
-    	final int closedListMax = 1200;
-
-    	while(closedList.size()<closedListMax && !openList.isEmpty())
-    	{
-    		next = openList.get(0);
-    		if(!checked.contains(toCC(next)))
-    		{
-    			if(next.isEnergyOutput())
-    			{
-    				ChunkCoordinates last = toCC(next);
-    				WireType averageType = null;
-    				int distance = 0;
-    				List<Connection> connectionParts = new ArrayList<Connection>();
-    				while(last!=null)
-    				{
-    					ChunkCoordinates prev = last;
-    					last = backtracker.get(last);
-    					if(last!=null)
-    					{
-    						for(Connection conB : getConnections(world, prev))
-    							if(conB.end.equals(toCC(last)))
-    							{
-    								connectionParts.add(conB);
-    								distance += conB.length;
-    								if(averageType==null || averageType.ordinal()>conB.cableType.ordinal())
-    									averageType = conB.cableType;
-    								break;
-    							}
-    					}
-    				}
-    				closedList.add(next);
-    			}
-
-    			for(Connection con : getConnections(world, toCC(next)))
-    				if(toIIC(con.end, world)!=null && !checked.contains(con.end) && !closedList.contains(toIIC(con.end, world)) && !openList.contains(toIIC(con.end, world)))
-    				{
-    					openList.add(toIIC(con.end, world));
-    					backtracker.put(con.end, toCC(next));
-    				}
-    			checked.add(toCC(next));
-    		}
-    		openList.remove(0);
-    	}
-
-    	return closedList;
-    }
+     * public static List<IImmersiveConnectable> getValidEnergyOutputs(ChunkCoordinates node, World world)
+     * {
+     * List<IImmersiveConnectable> openList = new ArrayList<IImmersiveConnectable>();
+     * List<IImmersiveConnectable> closedList = new ArrayList<IImmersiveConnectable>();
+     * List<ChunkCoordinates> checked = new ArrayList<ChunkCoordinates>();
+     * HashMap<ChunkCoordinates,ChunkCoordinates> backtracker = new HashMap<ChunkCoordinates,ChunkCoordinates>();
+     * checked.add(node);
+     * for(Connection con : getConnections(world, node))
+     * if(toIIC(con.end, world)!=null)
+     * {
+     * openList.add(toIIC(con.end, world));
+     * backtracker.put(con.end, node);
+     * }
+     * IImmersiveConnectable next = null;
+     * final int closedListMax = 1200;
+     * while(closedList.size()<closedListMax && !openList.isEmpty())
+     * {
+     * next = openList.get(0);
+     * if(!checked.contains(toCC(next)))
+     * {
+     * if(next.isEnergyOutput())
+     * {
+     * ChunkCoordinates last = toCC(next);
+     * WireType averageType = null;
+     * int distance = 0;
+     * List<Connection> connectionParts = new ArrayList<Connection>();
+     * while(last!=null)
+     * {
+     * ChunkCoordinates prev = last;
+     * last = backtracker.get(last);
+     * if(last!=null)
+     * {
+     * for(Connection conB : getConnections(world, prev))
+     * if(conB.end.equals(toCC(last)))
+     * {
+     * connectionParts.add(conB);
+     * distance += conB.length;
+     * if(averageType==null || averageType.ordinal()>conB.cableType.ordinal())
+     * averageType = conB.cableType;
+     * break;
+     * }
+     * }
+     * }
+     * closedList.add(next);
+     * }
+     * for(Connection con : getConnections(world, toCC(next)))
+     * if(toIIC(con.end, world)!=null && !checked.contains(con.end) && !closedList.contains(toIIC(con.end, world)) &&
+     * !openList.contains(toIIC(con.end, world)))
+     * {
+     * openList.add(toIIC(con.end, world));
+     * backtracker.put(con.end, toCC(next));
+     * }
+     * checked.add(toCC(next));
+     * }
+     * openList.remove(0);
+     * }
+     * return closedList;
+     * }
      */
     public Set<AbstractConnection> getIndirectEnergyConnections(ChunkCoordinates node, World world) {
         if (indirectConnections.containsKey(node)) return indirectConnections.get(node);
@@ -366,19 +359,21 @@ public class ImmersiveNetHandler {
 
         checked.add(node);
         Set<Connection> conL = getConnections(world, node);
-        if (conL != null)
-            for (Connection con : conL) {
-                IImmersiveConnectable end = toIIC(con.end, world);
-                if (end == null) {
-                    DimensionBlockPos p =
-                            new DimensionBlockPos(world.provider.dimensionId, con.end.posX, con.end.posY, con.end.posZ);
-                    if (proxies.containsKey(p)) end = proxies.get(p);
-                }
-                if (end != null) {
-                    openList.add(end);
-                    backtracker.put(con.end, node);
-                }
+        if (conL != null) for (Connection con : conL) {
+            IImmersiveConnectable end = toIIC(con.end, world);
+            if (end == null) {
+                DimensionBlockPos p = new DimensionBlockPos(
+                    world.provider.dimensionId,
+                    con.end.posX,
+                    con.end.posY,
+                    con.end.posZ);
+                if (proxies.containsKey(p)) end = proxies.get(p);
             }
+            if (end != null) {
+                openList.add(end);
+                backtracker.put(con.end, node);
+            }
+        }
 
         IImmersiveConnectable next = null;
         final int closedListMax = 1200;
@@ -397,19 +392,18 @@ public class ImmersiveNetHandler {
                         if (last != null) {
 
                             Set<Connection> conLB = getConnections(world, prev);
-                            if (conLB != null)
-                                for (Connection conB : conLB)
-                                    if (conB.end.equals(last)) {
-                                        connectionParts.add(conB);
-                                        distance += conB.length;
-                                        if (averageType == null
-                                                || conB.cableType.getTransferRate() < averageType.getTransferRate())
-                                            averageType = conB.cableType;
-                                        break;
-                                    }
+                            if (conLB != null) for (Connection conB : conLB) if (conB.end.equals(last)) {
+                                connectionParts.add(conB);
+                                distance += conB.length;
+                                if (averageType == null
+                                    || conB.cableType.getTransferRate() < averageType.getTransferRate())
+                                    averageType = conB.cableType;
+                                break;
+                            }
                         }
                     }
-                    closedList.add(new AbstractConnection(
+                    closedList.add(
+                        new AbstractConnection(
                             toCC(node),
                             toCC(next),
                             averageType,
@@ -418,33 +412,37 @@ public class ImmersiveNetHandler {
                 }
 
                 Set<Connection> conLN = getConnections(world, toCC(next));
-                if (conLN != null)
-                    for (Connection con : conLN)
-                        if (next.allowEnergyToPass(con)) {
-                            IImmersiveConnectable end = toIIC(con.end, world);
-                            if (end == null) {
-                                DimensionBlockPos p = new DimensionBlockPos(
-                                        world.provider.dimensionId, con.end.posX, con.end.posY, con.end.posZ);
-                                if (proxies.containsKey(p)) end = proxies.get(p);
-                            }
-                            if (end != null && !checked.contains(con.end) && !openList.contains(end)) {
-                                openList.add(end);
-                                backtracker.put(con.end, toCC(next));
-                            }
-                        }
+                if (conLN != null) for (Connection con : conLN) if (next.allowEnergyToPass(con)) {
+                    IImmersiveConnectable end = toIIC(con.end, world);
+                    if (end == null) {
+                        DimensionBlockPos p = new DimensionBlockPos(
+                            world.provider.dimensionId,
+                            con.end.posX,
+                            con.end.posY,
+                            con.end.posZ);
+                        if (proxies.containsKey(p)) end = proxies.get(p);
+                    }
+                    if (end != null && !checked.contains(con.end) && !openList.contains(end)) {
+                        openList.add(end);
+                        backtracker.put(con.end, toCC(next));
+                    }
+                }
                 checked.add(toCC(next));
             }
             openList.remove(0);
         }
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) {
             if (!indirectConnections.containsKey(node))
                 indirectConnections.put(node, newSetFromMap(new ConcurrentHashMap<AbstractConnection, Boolean>()));
-            indirectConnections.get(node).addAll(closedList);
+            indirectConnections.get(node)
+                .addAll(closedList);
         }
         return closedList;
     }
 
     public static class Connection implements Comparable<Connection> {
+
         public ChunkCoordinates start;
         public ChunkCoordinates end;
         public WireType cableType;
@@ -481,8 +479,8 @@ public class ImmersiveNetHandler {
 
         public NBTTagCompound writeToNBT() {
             NBTTagCompound tag = new NBTTagCompound();
-            if (start != null) tag.setIntArray("start", new int[] {start.posX, start.posY, start.posZ});
-            if (end != null) tag.setIntArray("end", new int[] {end.posX, end.posY, end.posZ});
+            if (start != null) tag.setIntArray("start", new int[] { start.posX, start.posY, start.posZ });
+            if (end != null) tag.setIntArray("end", new int[] { end.posX, end.posY, end.posZ });
             tag.setString("cableType", cableType.getUniqueName());
             tag.setInteger("length", length);
             return tag;
@@ -521,14 +519,11 @@ public class ImmersiveNetHandler {
     }
 
     public static class AbstractConnection extends Connection {
+
         public Connection[] subConnections;
 
-        public AbstractConnection(
-                ChunkCoordinates start,
-                ChunkCoordinates end,
-                WireType cableType,
-                int length,
-                Connection... subConnections) {
+        public AbstractConnection(ChunkCoordinates start, ChunkCoordinates end, WireType cableType, int length,
+            Connection... subConnections) {
             super(start, end, cableType, length);
             this.subConnections = subConnections;
         }

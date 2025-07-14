@@ -1,15 +1,18 @@
 package blusunrize.immersiveengineering.common.util.commands;
 
-import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.commands.CommandHandler.IESubCommand;
 import java.util.ArrayList;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 
+import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.commands.CommandHandler.IESubCommand;
+
 public class CommandShaders extends IESubCommand {
+
     @Override
     public String getIdent() {
         return "shaders";
@@ -21,11 +24,11 @@ public class CommandShaders extends IESubCommand {
             switch (args[1]) {
                 case "clear":
                     String player = args.length > 2 ? args[2].trim() : sender.getCommandSenderName();
-                    if (ShaderRegistry.receivedShaders.containsKey(player))
-                        ShaderRegistry.receivedShaders.get(player).clear();
+                    if (ShaderRegistry.receivedShaders.containsKey(player)) ShaderRegistry.receivedShaders.get(player)
+                        .clear();
                     ShaderRegistry.recalculatePlayerTotalWeight(player);
                     sender.addChatMessage(
-                            new ChatComponentTranslation(Lib.CHAT_COMMAND + getIdent() + ".clear.sucess", player));
+                        new ChatComponentTranslation(Lib.CHAT_COMMAND + getIdent() + ".clear.sucess", player));
                     break;
                 default:
                     sender.addChatMessage(new ChatComponentTranslation(getHelp("")));
@@ -41,16 +44,20 @@ public class CommandShaders extends IESubCommand {
             switch (args[0]) {
                 case "clear":
                     if (args.length > 2) break;
-                    list.addAll(CommandBase.getListOfStringsMatchingLastWord(
-                            args, MinecraftServer.getServer().getAllUsernames()));
+                    list.addAll(
+                        CommandBase.getListOfStringsMatchingLastWord(
+                            args,
+                            MinecraftServer.getServer()
+                                .getAllUsernames()));
                     break;
             }
             return list;
         }
 
-        for (String s : new String[] {"clear"}) {
+        for (String s : new String[] { "clear" }) {
             if (args.length == 0) list.add(s);
-            else if (s.toLowerCase().startsWith(args[0].toLowerCase())) list.add(s);
+            else if (s.toLowerCase()
+                .startsWith(args[0].toLowerCase())) list.add(s);
         }
         return list;
     }

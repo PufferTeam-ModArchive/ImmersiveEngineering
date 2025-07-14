@@ -3,6 +3,7 @@ package blusunrize.immersiveengineering.common.blocks;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class TileEntityIESlab extends TileEntityIEBase {
+
     public int slabType = 0;
 
     @Override

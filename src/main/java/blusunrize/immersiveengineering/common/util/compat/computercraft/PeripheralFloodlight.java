@@ -1,10 +1,11 @@
 package blusunrize.immersiveengineering.common.util.compat.computercraft;
 
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFloodlight;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import net.minecraft.world.World;
 
 public class PeripheralFloodlight extends IEPeripheral {
 
@@ -19,21 +20,13 @@ public class PeripheralFloodlight extends IEPeripheral {
 
     @Override
     public String[] getMethodNames() {
-        return new String[] {
-            "turnAroundXZ",
-            "turnAroundY",
-            "canTurn",
-            "waitForTimeout",
-            "setEnabled",
-            "isActive",
-            "getEnergyStored",
-            "getMaxEnergyStored"
-        };
+        return new String[] { "turnAroundXZ", "turnAroundY", "canTurn", "waitForTimeout", "setEnabled", "isActive",
+            "getEnergyStored", "getMaxEnergyStored" };
     }
 
     @Override
     public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments)
-            throws LuaException, InterruptedException {
+        throws LuaException, InterruptedException {
         TileEntityFloodlight te = (TileEntityFloodlight) getTileEntity(TileEntityFloodlight.class);
         if (te == null) throw new LuaException("The floodlight was removed");
         switch (method) {
@@ -52,7 +45,7 @@ public class PeripheralFloodlight extends IEPeripheral {
                 te.turnY(param, true);
                 return null;
             case 2: // can turn
-                return new Object[] {te.canComputerTurn()};
+                return new Object[] { te.canComputerTurn() };
             case 3: // wait
                 synchronized (te) {
                     while (!te.canComputerTurn()) te.wait();
@@ -64,11 +57,11 @@ public class PeripheralFloodlight extends IEPeripheral {
                 te.computerOn = (boolean) arguments[0];
                 return null;
             case 5: // is active
-                return new Object[] {te.active};
+                return new Object[] { te.active };
             case 6: // stored energy
-                return new Object[] {te.energyStorage};
+                return new Object[] { te.energyStorage };
             case 7: // max energy stored
-                return new Object[] {80};
+                return new Object[] { 80 };
         }
         return null;
     }

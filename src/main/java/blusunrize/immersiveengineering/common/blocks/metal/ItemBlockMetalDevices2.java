@@ -1,10 +1,7 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
-import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenBarrel;
-import blusunrize.immersiveengineering.common.util.Lib;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -16,7 +13,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
+import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWoodenBarrel;
+import blusunrize.immersiveengineering.common.util.Lib;
+
 public class ItemBlockMetalDevices2 extends ItemBlockIEBase {
+
     public ItemBlockMetalDevices2(Block b) {
         super(b);
     }
@@ -25,7 +28,8 @@ public class ItemBlockMetalDevices2 extends ItemBlockIEBase {
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advInfo) {
         if (stack.getItemDamage() == BlockMetalDevices2.META_barrel) {
             if (stack.hasTagCompound()) {
-                NBTTagCompound tag = stack.getTagCompound().getCompoundTag("tank");
+                NBTTagCompound tag = stack.getTagCompound()
+                    .getCompoundTag("tank");
                 if (!tag.hasKey("Empty")) {
                     FluidStack fluid = FluidStack.loadFluidStackFromNBT(tag);
                     list.add(fluid.getLocalizedName() + ": " + fluid.amount + "mB");
@@ -35,18 +39,8 @@ public class ItemBlockMetalDevices2 extends ItemBlockIEBase {
     }
 
     @Override
-    public boolean placeBlockAt(
-            ItemStack stack,
-            EntityPlayer player,
-            World world,
-            int x,
-            int y,
-            int z,
-            int side,
-            float hitX,
-            float hitY,
-            float hitZ,
-            int meta) {
+    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+        float hitX, float hitY, float hitZ, int meta) {
         int playerViewQuarter = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int f = playerViewQuarter == 0 ? 2 : playerViewQuarter == 1 ? 5 : playerViewQuarter == 2 ? 3 : 4;
 
@@ -62,7 +56,7 @@ public class ItemBlockMetalDevices2 extends ItemBlockIEBase {
             if (side < 2) {
                 ((TileEntityBreakerSwitch) tileEntity).sideAttached = ForgeDirection.OPPOSITES[side] + 1;
                 ((TileEntityBreakerSwitch) tileEntity).facing = f;
-            } else ((TileEntityBreakerSwitch) tileEntity).facing = ForgeDirection.OPPOSITES[side];
+            } else((TileEntityBreakerSwitch) tileEntity).facing = ForgeDirection.OPPOSITES[side];
         } else if (tileEntity instanceof TileEntityEnergyMeter) {
             ((TileEntityEnergyMeter) tileEntity).facing = f;
             ((TileEntityEnergyMeter) tileEntity).dummy = true;
@@ -84,7 +78,12 @@ public class ItemBlockMetalDevices2 extends ItemBlockIEBase {
             ((TileEntityBlastFurnacePreheater) tileEntity).facing = f;
             for (int i = 1; i <= 2; i++) {
                 world.setBlock(
-                        x, y + i, z, IEContent.blockMetalDevice2, BlockMetalDevices2.META_blastFurnacePreheater, 3);
+                    x,
+                    y + i,
+                    z,
+                    IEContent.blockMetalDevice2,
+                    BlockMetalDevices2.META_blastFurnacePreheater,
+                    3);
                 ((TileEntityBlastFurnacePreheater) world.getTileEntity(x, y + i, z)).dummy = i;
                 ((TileEntityBlastFurnacePreheater) world.getTileEntity(x, y + i, z)).facing = f;
             }

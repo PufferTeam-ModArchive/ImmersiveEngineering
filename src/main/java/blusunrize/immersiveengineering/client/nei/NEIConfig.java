@@ -1,5 +1,8 @@
 package blusunrize.immersiveengineering.client.nei;
 
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.crafting.ArcFurnaceRecipe;
 import blusunrize.immersiveengineering.client.gui.GuiAssembler;
@@ -8,10 +11,9 @@ import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
 import codechicken.nei.recipe.ICraftingHandler;
 import codechicken.nei.recipe.IUsageHandler;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class NEIConfig implements IConfigureNEI {
+
     @Override
     public void loadConfig() {
         // registerDualHandler(new NEIHammerCrushingHandler());

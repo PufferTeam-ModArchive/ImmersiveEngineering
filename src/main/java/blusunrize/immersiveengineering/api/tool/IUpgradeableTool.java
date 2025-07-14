@@ -10,13 +10,16 @@ import net.minecraft.nbt.NBTTagCompound;
 /**
  * @author BluSunrize - 27.10.2015
  *
- * Upgradeable tools like Drill and Revolver implement this.<br>
- * Since this is an interface, upgrade- and inventory-management need to be handled by the item implementing this
+ *         Upgradeable tools like Drill and Revolver implement this.<br>
+ *         Since this is an interface, upgrade- and inventory-management need to be handled by the item implementing
+ *         this
  */
 public interface IUpgradeableTool extends IInternalStorageItem {
+
     /**
      * @return an NBTTagCompound containing the upgrades as keys and their values<br>
-     * Examples include "speed" for the mining speed of the drill or "bullets" for extended magazines on the revolver
+     *         Examples include "speed" for the mining speed of the drill or "bullets" for extended magazines on the
+     *         revolver
      */
     public NBTTagCompound getUpgrades(ItemStack stack);
 
@@ -25,7 +28,8 @@ public interface IUpgradeableTool extends IInternalStorageItem {
     public void finishUpgradeRecalculation(ItemStack stack);
 
     /**
-     * Iterate through the stored items and apply upgrades. For an example implementation, see ItemUpgradeableTool in the IE source
+     * Iterate through the stored items and apply upgrades. For an example implementation, see ItemUpgradeableTool in
+     * the IE source
      */
     public void recalculateUpgrades(ItemStack stack);
 

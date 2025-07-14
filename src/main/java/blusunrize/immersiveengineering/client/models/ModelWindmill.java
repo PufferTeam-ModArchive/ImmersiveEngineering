@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 4.1.1
  */
 public class ModelWindmill extends ModelBase {
+
     public ModelRenderer axel;
     public ModelRenderer sail2;
     public ModelRenderer rod3;

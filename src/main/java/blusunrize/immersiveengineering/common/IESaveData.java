@@ -1,5 +1,13 @@
 package blusunrize.immersiveengineering.common;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.world.WorldSavedData;
+
 import blusunrize.immersiveengineering.api.DimensionBlockPos;
 import blusunrize.immersiveengineering.api.DimensionChunkCoords;
 import blusunrize.immersiveengineering.api.energy.IICProxy;
@@ -10,15 +18,10 @@ import blusunrize.immersiveengineering.api.tool.ExcavatorHandler;
 import blusunrize.immersiveengineering.api.tool.ExcavatorHandler.MineralWorldInfo;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import java.util.Map;
-import java.util.Map.Entry;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.world.WorldSavedData;
 
 public class IESaveData extends WorldSavedData {
-    //	private static HashMap<Integer, IESaveData> INSTANCE = new HashMap<Integer, IESaveData>();
+
+    // private static HashMap<Integer, IESaveData> INSTANCE = new HashMap<Integer, IESaveData>();
     private static IESaveData INSTANCE;
     public static final String dataName = "ImmersiveEngineering-SaveData";
 
@@ -62,7 +65,8 @@ public class IESaveData extends WorldSavedData {
         for (int i = 0; i < receivedShaderList.tagCount(); i++) {
             NBTTagCompound tag = receivedShaderList.getCompoundTagAt(i);
             String player = tag.getString("player");
-            ShaderRegistry.receivedShaders.get(player).clear();
+            ShaderRegistry.receivedShaders.get(player)
+                .clear();
 
             NBTTagList playerReceived = tag.getTagList("received", 8);
             for (int j = 0; j < playerReceived.tagCount(); j++) {
@@ -74,7 +78,8 @@ public class IESaveData extends WorldSavedData {
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
-        Integer[] relDim = ImmersiveNetHandler.INSTANCE.getRelevantDimensions().toArray(new Integer[0]);
+        Integer[] relDim = ImmersiveNetHandler.INSTANCE.getRelevantDimensions()
+            .toArray(new Integer[0]);
         int[] savedDimensions = new int[relDim.length];
         for (int ii = 0; ii < relDim.length; ii++) savedDimensions[ii] = relDim[ii];
 
@@ -90,8 +95,12 @@ public class IESaveData extends WorldSavedData {
         NBTTagList mineralList = new NBTTagList();
         for (Map.Entry<DimensionChunkCoords, MineralWorldInfo> e : ExcavatorHandler.mineralCache.entrySet())
             if (e.getKey() != null && e.getValue() != null) {
-                NBTTagCompound tag = e.getKey().writeToNBT();
-                tag.setTag("info", e.getValue().writeToNBT());
+                NBTTagCompound tag = e.getKey()
+                    .writeToNBT();
+                tag.setTag(
+                    "info",
+                    e.getValue()
+                        .writeToNBT());
                 mineralList.appendTag(tag);
             }
         nbt.setTag("mineralDepletion", mineralList);
@@ -112,23 +121,26 @@ public class IESaveData extends WorldSavedData {
 
         NBTTagList iicProxies = new NBTTagList();
         for (Entry<DimensionBlockPos, IICProxy> prox : ImmersiveNetHandler.INSTANCE.proxies.entrySet()) {
-            NBTTagCompound c = prox.getValue().writeToNBT();
+            NBTTagCompound c = prox.getValue()
+                .writeToNBT();
             iicProxies.appendTag(c);
         }
         nbt.setTag("iicProxies", iicProxies);
     }
 
     public static void setDirty(int dimension) {
-        //		if(FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER && INSTANCE.get(dimension)!=null)
-        //		{
-        //			INSTANCE.get(dimension).markDirty();
-        //		}
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && INSTANCE != null) INSTANCE.markDirty();
+        // if(FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER && INSTANCE.get(dimension)!=null)
+        // {
+        // INSTANCE.get(dimension).markDirty();
+        // }
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER && INSTANCE != null) INSTANCE.markDirty();
     }
 
     public static void setInstance(int dimension, IESaveData in) {
-        //		if(FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER)
-        //			INSTANCE.put(dimension, in);
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) INSTANCE = in;
+        // if(FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER)
+        // INSTANCE.put(dimension, in);
+        if (FMLCommonHandler.instance()
+            .getEffectiveSide() == Side.SERVER) INSTANCE = in;
     }
 }

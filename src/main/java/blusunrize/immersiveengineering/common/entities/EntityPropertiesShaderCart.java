@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
 public class EntityPropertiesShaderCart implements IExtendedEntityProperties {
+
     public static final String PROPERTY_NAME = "IEShaderCart";
     private ItemStack shader = null;
 

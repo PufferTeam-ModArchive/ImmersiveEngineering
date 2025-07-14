@@ -1,5 +1,8 @@
 package blusunrize.immersiveengineering.common.util.compat.opencomputers;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFloodlight;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
@@ -7,8 +10,6 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.prefab.DriverTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class FloodlightDriver extends DriverTileEntity {
 
@@ -58,12 +59,12 @@ public class FloodlightDriver extends DriverTileEntity {
 
         @Callback(doc = "function():int -- gets the maximum amount of energy stored")
         public Object[] getMaxEnergyStored(Context context, Arguments args) {
-            return new Object[] {80};
+            return new Object[] { 80 };
         }
 
         @Callback(doc = "function():int -- gets the amount of energy stored")
         public Object[] getEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().energyStorage};
+            return new Object[] { getTileEntity().energyStorage };
         }
 
         @Callback(doc = "function(up:boolean) -- turns the floodlight")
@@ -82,7 +83,7 @@ public class FloodlightDriver extends DriverTileEntity {
 
         @Callback(doc = "function():boolean -- checks whether the floodlight can turn again yet")
         public Object[] canTurnAroundY(Context context, Arguments args) {
-            return new Object[] {getTileEntity().canComputerTurn()};
+            return new Object[] { getTileEntity().canComputerTurn() };
         }
 
         @Callback(doc = "function(on:boolean) -- turns the floodlight on and off")
@@ -93,7 +94,7 @@ public class FloodlightDriver extends DriverTileEntity {
 
         @Callback(doc = "function():boolean -- checks whether the floodlight is on")
         public Object[] isActive(Context context, Arguments args) {
-            return new Object[] {getTileEntity().active};
+            return new Object[] { getTileEntity().active };
         }
     }
 }

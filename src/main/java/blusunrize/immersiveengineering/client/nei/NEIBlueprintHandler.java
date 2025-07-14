@@ -3,22 +3,27 @@ package blusunrize.immersiveengineering.client.nei;
 import static codechicken.lib.gui.GuiDraw.changeTexture;
 import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.api.crafting.BlueprintCraftingRecipe;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.util.Utils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
-import org.lwjgl.opengl.GL11;
 
 public class NEIBlueprintHandler extends TemplateRecipeHandler {
+
     public class CachedBlueprintCraftingRecipe extends CachedRecipe {
+
         PositionedStack blueprint;
         PositionedStack[] inputs;
         PositionedStack output;
@@ -27,9 +32,8 @@ public class NEIBlueprintHandler extends TemplateRecipeHandler {
             blueprint = new PositionedStack(new ItemStack(IEContent.itemBlueprint, 1, blueprintMeta), 19, 11);
             ArrayList<Object> formattedInputs = recipe.getFormattedInputs();
             inputs = new PositionedStack[formattedInputs.size()];
-            for (int i = 0; i < inputs.length; i++)
-                if (recipe.inputs[i] != null)
-                    inputs[i] = new PositionedStack(formattedInputs.get(i), 75 + i % 2 * 18, 10 + i / 2 * 18);
+            for (int i = 0; i < inputs.length; i++) if (recipe.inputs[i] != null)
+                inputs[i] = new PositionedStack(formattedInputs.get(i), 75 + i % 2 * 18, 10 + i / 2 * 18);
 
             output = new PositionedStack(recipe.output, 128, 28);
         }
@@ -60,8 +64,8 @@ public class NEIBlueprintHandler extends TemplateRecipeHandler {
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId == getOverlayIdentifier()) {
             for (int s = 0; s < BlueprintCraftingRecipe.blueprintCategories.size(); s++)
-                for (BlueprintCraftingRecipe r :
-                        BlueprintCraftingRecipe.recipeList.get(BlueprintCraftingRecipe.blueprintCategories.get(s)))
+                for (BlueprintCraftingRecipe r : BlueprintCraftingRecipe.recipeList
+                    .get(BlueprintCraftingRecipe.blueprintCategories.get(s)))
                     this.arecipes.add(new CachedBlueprintCraftingRecipe(s, r));
         } else super.loadCraftingRecipes(outputId, results);
     }
@@ -88,31 +92,26 @@ public class NEIBlueprintHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result != null)
-            for (int s = 0; s < BlueprintCraftingRecipe.blueprintCategories.size(); s++)
-                for (BlueprintCraftingRecipe r :
-                        BlueprintCraftingRecipe.recipeList.get(BlueprintCraftingRecipe.blueprintCategories.get(s)))
-                    if (r != null && (Utils.stackMatchesObject(result, r.output)))
-                        this.arecipes.add(new CachedBlueprintCraftingRecipe(s, r));
+        if (result != null) for (int s = 0; s < BlueprintCraftingRecipe.blueprintCategories.size(); s++)
+            for (BlueprintCraftingRecipe r : BlueprintCraftingRecipe.recipeList
+                .get(BlueprintCraftingRecipe.blueprintCategories.get(s)))
+                if (r != null && (Utils.stackMatchesObject(result, r.output)))
+                    this.arecipes.add(new CachedBlueprintCraftingRecipe(s, r));
     }
 
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
-        if (ingredient != null)
-            if (IEContent.itemBlueprint.equals(ingredient.getItem())) {
-                for (BlueprintCraftingRecipe r : BlueprintCraftingRecipe.recipeList.get(
-                        BlueprintCraftingRecipe.blueprintCategories.get(ingredient.getItemDamage())))
-                    this.arecipes.add(new CachedBlueprintCraftingRecipe(ingredient.getItemDamage(), r));
-            } else
-                for (int s = 0; s < BlueprintCraftingRecipe.blueprintCategories.size(); s++)
-                    for (BlueprintCraftingRecipe r :
-                            BlueprintCraftingRecipe.recipeList.get(BlueprintCraftingRecipe.blueprintCategories.get(s)))
-                        if (r != null)
-                            for (Object o : r.inputs)
-                                if (Utils.stackMatchesObject(ingredient, o)) {
-                                    this.arecipes.add(new CachedBlueprintCraftingRecipe(s, r));
-                                    break;
-                                }
+        if (ingredient != null) if (IEContent.itemBlueprint.equals(ingredient.getItem())) {
+            for (BlueprintCraftingRecipe r : BlueprintCraftingRecipe.recipeList
+                .get(BlueprintCraftingRecipe.blueprintCategories.get(ingredient.getItemDamage())))
+                this.arecipes.add(new CachedBlueprintCraftingRecipe(ingredient.getItemDamage(), r));
+        } else for (int s = 0; s < BlueprintCraftingRecipe.blueprintCategories.size(); s++)
+            for (BlueprintCraftingRecipe r : BlueprintCraftingRecipe.recipeList
+                .get(BlueprintCraftingRecipe.blueprintCategories.get(s)))
+                if (r != null) for (Object o : r.inputs) if (Utils.stackMatchesObject(ingredient, o)) {
+                    this.arecipes.add(new CachedBlueprintCraftingRecipe(s, r));
+                    break;
+                }
     }
 
     @Override

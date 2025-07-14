@@ -3,6 +3,21 @@ package blusunrize.immersiveengineering.client.nei;
 import static codechicken.lib.gui.GuiDraw.changeTexture;
 import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.api.energy.DieselHandler;
 import blusunrize.immersiveengineering.api.energy.DieselHandler.SqueezerRecipe;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -15,21 +30,11 @@ import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.GuiUsageRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.Arrays;
-import java.util.List;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.oredict.OreDictionary;
-import org.lwjgl.opengl.GL11;
 
 public class NEISqueezerHandler extends TemplateRecipeHandler {
+
     public class CachedSqueezerRecipe extends CachedRecipe {
+
         PositionedStack input;
         PositionedStack output;
         FluidStack fluid;
@@ -71,19 +76,17 @@ public class NEISqueezerHandler extends TemplateRecipeHandler {
         Fluid ff = null;
         if (outputId == "liquid" && results != null && results.length > 0 && results[0] instanceof FluidStack)
             ff = ((FluidStack) results[0]).getFluid();
-        if (outputId == "item"
-                && results != null
-                && results.length > 0
-                && results[0] instanceof ItemStack
-                && FluidContainerRegistry.isFilledContainer((ItemStack) results[0]))
+        if (outputId == "item" && results != null
+            && results.length > 0
+            && results[0] instanceof ItemStack
+            && FluidContainerRegistry.isFilledContainer((ItemStack) results[0]))
             ff = FluidContainerRegistry.getFluidForFilledItem((ItemStack) results[0])
-                    .getFluid();
+                .getFluid();
 
         for (SqueezerRecipe r : DieselHandler.squeezerList)
-            if (r != null)
-                if (outputId == getOverlayIdentifier()) this.arecipes.add(new CachedSqueezerRecipe(r));
-                else if (ff != null && r.fluid != null && r.fluid.getFluid() == ff)
-                    this.arecipes.add(new CachedSqueezerRecipe(r));
+            if (r != null) if (outputId == getOverlayIdentifier()) this.arecipes.add(new CachedSqueezerRecipe(r));
+            else if (ff != null && r.fluid != null && r.fluid.getFluid() == ff)
+                this.arecipes.add(new CachedSqueezerRecipe(r));
 
         super.loadCraftingRecipes(outputId, results);
     }
@@ -110,10 +113,8 @@ public class NEISqueezerHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result != null)
-            for (SqueezerRecipe r : DieselHandler.squeezerList)
-                if (r != null && Utils.stackMatchesObject(result, r.output))
-                    this.arecipes.add(new CachedSqueezerRecipe(r));
+        if (result != null) for (SqueezerRecipe r : DieselHandler.squeezerList)
+            if (r != null && Utils.stackMatchesObject(result, r.output)) this.arecipes.add(new CachedSqueezerRecipe(r));
     }
 
     @Override
@@ -131,14 +132,13 @@ public class NEISqueezerHandler extends TemplateRecipeHandler {
             Point localPoint = GuiDraw.getMousePosition();
             int gl = (gui.width - 176) / 2;
             int gt = (gui.height - 176) / 2;
-            if (localPoint.x > gl + 110
-                    && localPoint.x <= gl + 110 + 16
-                    && localPoint.y > gt + (64 * (recipe % 2)) + 13
-                    && localPoint.y <= gt + (64 * (recipe % 2)) + 13 + 47) {
+            if (localPoint.x > gl + 110 && localPoint.x <= gl + 110 + 16
+                && localPoint.y > gt + (64 * (recipe % 2)) + 13
+                && localPoint.y <= gt + (64 * (recipe % 2)) + 13 + 47) {
                 if (keyCode == NEIClientConfig.getKeyBinding("gui.recipe")) {
-                    if (GuiCraftingRecipe.openRecipeGui("liquid", new Object[] {r.fluid})) return true;
+                    if (GuiCraftingRecipe.openRecipeGui("liquid", new Object[] { r.fluid })) return true;
                 } else if (keyCode == NEIClientConfig.getKeyBinding("gui.usage")) {
-                    if (GuiUsageRecipe.openRecipeGui("liquid", new Object[] {r.fluid})) return true;
+                    if (GuiUsageRecipe.openRecipeGui("liquid", new Object[] { r.fluid })) return true;
                 }
             }
         }
@@ -152,14 +152,13 @@ public class NEISqueezerHandler extends TemplateRecipeHandler {
             Point localPoint = GuiDraw.getMousePosition();
             int gl = (gui.width - 176) / 2;
             int gt = (gui.height - 176) / 2;
-            if (localPoint.x > gl + 110
-                    && localPoint.x <= gl + 110 + 16
-                    && localPoint.y > gt + (64 * (recipe % 2)) + 13
-                    && localPoint.y <= gt + (64 * (recipe % 2)) + 13 + 47) {
+            if (localPoint.x > gl + 110 && localPoint.x <= gl + 110 + 16
+                && localPoint.y > gt + (64 * (recipe % 2)) + 13
+                && localPoint.y <= gt + (64 * (recipe % 2)) + 13 + 47) {
                 if (button == 0) {
-                    if (GuiCraftingRecipe.openRecipeGui("liquid", new Object[] {r.fluid})) return true;
+                    if (GuiCraftingRecipe.openRecipeGui("liquid", new Object[] { r.fluid })) return true;
                 } else if (button == 1) {
-                    if (GuiUsageRecipe.openRecipeGui("liquid", new Object[] {r.fluid})) return true;
+                    if (GuiUsageRecipe.openRecipeGui("liquid", new Object[] { r.fluid })) return true;
                 }
             }
         }
@@ -173,18 +172,16 @@ public class NEISqueezerHandler extends TemplateRecipeHandler {
             Point localPoint = GuiDraw.getMousePosition();
             int gl = (gui.width - 176) / 2;
             int gt = (gui.height - 134) / 2;
-            if (r.fluid != null
-                    && localPoint.x > gl + 110
-                    && localPoint.x <= gl + 110 + 16
-                    && localPoint.y > gt + (64 * (recipe % 2)) + 13
-                    && localPoint.y <= gt + (64 * (recipe % 2)) + 13 + 47) {
+            if (r.fluid != null && localPoint.x > gl + 110
+                && localPoint.x <= gl + 110 + 16
+                && localPoint.y > gt + (64 * (recipe % 2)) + 13
+                && localPoint.y <= gt + (64 * (recipe % 2)) + 13 + 47) {
                 list.add(r.fluid.getLocalizedName());
                 list.add(r.fluid.amount + " mB");
             }
-            if (localPoint.x > gl + 79
-                    && localPoint.x <= gl + 79 + 7
-                    && localPoint.y > gt + (64 * (recipe % 2)) + 25
-                    && localPoint.y <= gt + (64 * (recipe % 2)) + 25 + 18) list.add(r.time + " Ticks");
+            if (localPoint.x > gl + 79 && localPoint.x <= gl + 79 + 7
+                && localPoint.y > gt + (64 * (recipe % 2)) + 25
+                && localPoint.y <= gt + (64 * (recipe % 2)) + 25 + 18) list.add(r.time + " Ticks");
         }
         return super.handleTooltip(gui, list, recipe);
     }

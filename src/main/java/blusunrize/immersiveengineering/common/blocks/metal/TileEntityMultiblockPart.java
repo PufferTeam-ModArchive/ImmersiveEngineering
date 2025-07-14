@@ -1,13 +1,15 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+
 public abstract class TileEntityMultiblockPart extends TileEntityIEBase {
+
     public boolean formed = false;
     public int pos = -1;
-    public int[] offset = {0, 0, 0};
+    public int[] offset = { 0, 0, 0 };
     public boolean mirrored = false;
 
     @Override

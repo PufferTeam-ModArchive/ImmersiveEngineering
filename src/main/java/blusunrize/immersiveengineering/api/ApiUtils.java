@@ -1,14 +1,10 @@
 package blusunrize.immersiveengineering.api;
 
-import blusunrize.immersiveengineering.api.energy.IICProxy;
-import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.api.energy.WireType;
-import cpw.mods.fml.common.registry.GameData;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,7 +16,14 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.energy.IICProxy;
+import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.api.energy.WireType;
+import cpw.mods.fml.common.registry.GameData;
+
 public class ApiUtils {
+
     public static boolean compareToOreName(ItemStack stack, String oreName) {
         if (!isExistingOreName(oreName)) return false;
         ItemStack comp = copyStackWithAmount(stack, 1);
@@ -53,15 +56,16 @@ public class ApiUtils {
 
     public static boolean isExistingOreName(String name) {
         if (!OreDictionary.doesOreNameExist(name)) return false;
-        else return !OreDictionary.getOres(name).isEmpty();
+        else return !OreDictionary.getOres(name)
+            .isEmpty();
     }
 
     public static String nameFromStack(ItemStack stack) {
         if (stack == null) return "";
         try {
-            return GameData.getItemRegistry().getNameForObject(stack.getItem());
-        } catch (NullPointerException e) {
-        }
+            return GameData.getItemRegistry()
+                .getNameForObject(stack.getItem());
+        } catch (NullPointerException e) {}
         return "";
     }
 
@@ -71,29 +75,24 @@ public class ApiUtils {
 
     public static String getMetalComponentType(ItemStack stack, String... componentTypes) {
         ItemStack comp = copyStackWithAmount(stack, 1);
-        for (String oreName :
-                OreDictionary.getOreNames()) // This is super ugly, but I don't want to force the latest forge ._.
-        for (int iType = 0; iType < componentTypes.length; iType++)
-                if (oreName.startsWith(componentTypes[iType])) {
-                    ArrayList<ItemStack> s = OreDictionary.getOres(oreName);
-                    for (ItemStack st : s) if (ItemStack.areItemStacksEqual(comp, st)) return componentTypes[iType];
-                }
+        for (String oreName : OreDictionary.getOreNames()) // This is super ugly, but I don't want to force the latest
+                                                           // forge ._.
+            for (int iType = 0; iType < componentTypes.length; iType++) if (oreName.startsWith(componentTypes[iType])) {
+                ArrayList<ItemStack> s = OreDictionary.getOres(oreName);
+                for (ItemStack st : s) if (ItemStack.areItemStacksEqual(comp, st)) return componentTypes[iType];
+            }
         return null;
     }
 
     public static String[] getMetalComponentTypeAndMetal(ItemStack stack, String... componentTypes) {
         ItemStack comp = copyStackWithAmount(stack, 1);
-        for (String oreName :
-                OreDictionary.getOreNames()) // This is super ugly, but I don't want to force the latest forge ._.
-        for (int iType = 0; iType < componentTypes.length; iType++)
-                if (oreName.startsWith(componentTypes[iType])) {
-                    ArrayList<ItemStack> s = OreDictionary.getOres(oreName);
-                    for (ItemStack st : s)
-                        if (ItemStack.areItemStacksEqual(comp, st))
-                            return new String[] {
-                                componentTypes[iType], oreName.substring(componentTypes[iType].length())
-                            };
-                }
+        for (String oreName : OreDictionary.getOreNames()) // This is super ugly, but I don't want to force the latest
+                                                           // forge ._.
+            for (int iType = 0; iType < componentTypes.length; iType++) if (oreName.startsWith(componentTypes[iType])) {
+                ArrayList<ItemStack> s = OreDictionary.getOres(oreName);
+                for (ItemStack st : s) if (ItemStack.areItemStacksEqual(comp, st))
+                    return new String[] { componentTypes[iType], oreName.substring(componentTypes[iType].length()) };
+            }
         return null;
     }
 
@@ -106,7 +105,8 @@ public class ApiUtils {
     }
 
     public static int getComponentIngotWorth(ItemStack stack) {
-        String[] keys = IEApi.prefixToIngotMap.keySet().toArray(new String[IEApi.prefixToIngotMap.size()]);
+        String[] keys = IEApi.prefixToIngotMap.keySet()
+            .toArray(new String[IEApi.prefixToIngotMap.size()]);
         String key = getMetalComponentType(stack, keys);
         if (key != null) {
             Integer[] relation = IEApi.prefixToIngotMap.get(key);
@@ -119,7 +119,8 @@ public class ApiUtils {
     }
 
     public static ItemStack breakStackIntoIngots(ItemStack stack) {
-        String[] keys = IEApi.prefixToIngotMap.keySet().toArray(new String[IEApi.prefixToIngotMap.size()]);
+        String[] keys = IEApi.prefixToIngotMap.keySet()
+            .toArray(new String[IEApi.prefixToIngotMap.size()]);
         String[] type = getMetalComponentTypeAndMetal(stack, keys);
         if (type != null) {
             Integer[] relation = IEApi.prefixToIngotMap.get(type[0]);
@@ -132,13 +133,14 @@ public class ApiUtils {
     }
 
     public static Object[] breakStackIntoPreciseIngots(ItemStack stack) {
-        String[] keys = IEApi.prefixToIngotMap.keySet().toArray(new String[IEApi.prefixToIngotMap.size()]);
+        String[] keys = IEApi.prefixToIngotMap.keySet()
+            .toArray(new String[IEApi.prefixToIngotMap.size()]);
         String[] type = getMetalComponentTypeAndMetal(stack, keys);
         if (type != null) {
             Integer[] relation = IEApi.prefixToIngotMap.get(type[0]);
             if (relation != null && relation.length > 1) {
                 double val = relation[0] / (double) relation[1];
-                return new Object[] {IEApi.getPreferredOreStack("ingot" + type[1]), val};
+                return new Object[] { IEApi.getPreferredOreStack("ingot" + type[1]), val };
             }
         }
         return null;
@@ -146,27 +148,27 @@ public class ApiUtils {
 
     public static ChunkCoordinates toCC(Object object) {
         if (object instanceof ChunkCoordinates) return (ChunkCoordinates) object;
-        if (object instanceof TileEntity)
-            return new ChunkCoordinates(
-                    ((TileEntity) object).xCoord, ((TileEntity) object).yCoord, ((TileEntity) object).zCoord);
+        if (object instanceof TileEntity) return new ChunkCoordinates(
+            ((TileEntity) object).xCoord,
+            ((TileEntity) object).yCoord,
+            ((TileEntity) object).zCoord);
         if (object instanceof IICProxy) return ((IICProxy) object).getPos();
         return null;
     }
 
     public static IImmersiveConnectable toIIC(Object object, World world) {
         if (object instanceof IImmersiveConnectable) return (IImmersiveConnectable) object;
-        else if (object instanceof ChunkCoordinates
-                && world != null
-                && world.blockExists(
+        else if (object instanceof ChunkCoordinates && world != null
+            && world.blockExists(
+                ((ChunkCoordinates) object).posX,
+                ((ChunkCoordinates) object).posY,
+                ((ChunkCoordinates) object).posZ)) {
+                    TileEntity te = world.getTileEntity(
                         ((ChunkCoordinates) object).posX,
                         ((ChunkCoordinates) object).posY,
-                        ((ChunkCoordinates) object).posZ)) {
-            TileEntity te = world.getTileEntity(
-                    ((ChunkCoordinates) object).posX,
-                    ((ChunkCoordinates) object).posY,
-                    ((ChunkCoordinates) object).posZ);
-            if (te instanceof IImmersiveConnectable) return (IImmersiveConnectable) te;
-        }
+                        ((ChunkCoordinates) object).posZ);
+                    if (te instanceof IImmersiveConnectable) return (IImmersiveConnectable) te;
+                }
         return null;
     }
 
@@ -177,7 +179,7 @@ public class ApiUtils {
     public static Vec3[] getConnectionCatenary(Connection connection, Vec3 start, Vec3 end) {
         boolean vertical = connection.end.posX == connection.start.posX && connection.end.posZ == connection.start.posZ;
 
-        if (vertical) return new Vec3[] {Vec3.createVectorHelper(end.xCoord, end.yCoord, end.zCoord)};
+        if (vertical) return new Vec3[] { Vec3.createVectorHelper(end.xCoord, end.yCoord, end.zCoord) };
 
         double dx = (end.xCoord) - (start.xCoord);
         double dy = (end.yCoord) - (start.yCoord);
@@ -214,11 +216,9 @@ public class ApiUtils {
         // Legacy code for old save data, where types used to be integers
         if (tag.getTag(key) instanceof NBTTagInt) {
             int i = tag.getInteger(key);
-            return i == 1
-                    ? WireType.ELECTRUM
-                    : i == 2
-                            ? WireType.STEEL
-                            : i == 3 ? WireType.STRUCTURE_ROPE : i == 4 ? WireType.STRUCTURE_STEEL : WireType.COPPER;
+            return i == 1 ? WireType.ELECTRUM
+                : i == 2 ? WireType.STEEL
+                    : i == 3 ? WireType.STRUCTURE_ROPE : i == 4 ? WireType.STRUCTURE_STEEL : WireType.COPPER;
         } else return WireType.getValue(tag.getString(key));
     }
 
@@ -232,10 +232,9 @@ public class ApiUtils {
             ArrayList<ItemStack> l = OreDictionary.getOres((String) input);
             if (!l.isEmpty()) return l;
             else return null;
-        } else
-            throw new RuntimeException(
-                    "Recipe Inputs must always be ItemStack, Item, Block or String (OreDictionary name), " + input
-                            + " is invalid");
+        } else throw new RuntimeException(
+            "Recipe Inputs must always be ItemStack, Item, Block or String (OreDictionary name), " + input
+                + " is invalid");
     }
 
     public static ItemStack getItemStackFromObject(Object o) {
@@ -259,6 +258,7 @@ public class ApiUtils {
     }
 
     static class ValueComparator implements Comparator<String> {
+
         Map<String, Integer> base;
         boolean inverse;
 

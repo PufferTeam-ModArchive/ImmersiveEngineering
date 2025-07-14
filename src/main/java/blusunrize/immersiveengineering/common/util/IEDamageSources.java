@@ -1,28 +1,34 @@
 package blusunrize.immersiveengineering.common.util;
 
-import blusunrize.immersiveengineering.common.entities.EntityRailgunShot;
-import blusunrize.immersiveengineering.common.entities.EntityRevolvershot;
-import com.emoniph.witchery.util.EntityDamageSourceIndirectSilver;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 
+import com.emoniph.witchery.util.EntityDamageSourceIndirectSilver;
+
+import blusunrize.immersiveengineering.common.entities.EntityRailgunShot;
+import blusunrize.immersiveengineering.common.entities.EntityRevolvershot;
+
 public class IEDamageSources {
+
     public static class IEDamageSource_Indirect extends EntityDamageSourceIndirect {
+
         public IEDamageSource_Indirect(String tag, Entity shot, Entity shooter) {
             super(tag, shot, shooter);
         }
     }
 
     public static class IEDamageSource_Direct extends EntityDamageSource {
+
         public IEDamageSource_Direct(String tag, Entity attacker) {
             super(tag, attacker);
         }
     }
 
     public static class IEDamageSource extends DamageSource {
+
         public IEDamageSource(String tag) {
             super(tag);
         }

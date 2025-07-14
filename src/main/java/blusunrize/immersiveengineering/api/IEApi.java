@@ -1,20 +1,23 @@
 package blusunrize.immersiveengineering.api;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.oredict.OreDictionary;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+
 /**
  * @author BluSunrize - 13.08.2015
  *
- * An API class, for features that should be accessible in compatibility
+ *         An API class, for features that should be accessible in compatibility
  */
 public class IEApi {
+
     /**
      * A list of mod-ids, representing the mods an ore should be used from in order of priority
      */
@@ -31,8 +34,13 @@ public class IEApi {
     public static int revolverTextureSheetID;
 
     /**
-     * This map stores a list of OreDict prefixes (ingot, plate, gear, nugget) and their ingot relation (ingot:component) <br>
-     * Examples:<br>"plate"-{1,1},<br>"nugget"-{1,9},<br>"block"-{9,1},<br>"gear"-{4,1}
+     * This map stores a list of OreDict prefixes (ingot, plate, gear, nugget) and their ingot relation
+     * (ingot:component) <br>
+     * Examples:<br>
+     * "plate"-{1,1},<br>
+     * "nugget"-{1,9},<br>
+     * "block"-{9,1},<br>
+     * "gear"-{4,1}
      */
     public static HashMap<String, Integer[]> prefixToIngotMap = new HashMap<String, Integer[]>();
 
@@ -46,8 +54,9 @@ public class IEApi {
 
     public static ItemStack getPreferredOreStack(String oreName) {
         if (!oreOutputPreference.containsKey(oreName)) {
-            ItemStack preferredStack =
-                    ApiUtils.isExistingOreName(oreName) ? getPreferredStackbyMod(OreDictionary.getOres(oreName)) : null;
+            ItemStack preferredStack = ApiUtils.isExistingOreName(oreName)
+                ? getPreferredStackbyMod(OreDictionary.getOres(oreName))
+                : null;
             oreOutputPreference.put(oreName, preferredStack);
             return preferredStack;
         }
@@ -58,18 +67,17 @@ public class IEApi {
     public static ItemStack getPreferredStackbyMod(ArrayList<ItemStack> list) {
         ItemStack preferredStack = null;
         int lastPref = -1;
-        for (ItemStack stack : list)
-            if (stack != null && stack.getItem() != null) {
-                UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(stack.getItem());
-                if (id != null) {
-                    String modId = id.modId;
-                    int idx = modId == null || modId.isEmpty() ? -1 : modPreference.indexOf(modId);
-                    if (preferredStack == null || (idx >= 0 && (lastPref < 0 || idx < lastPref))) {
-                        preferredStack = stack;
-                        lastPref = idx;
-                    }
+        for (ItemStack stack : list) if (stack != null && stack.getItem() != null) {
+            UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(stack.getItem());
+            if (id != null) {
+                String modId = id.modId;
+                int idx = modId == null || modId.isEmpty() ? -1 : modPreference.indexOf(modId);
+                if (preferredStack == null || (idx >= 0 && (lastPref < 0 || idx < lastPref))) {
+                    preferredStack = stack;
+                    lastPref = idx;
                 }
             }
+        }
         return preferredStack != null ? preferredStack.copy() : null;
     }
 }

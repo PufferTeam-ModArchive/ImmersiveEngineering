@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 5.0.0
  */
 public class ModelRevolverUpgraded extends ModelBase {
+
     public ModelRenderer trigger;
     public ModelRenderer Grip;
     public ModelRenderer Frontgrip;

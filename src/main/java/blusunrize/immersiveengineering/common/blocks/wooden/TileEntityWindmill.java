@@ -1,16 +1,18 @@
 package blusunrize.immersiveengineering.common.blocks.wooden;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityDynamo;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityDynamo;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class TileEntityWindmill extends TileEntityIEBase {
+
     public int facing = 2;
     public float prevRotation = 0;
     public float rotation = 0;
@@ -38,8 +40,8 @@ public class TileEntityWindmill extends TileEntityIEBase {
 
         if (!worldObj.isRemote) {
             ForgeDirection fd = ForgeDirection.getOrientation(facing);
-            TileEntity tileEntity =
-                    worldObj.getTileEntity(xCoord - fd.offsetX, yCoord - fd.offsetY, zCoord - fd.offsetZ);
+            TileEntity tileEntity = worldObj
+                .getTileEntity(xCoord - fd.offsetX, yCoord - fd.offsetY, zCoord - fd.offsetZ);
             if (tileEntity instanceof TileEntityDynamo) {
                 TileEntityDynamo dynamo = (TileEntityDynamo) tileEntity;
                 if ((facing == 2 || facing == 3) && dynamo.facing != 2 && dynamo.facing != 3) return;
@@ -58,11 +60,9 @@ public class TileEntityWindmill extends TileEntityIEBase {
         turnSpeed = 0;
         for (int hh = -6; hh <= 6; hh++) {
             int r = Math.abs(hh) == 6 ? 1 : Math.abs(hh) == 5 ? 3 : Math.abs(hh) == 4 ? 4 : Math.abs(hh) > 1 ? 5 : 6;
-            for (int ww = -r; ww <= r; ww++)
-                if ((hh != 0 || ww != 0)
-                        && !worldObj.isAirBlock(
-                                xCoord + (facing <= 3 ? ww : 0), yCoord + hh, zCoord + (facing <= 3 ? 0 : ww)))
-                    return false;
+            for (int ww = -r; ww <= r; ww++) if ((hh != 0 || ww != 0)
+                && !worldObj.isAirBlock(xCoord + (facing <= 3 ? ww : 0), yCoord + hh, zCoord + (facing <= 3 ? 0 : ww)))
+                return false;
         }
 
         int blocked = 0;
@@ -112,22 +112,21 @@ public class TileEntityWindmill extends TileEntityIEBase {
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            renderAABB = AxisAlignedBB.getBoundingBox(
-                    xCoord - (facing <= 3 ? 6 : 0),
-                    yCoord - 6,
-                    zCoord - (facing <= 3 ? 0 : 6),
-                    xCoord + (facing <= 3 ? 7 : 0),
-                    yCoord + 7,
-                    zCoord + (facing <= 3 ? 0 : 7));
+        if (renderAABB == null) renderAABB = AxisAlignedBB.getBoundingBox(
+            xCoord - (facing <= 3 ? 6 : 0),
+            yCoord - 6,
+            zCoord - (facing <= 3 ? 0 : 6),
+            xCoord + (facing <= 3 ? 7 : 0),
+            yCoord + 7,
+            zCoord + (facing <= 3 ? 0 : 7));
         return renderAABB;
     }
 
     @Override
     public double getMaxRenderDistanceSquared() {
         return super.getMaxRenderDistanceSquared() * Config.getDouble("increasedTileRenderdistance");
-        //		if(Config.getBoolean("increasedTileRenderdistance"))
-        //			return super.getMaxRenderDistanceSquared()*1.5;
-        //		return super.getMaxRenderDistanceSquared();
+        // if(Config.getBoolean("increasedTileRenderdistance"))
+        // return super.getMaxRenderDistanceSquared()*1.5;
+        // return super.getMaxRenderDistanceSquared();
     }
 }

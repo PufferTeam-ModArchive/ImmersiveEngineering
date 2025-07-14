@@ -1,8 +1,9 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.energy.IEnergyReceiver;
 
 public class TileEntityCapacitorCreative extends TileEntityCapacitorLV {
 
@@ -37,8 +38,7 @@ public class TileEntityCapacitorCreative extends TileEntityCapacitorLV {
     protected void transferEnergy(int side) {
         if (sideConfig[side] != 1) return;
         ForgeDirection to = ForgeDirection.getOrientation(side);
-        if (worldObj.blockExists(xCoord + to.offsetX, yCoord + to.offsetY, zCoord + to.offsetZ))
-            ;
+        if (worldObj.blockExists(xCoord + to.offsetX, yCoord + to.offsetY, zCoord + to.offsetZ));
         {
             TileEntity te = worldObj.getTileEntity(xCoord + to.offsetX, yCoord + to.offsetY, zCoord + to.offsetZ);
             if (te instanceof IEnergyReceiver)

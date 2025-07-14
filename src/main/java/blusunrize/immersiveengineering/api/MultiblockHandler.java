@@ -1,19 +1,23 @@
 package blusunrize.immersiveengineering.api;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 /**
  * @author BluSunrize - 27.04.2015
- * <br>
- * The handler for IE multiblocks. TO handle custom structures, create a class implementing IMultiblock and register it
+ *         <br>
+ *         The handler for IE multiblocks. TO handle custom structures, create a class implementing IMultiblock and
+ *         register it
  */
 public class MultiblockHandler {
+
     static ArrayList<IMultiblock> multiblocks = new ArrayList<IMultiblock>();
 
     public static void registerMultiblock(IMultiblock multiblock) {
@@ -25,8 +29,10 @@ public class MultiblockHandler {
     }
 
     public static interface IMultiblock {
+
         /**
-         * returns name of the Multiblock. This is used for the interdiction NBT system on the hammer, so this name /must/ be unique.
+         * returns name of the Multiblock. This is used for the interdiction NBT system on the hammer, so this name
+         * /must/ be unique.
          */
         public String getUniqueName();
 
@@ -38,6 +44,7 @@ public class MultiblockHandler {
 
         /**
          * This method checks the structure and sets the new one.
+         * 
          * @return if the structure was valid and transformed
          */
         public boolean createStructure(World world, int x, int y, int z, int side, EntityPlayer player);
@@ -48,7 +55,8 @@ public class MultiblockHandler {
         public ItemStack[][][] getStructureManual();
 
         /**
-         * An array of ItemStacks that summarizes the total amount of materials needed for the structure. Will be rendered in the Engineer's Manual
+         * An array of ItemStacks that summarizes the total amount of materials needed for the structure. Will be
+         * rendered in the Engineer's Manual
          */
         public ItemStack[] getTotalMaterials();
 
@@ -68,6 +76,7 @@ public class MultiblockHandler {
          */
         @SideOnly(Side.CLIENT)
         public boolean canRenderFormedStructure();
+
         /**
          * use this function to render the complete multiblock
          */

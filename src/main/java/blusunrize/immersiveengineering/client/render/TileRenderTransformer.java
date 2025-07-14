@@ -1,5 +1,11 @@
 package blusunrize.immersiveengineering.client.render;
 
+import java.util.ArrayList;
+
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+
 import blusunrize.immersiveengineering.api.energy.WireType;
 import blusunrize.immersiveengineering.client.models.ModelIEObj;
 import blusunrize.immersiveengineering.common.IEContent;
@@ -7,19 +13,18 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityTransformer;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityTransformerHV;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
-import java.util.ArrayList;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 
 public class TileRenderTransformer extends TileRenderIE {
+
     static ModelIEObj model = new ModelIEObj("immersiveengineering:models/transformerHV.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockMetalDevice.getIcon(0, BlockMetalDevices.META_transformerHV);
         }
     };
     static ModelIEObj modelPost = new ModelIEObj("immersiveengineering:models/transformerPost.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockMetalDevice.getIcon(1, BlockMetalDevices.META_transformer);

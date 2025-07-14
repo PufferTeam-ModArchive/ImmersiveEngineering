@@ -1,5 +1,10 @@
 package blusunrize.immersiveengineering.common.util.compat;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import blusunrize.immersiveengineering.common.Config;
 import blusunrize.immersiveengineering.common.util.IELogger;
 import blusunrize.immersiveengineering.common.util.compat.computercraft.ComputercraftHelper;
@@ -9,14 +14,10 @@ import blusunrize.immersiveengineering.common.util.compat.minetweaker.MTHelper;
 import blusunrize.immersiveengineering.common.util.compat.opencomputers.OCHelper;
 import blusunrize.immersiveengineering.common.util.compat.waila.WailaHelper;
 import cpw.mods.fml.common.Loader;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
 
 public abstract class IECompatModule {
-    public static HashMap<String, Class<? extends IECompatModule>> moduleClasses =
-            new HashMap<String, Class<? extends IECompatModule>>();
+
+    public static HashMap<String, Class<? extends IECompatModule>> moduleClasses = new HashMap<String, Class<? extends IECompatModule>>();
     public static Set<IECompatModule> modules = new HashSet<IECompatModule>();
 
     static {
@@ -56,47 +57,45 @@ public abstract class IECompatModule {
 
     public static void doModulesPreInit() {
         for (Entry<String, Class<? extends IECompatModule>> e : moduleClasses.entrySet())
-            if (Loader.isModLoaded(e.getKey()) && Config.getBoolean("compat_" + e.getKey()))
-                try {
-                    IECompatModule m = e.getValue().newInstance();
-                    IELogger.info("Loading compat module: " + m);
-                    modules.add(m);
-                    m.preInit();
-                } catch (Exception exception) {
-                    IELogger.error("Compat module for " + e.getKey() + " could not be preInitialized. Report this!");
-                }
+            if (Loader.isModLoaded(e.getKey()) && Config.getBoolean("compat_" + e.getKey())) try {
+                IECompatModule m = e.getValue()
+                    .newInstance();
+                IELogger.info("Loading compat module: " + m);
+                modules.add(m);
+                m.preInit();
+            } catch (Exception exception) {
+                IELogger.error("Compat module for " + e.getKey() + " could not be preInitialized. Report this!");
+            }
     }
 
     public static void doModulesInit() {
-        for (IECompatModule compat : IECompatModule.modules)
-            try {
-                compat.init();
-            } catch (Exception exception) {
-                IELogger.error("Compat module for " + compat + " could not be initialized");
-            }
+        for (IECompatModule compat : IECompatModule.modules) try {
+            compat.init();
+        } catch (Exception exception) {
+            IELogger.error("Compat module for " + compat + " could not be initialized");
+        }
     }
 
     public static void doModulesPostInit() {
-        for (IECompatModule compat : IECompatModule.modules)
-            try {
-                compat.postInit();
-            } catch (Exception exception) {
-                IELogger.error("Compat module for " + compat + " could not be initialized");
-            }
+        for (IECompatModule compat : IECompatModule.modules) try {
+            compat.postInit();
+        } catch (Exception exception) {
+            IELogger.error("Compat module for " + compat + " could not be initialized");
+        }
     }
+
     // We don't want this to happen multiple times after all >_>
     public static boolean serverStartingDone = false;
 
     public static void doModulesLoadComplete() {
         if (!serverStartingDone) {
             serverStartingDone = true;
-            for (IECompatModule compat : IECompatModule.modules)
-                try {
-                    compat.loadComplete();
-                } catch (Exception exception) {
-                    IELogger.error("Compat module for " + compat + " could not be initialized");
-                    exception.printStackTrace();
-                }
+            for (IECompatModule compat : IECompatModule.modules) try {
+                compat.loadComplete();
+            } catch (Exception exception) {
+                IELogger.error("Compat module for " + compat + " could not be initialized");
+                exception.printStackTrace();
+            }
         }
     }
 

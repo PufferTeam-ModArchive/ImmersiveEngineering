@@ -1,18 +1,20 @@
 package blusunrize.immersiveengineering.common.util.compat.computercraft;
 
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityEnergyMeter;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
-import net.minecraft.world.World;
 
 public class PeripheralEnergyMeter extends IEPeripheral {
+
     public PeripheralEnergyMeter(World w, int _x, int _y, int _z) {
         super(w, _x, _y, _z);
     }
 
-    static final String[] cmds = {"getAvgEnergy"};
+    static final String[] cmds = { "getAvgEnergy" };
 
     @Override
     public String getType() {
@@ -26,10 +28,10 @@ public class PeripheralEnergyMeter extends IEPeripheral {
 
     @Override
     public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments)
-            throws LuaException, InterruptedException {
+        throws LuaException, InterruptedException {
         if (method == 0) {
             TileEntityEnergyMeter te = (TileEntityEnergyMeter) getTileEntity(TileEntityEnergyMeter.class);
-            if (te != null) return new Object[] {te.getAveragePower()};
+            if (te != null) return new Object[] { te.getAveragePower() };
             else throw new LuaException("The current transformer was removed");
         }
         return null;

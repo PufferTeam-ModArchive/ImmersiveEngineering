@@ -1,5 +1,11 @@
 package blusunrize.immersiveengineering.client.render;
 
+import java.util.ArrayList;
+
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.models.ModelIEObj;
 import blusunrize.immersiveengineering.common.IEContent;
@@ -7,20 +13,19 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IColoured
 import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices2;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
-import java.util.ArrayList;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 
 public class TileRenderFluidPipe extends TileRenderIE {
+
     static ModelIEObj model = new ModelIEObj("immersiveengineering:models/pipe.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockMetalDevice2.getIcon(0, BlockMetalDevices2.META_fluidPipe);
         }
     };
 
-    static String[] CONNECTIONS = new String[] {"con_yMin", "con_yMax", "con_zMin", "con_zMax", "con_xMin", "con_xMax"};
+    static String[] CONNECTIONS = new String[] { "con_yMin", "con_yMax", "con_zMin", "con_zMax", "con_xMin",
+        "con_xMax" };
 
     @Override
     public void renderDynamic(TileEntity tile, double x, double y, double z, float f) {}
@@ -48,15 +53,15 @@ public class TileRenderFluidPipe extends TileRenderIE {
 
                     // default: y-
                     if ((connections & 2) != 0) // y+
-                    rotationMatrix.rotate(Math.PI, 0, 0, 1);
+                        rotationMatrix.rotate(Math.PI, 0, 0, 1);
                     else if ((connections & 4) != 0) // z-
-                    rotationMatrix.rotate(Math.PI / 2, 1, 0, 0);
+                        rotationMatrix.rotate(Math.PI / 2, 1, 0, 0);
                     else if ((connections & 8) != 0) // z+
-                    rotationMatrix.rotate(-Math.PI / 2, 1, 0, 0);
+                        rotationMatrix.rotate(-Math.PI / 2, 1, 0, 0);
                     else if ((connections & 16) != 0) // x-
-                    rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
+                        rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
                     else if ((connections & 32) != 0) // x+
-                    rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
+                        rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
                     break;
                 case 2: // straight or curve
                     if (straightY) parts.add("pipe_y");
@@ -68,23 +73,23 @@ public class TileRenderFluidPipe extends TileRenderIE {
                         if ((connections & 3) != 0) // curve to top or bottom
                         {
                             if (connectTo == 16) // x-
-                            rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
+                                rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
                             else if (connectTo == 32) // x+
-                            rotationMatrix.rotate(-Math.PI / 2, 0, 1, 0);
+                                rotationMatrix.rotate(-Math.PI / 2, 0, 1, 0);
                             else if (connectTo == 8) // z+
-                            rotationMatrix.rotate(Math.PI, 0, 1, 0);
+                                rotationMatrix.rotate(Math.PI, 0, 1, 0);
                             if ((connections & 2) != 0) // flip to top
-                            rotationMatrix.rotate(Math.PI, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI, 0, 0, 1);
                             // default: Curve to z-
                         } else // curve to horizontal
                         {
                             rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
                             if (connectTo == 40) // z+ to x+
-                            rotationMatrix.rotate(Math.PI, 1, 0, 0);
+                                rotationMatrix.rotate(Math.PI, 1, 0, 0);
                             else if (connectTo == 24) // z+ to x-
-                            rotationMatrix.rotate(-Math.PI / 2, 1, 0, 0);
+                                rotationMatrix.rotate(-Math.PI / 2, 1, 0, 0);
                             else if (connectTo == 36) // x+ to x+
-                            rotationMatrix.rotate(Math.PI / 2, 1, 0, 0);
+                                rotationMatrix.rotate(Math.PI / 2, 1, 0, 0);
                             // default: z- to x-
                         }
                     }
@@ -96,29 +101,29 @@ public class TileRenderFluidPipe extends TileRenderIE {
                         if (straightX) {
                             rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
                             if ((connections & 4) != 0) // z-
-                            rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
                             else if ((connections & 8) != 0) // z+
-                            rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
+                                rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
                             else if ((connections & 2) != 0) // y+
-                            rotationMatrix.rotate(Math.PI, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI, 0, 0, 1);
                             // default: Curve to y-
                         } else if (straightY) {
                             rotationMatrix.rotate(Math.PI / 2, 1, 0, 0);
                             if ((connections & 16) != 0) // x-
-                            rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
+                                rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
                             else if ((connections & 32) != 0) // x+
-                            rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
                             else if ((connections & 8) != 0) // z+
-                            rotationMatrix.rotate(Math.PI, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI, 0, 0, 1);
                             // default: Curve to z-
                         } else // default:z straight
                         {
                             if ((connections & 16) != 0) // x-
-                            rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
+                                rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
                             else if ((connections & 32) != 0) // x+
-                            rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
                             else if ((connections & 2) != 0) // y+
-                            rotationMatrix.rotate(Math.PI, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI, 0, 0, 1);
                             // default: Curve to y-
                         }
                     } else // tcurve
@@ -128,15 +133,15 @@ public class TileRenderFluidPipe extends TileRenderIE {
                         if ((connections & 8) != 0) // z+
                         {
                             if ((connections & 16) != 0) // x-
-                            rotationMatrix.rotate(Math.PI, 0, 1, 0);
+                                rotationMatrix.rotate(Math.PI, 0, 1, 0);
                             else rotationMatrix.rotate(-Math.PI / 2, 0, 1, 0);
                         } else // z-
                         {
                             if ((connections & 16) != 0) // x-
-                            rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
+                                rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
                         }
                         if ((connections & 2) != 0) // y+
-                        rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
+                            rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
                     }
                     break;
                 case 4: // cross or complex tcross
@@ -144,17 +149,17 @@ public class TileRenderFluidPipe extends TileRenderIE {
                     if (cross) {
                         parts.add("cross");
                         if (!straightY) // x and z
-                        rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
+                            rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
                         else if (straightX) // x and y
-                        rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
+                            rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
                     } else {
                         parts.add("tcross2");
                         if (straightZ) {
                             // default y- z+- x+
                             if ((connections & 16) != 0) // x-
-                            rotationMatrix.rotate(Math.PI, 0, 1, 0);
+                                rotationMatrix.rotate(Math.PI, 0, 1, 0);
                             if ((connections & 2) != 0) // y+
-                            rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
                         } else if (straightY) {
                             rotationMatrix.rotate(Math.PI / 2, 1, 0, 0);
                             if ((connections & 20) == 20) rotationMatrix.rotate(-Math.PI / 2, 0, 0, 1);
@@ -164,9 +169,9 @@ public class TileRenderFluidPipe extends TileRenderIE {
                             rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
                             // default y- z- x+-
                             if ((connections & 8) != 0) // z+
-                            rotationMatrix.rotate(Math.PI, 0, 1, 0);
+                                rotationMatrix.rotate(Math.PI, 0, 1, 0);
                             if ((connections & 2) != 0) // y+
-                            rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
+                                rotationMatrix.rotate(Math.PI / 2, 0, 0, 1);
                         }
                     }
                     break;
@@ -176,13 +181,13 @@ public class TileRenderFluidPipe extends TileRenderIE {
                     if (straightZ) {
                         if (straightY) {
                             if ((connections & 16) != 0) // x-
-                            rotationMatrix.rotate(Math.PI, 0, 1, 0);
+                                rotationMatrix.rotate(Math.PI, 0, 1, 0);
                         } else if (straightX)
                             rotationMatrix.rotate(((connections & 2) != 0) ? (Math.PI / 2) : (-Math.PI / 2), 0, 0, 1);
                     } else if (straightX) {
                         rotationMatrix.rotate(Math.PI / 2, 0, 1, 0);
                         if ((connections & 8) != 0) // z+
-                        rotationMatrix.rotate(Math.PI, 0, 1, 0);
+                            rotationMatrix.rotate(Math.PI, 0, 1, 0);
                     }
                     break;
                 case 6: // Full Crossing
@@ -195,32 +200,30 @@ public class TileRenderFluidPipe extends TileRenderIE {
             float r = (((IColouredTile) tile).getColour() >> 16 & 255) / 255f;
             float g = (((IColouredTile) tile).getColour() >> 8 & 255) / 255f;
             float b = (((IColouredTile) tile).getColour() & 255) / 255f;
-            if (!parts.isEmpty())
-                ClientUtils.renderStaticWavefrontModel(
-                        tile,
-                        model.model,
-                        tes,
-                        translationMatrix,
-                        rotationMatrix,
-                        1,
-                        false,
-                        r,
-                        g,
-                        b,
-                        parts.toArray(new String[parts.size()]));
-            if (!connectionCaps.isEmpty())
-                ClientUtils.renderStaticWavefrontModel(
-                        tile,
-                        model.model,
-                        tes,
-                        translationMatrix,
-                        new Matrix4(),
-                        1,
-                        false,
-                        r,
-                        g,
-                        b,
-                        connectionCaps.toArray(new String[connectionCaps.size()]));
+            if (!parts.isEmpty()) ClientUtils.renderStaticWavefrontModel(
+                tile,
+                model.model,
+                tes,
+                translationMatrix,
+                rotationMatrix,
+                1,
+                false,
+                r,
+                g,
+                b,
+                parts.toArray(new String[parts.size()]));
+            if (!connectionCaps.isEmpty()) ClientUtils.renderStaticWavefrontModel(
+                tile,
+                model.model,
+                tes,
+                translationMatrix,
+                new Matrix4(),
+                1,
+                false,
+                r,
+                g,
+                b,
+                connectionCaps.toArray(new String[connectionCaps.size()]));
         }
     }
 }

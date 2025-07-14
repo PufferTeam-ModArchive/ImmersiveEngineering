@@ -1,17 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks.wooden;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.api.IPostBlock;
-import blusunrize.immersiveengineering.client.render.BlockRenderWoodenDevices;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -35,25 +26,37 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.api.IPostBlock;
+import blusunrize.immersiveengineering.client.render.BlockRenderWoodenDevices;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.blocks.BlockIEBase;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 // @Optional.Interface(iface = "blusunrize.aquatweaks.api.IAquaConnectable", modid = "AquaTweaks")
-public class BlockWoodenDevices extends BlockIEBase
-        implements IPostBlock // , blusunrize.aquatweaks.api.IAquaConnectable
+public class BlockWoodenDevices extends BlockIEBase implements IPostBlock // ,
+                                                                          // blusunrize.aquatweaks.api.IAquaConnectable
 {
+
     IIcon[] iconBarrel = new IIcon[3];
 
     public BlockWoodenDevices() {
         super(
-                "woodenDevice",
-                Material.wood,
-                Config.getBoolean("christmas") ? 2 : 1,
-                ItemBlockWoodenDevices.class,
-                "post",
-                "watermill",
-                "windmill",
-                "windmillAdvanced",
-                "crate",
-                "modificationWorkbench",
-                "barrel");
+            "woodenDevice",
+            Material.wood,
+            Config.getBoolean("christmas") ? 2 : 1,
+            ItemBlockWoodenDevices.class,
+            "post",
+            "watermill",
+            "windmill",
+            "windmillAdvanced",
+            "crate",
+            "modificationWorkbench",
+            "barrel");
         this.setHardness(2.0F);
         this.setResistance(5.0F);
         this.setMetaLightOpacity(4, 255);
@@ -140,21 +143,21 @@ public class BlockWoodenDevices extends BlockIEBase
                         if (!canArmConnectToBlock(world, x, y + 1, z, false)) fu = .5625f;
                     }
                     this.setBlockBounds(
-                            type == 7 ? 0 : .3125f,
-                            fd,
-                            type == 5 ? 0 : .3125f,
-                            type == 6 ? 1 : .6875f,
-                            fu,
-                            type == 4 ? 1 : .6875f);
+                        type == 7 ? 0 : .3125f,
+                        fd,
+                        type == 5 ? 0 : .3125f,
+                        type == 6 ? 1 : .6875f,
+                        fu,
+                        type == 4 ? 1 : .6875f);
                     break;
                 default:
                     this.setBlockBounds(
-                            isPost(world, x - 1, y, z, 6) ? 0 : .3125f,
-                            0,
-                            isPost(world, x, y, z - 1, 4) ? 0 : .3125f,
-                            isPost(world, x + 1, y, z, 7) ? 1 : .6875f,
-                            1f,
-                            isPost(world, x, y, z + 1, 5) ? 1 : .6875f);
+                        isPost(world, x - 1, y, z, 6) ? 0 : .3125f,
+                        0,
+                        isPost(world, x, y, z - 1, 4) ? 0 : .3125f,
+                        isPost(world, x + 1, y, z, 7) ? 1 : .6875f,
+                        1f,
+                        isPost(world, x, y, z + 1, 5) ? 1 : .6875f);
                     break;
             }
         } else this.setBlockBounds(0, 0, 0, 1, 1, 1);
@@ -168,10 +171,12 @@ public class BlockWoodenDevices extends BlockIEBase
 
     boolean canArmConnectToBlock(IBlockAccess world, int x, int y, int z, boolean down) {
         if (world.isAirBlock(x, y, z)) return false;
-        world.getBlock(x, y, z).setBlockBoundsBasedOnState(world, x, y, z);
-        return down
-                ? world.getBlock(x, y, z).getBlockBoundsMaxY() >= 1
-                : world.getBlock(x, y, z).getBlockBoundsMinY() <= 0;
+        world.getBlock(x, y, z)
+            .setBlockBoundsBasedOnState(world, x, y, z);
+        return down ? world.getBlock(x, y, z)
+            .getBlockBoundsMaxY() >= 1
+            : world.getBlock(x, y, z)
+                .getBlockBoundsMinY() <= 0;
     }
 
     @Override
@@ -192,8 +197,8 @@ public class BlockWoodenDevices extends BlockIEBase
     }
 
     @Override
-    public boolean onBlockActivated(
-            World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
+        float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof TileEntityWoodenPost && Utils.isHammer(player.getCurrentEquippedItem())) {
             byte type = ((TileEntityWoodenPost) te).type;
@@ -221,9 +226,8 @@ public class BlockWoodenDevices extends BlockIEBase
 
             return true;
         }
-        if (te instanceof TileEntityWindmillAdvanced
-                && Utils.getDye(player.getCurrentEquippedItem()) >= 0
-                && ((TileEntityWindmillAdvanced) te).facing == side) {
+        if (te instanceof TileEntityWindmillAdvanced && Utils.getDye(player.getCurrentEquippedItem()) >= 0
+            && ((TileEntityWindmillAdvanced) te).facing == side) {
             int f = ((TileEntityWindmillAdvanced) te).facing;
             float w = f == 2 ? 1 - hitX : f == 3 ? hitX : f == 4 ? hitZ : 1 - hitZ;
             double r = Math.sqrt((w - .5) * (w - .5) + (hitY - .5) * (hitY - .5));
@@ -253,14 +257,13 @@ public class BlockWoodenDevices extends BlockIEBase
                 if (tileEntityModWorkbench instanceof TileEntityModWorkbench)
                     tile = (TileEntityModWorkbench) tileEntityModWorkbench;
             }
-            if (!world.isRemote)
-                player.openGui(
-                        ImmersiveEngineering.instance,
-                        Lib.GUIID_Workbench,
-                        world,
-                        tile.xCoord,
-                        tile.yCoord,
-                        tile.zCoord);
+            if (!world.isRemote) player.openGui(
+                ImmersiveEngineering.instance,
+                Lib.GUIID_Workbench,
+                world,
+                tile.xCoord,
+                tile.yCoord,
+                tile.zCoord);
             return true;
         }
         if (te instanceof TileEntityWoodenBarrel) {
@@ -270,15 +273,16 @@ public class BlockWoodenDevices extends BlockIEBase
                 barrel.toggleSide(side);
             } else {
                 FluidStack f = Utils.getFluidFromItemStack(player.getCurrentEquippedItem());
-                if (f != null)
-                    if (f.getFluid().isGaseous(f))
-                        player.addChatComponentMessage(new ChatComponentTranslation(Lib.CHAT_INFO + "noGasAllowed"));
-                    else if (f.getFluid().getTemperature(f) >= TileEntityWoodenBarrel.IGNITION_TEMPERATURE)
-                        player.addChatComponentMessage(new ChatComponentTranslation(Lib.CHAT_INFO + "tooHot"));
-                    else if (Utils.fillFluidHandlerWithPlayerItem(world, barrel, player)) {
-                        world.markBlockForUpdate(x, y, z);
-                        return true;
-                    }
+                if (f != null) if (f.getFluid()
+                    .isGaseous(f))
+                    player.addChatComponentMessage(new ChatComponentTranslation(Lib.CHAT_INFO + "noGasAllowed"));
+                else if (f.getFluid()
+                    .getTemperature(f) >= TileEntityWoodenBarrel.IGNITION_TEMPERATURE)
+                    player.addChatComponentMessage(new ChatComponentTranslation(Lib.CHAT_INFO + "tooHot"));
+                else if (Utils.fillFluidHandlerWithPlayerItem(world, barrel, player)) {
+                    world.markBlockForUpdate(x, y, z);
+                    return true;
+                }
                 if (Utils.fillFluidHandlerWithPlayerItem(world, barrel, player)) {
                     barrel.markDirty();
                     world.markBlockForUpdate(barrel.xCoord, barrel.yCoord, barrel.zCoord);
@@ -289,8 +293,8 @@ public class BlockWoodenDevices extends BlockIEBase
                     world.markBlockForUpdate(barrel.xCoord, barrel.yCoord, barrel.zCoord);
                     return true;
                 }
-                if (player.getCurrentEquippedItem() != null
-                        && player.getCurrentEquippedItem().getItem() instanceof IFluidContainerItem) {
+                if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
+                    .getItem() instanceof IFluidContainerItem) {
                     barrel.markDirty();
                     world.markBlockForUpdate(barrel.xCoord, barrel.yCoord, barrel.zCoord);
                     return true;
@@ -427,20 +431,19 @@ public class BlockWoodenDevices extends BlockIEBase
                 world.setBlockToAir(x, yy + i, z);
                 if (i == 3) {
                     TileEntity te;
-                    for (ForgeDirection fd : new ForgeDirection[] {
-                        ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.WEST
-                    }) {
+                    for (ForgeDirection fd : new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH,
+                        ForgeDirection.EAST, ForgeDirection.WEST }) {
                         te = world.getTileEntity(x + fd.offsetX, yy + i, z + fd.offsetZ);
                         if (te instanceof TileEntityWoodenPost
-                                && ((TileEntityWoodenPost) te).type == (2 + fd.ordinal()))
+                            && ((TileEntityWoodenPost) te).type == (2 + fd.ordinal()))
                             world.setBlockToAir(x + fd.offsetX, yy + i, z + fd.offsetZ);
                     }
                 }
             }
-            if (type == 0
-                    && !world.isRemote
-                    && world.getGameRules().getGameRuleBooleanValue("doTileDrops")
-                    && !world.restoringBlockSnapshots)
+            if (type == 0 && !world.isRemote
+                && world.getGameRules()
+                    .getGameRuleBooleanValue("doTileDrops")
+                && !world.restoringBlockSnapshots)
                 world.spawnEntityInWorld(new EntityItem(world, x + .5, y + .5, z + .5, new ItemStack(this, 1, 0)));
         }
         if (tileEntity instanceof TileEntityWatermill) {
@@ -454,9 +457,8 @@ public class BlockWoodenDevices extends BlockIEBase
             world.setBlockToAir(xx, yy, zz);
             for (int hh = -2; hh <= 2; hh++) {
                 int r = hh < -1 || hh > 1 ? 1 : 2;
-                for (int ww = -r; ww <= r; ww++)
-                    world.setBlockToAir(
-                            xx + ((f == 2 || f == 3) ? ww : 0), yy + hh, zz + ((f == 2 || f == 3) ? 0 : ww));
+                for (int ww = -r; ww <= r; ww++) world
+                    .setBlockToAir(xx + ((f == 2 || f == 3) ? ww : 0), yy + hh, zz + ((f == 2 || f == 3) ? 0 : ww));
             }
         }
         if (tileEntity instanceof TileEntityModWorkbench) {
@@ -468,7 +470,9 @@ public class BlockWoodenDevices extends BlockIEBase
             int zz = z + (f > 3 ? off : 0);
 
             if (world.getTileEntity(xx, y, zz) instanceof TileEntityModWorkbench) world.setBlockToAir(xx, y, zz);
-            if (!world.isRemote && !tile.dummy && world.getGameRules().getGameRuleBooleanValue("doTileDrops"))
+            if (!world.isRemote && !tile.dummy
+                && world.getGameRules()
+                    .getGameRuleBooleanValue("doTileDrops"))
                 for (int i = 0; i < tile.getSizeInventory(); i++) {
                     ItemStack stack = tile.getStackInSlot(i);
                     if (stack != null) {
@@ -479,9 +483,10 @@ public class BlockWoodenDevices extends BlockIEBase
                         entityitem.motionX = world.rand.nextGaussian() * .05;
                         entityitem.motionY = world.rand.nextGaussian() * .05 + .2;
                         entityitem.motionZ = world.rand.nextGaussian() * .05;
-                        if (stack.hasTagCompound())
-                            entityitem.getEntityItem().setTagCompound((NBTTagCompound)
-                                    stack.getTagCompound().copy());
+                        if (stack.hasTagCompound()) entityitem.getEntityItem()
+                            .setTagCompound(
+                                (NBTTagCompound) stack.getTagCompound()
+                                    .copy());
                         world.spawnEntityInWorld(entityitem);
                     }
                 }

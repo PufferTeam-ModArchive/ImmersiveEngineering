@@ -1,14 +1,16 @@
 package blusunrize.immersiveengineering.common.gui;
 
-import blusunrize.immersiveengineering.api.crafting.BlastFurnaceRecipe;
-import blusunrize.immersiveengineering.common.blocks.stone.TileEntityBlastFurnace;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import blusunrize.immersiveengineering.api.crafting.BlastFurnaceRecipe;
+import blusunrize.immersiveengineering.common.blocks.stone.TileEntityBlastFurnace;
+
 public class ContainerBlastFurnace extends Container {
+
     TileEntityBlastFurnace tile;
     int slotCount;
 
@@ -16,6 +18,7 @@ public class ContainerBlastFurnace extends Container {
         this.tile = tile;
 
         this.addSlotToContainer(new IESlot(this, tile, 0, 52, 17) {
+
             @Override
             public boolean isItemValid(ItemStack itemStack) {
                 return BlastFurnaceRecipe.findRecipe(itemStack) != null;
@@ -26,9 +29,8 @@ public class ContainerBlastFurnace extends Container {
         this.addSlotToContainer(new IESlot.Output(this, tile, 3, 112, 53));
         slotCount = 4;
 
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 9; j++)
-                addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++)
+            addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
         for (int i = 0; i < 9; i++) addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
     }
 
@@ -54,8 +56,8 @@ public class ContainerBlastFurnace extends Container {
                 else if (BlastFurnaceRecipe.isValidBlastFuel(stackInSlot)) i = 1;
                 if (i != -1) if (!this.mergeItemStack(stackInSlot, i, i + 1, false)) return null;
 
-                //				for(int i=0;i<slotCount;i++)
-                //					if(this.getSlot(i).isItemValid(stackInSlot))
+                // for(int i=0;i<slotCount;i++)
+                // if(this.getSlot(i).isItemValid(stackInSlot))
             }
 
             if (stackInSlot.stackSize == 0) slotObject.putStack(null);

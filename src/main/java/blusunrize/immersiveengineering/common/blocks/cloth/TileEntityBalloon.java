@@ -1,15 +1,17 @@
 package blusunrize.immersiveengineering.common.blocks.cloth;
 
-import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorStructural;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 
+import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorStructural;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class TileEntityBalloon extends TileEntityConnectorStructural {
+
     public int style = 0;
     public byte colour0 = 15;
     public byte colour1 = 15;
@@ -65,21 +67,15 @@ public class TileEntityBalloon extends TileEntityConnectorStructural {
 
     @Override
     public Vec3 getConnectionOffset(Connection con) {
-        int xDif = (con == null || con.start == null || con.end == null)
-                ? 0
-                : (con.start.equals(Utils.toCC(this)) && con.end != null)
-                        ? con.end.posX - xCoord
-                        : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posX - xCoord : 0;
-        int zDif = (con == null || con.start == null || con.end == null)
-                ? 0
-                : (con.start.equals(Utils.toCC(this)) && con.end != null)
-                        ? con.end.posZ - zCoord
-                        : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posZ - zCoord : 0;
-        int yDif = (con == null || con.start == null || con.end == null)
-                ? 0
-                : (con.start.equals(Utils.toCC(this)) && con.end != null)
-                        ? con.end.posY - yCoord
-                        : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posY - yCoord : 0;
+        int xDif = (con == null || con.start == null || con.end == null) ? 0
+            : (con.start.equals(Utils.toCC(this)) && con.end != null) ? con.end.posX - xCoord
+                : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posX - xCoord : 0;
+        int zDif = (con == null || con.start == null || con.end == null) ? 0
+            : (con.start.equals(Utils.toCC(this)) && con.end != null) ? con.end.posZ - zCoord
+                : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posZ - zCoord : 0;
+        int yDif = (con == null || con.start == null || con.end == null) ? 0
+            : (con.start.equals(Utils.toCC(this)) && con.end != null) ? con.end.posY - yCoord
+                : (con.end.equals(Utils.toCC(this)) && con.start != null) ? con.start.posY - yCoord : 0;
         if (yDif < 0) {
             double dist = Math.sqrt(xDif * xDif + zDif * zDif);
             if (dist / Math.abs(yDif) < 2.5) return Vec3.createVectorHelper(.5, .09375, .5);

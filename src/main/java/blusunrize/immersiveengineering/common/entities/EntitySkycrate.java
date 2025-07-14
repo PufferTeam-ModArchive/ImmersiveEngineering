@@ -1,15 +1,7 @@
 package blusunrize.immersiveengineering.common.entities;
 
-import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.util.IELogger;
-import blusunrize.immersiveengineering.common.util.SkylineHelper;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Set;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +11,18 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.util.IELogger;
+import blusunrize.immersiveengineering.common.util.SkylineHelper;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class EntitySkycrate extends EntitySkylineHook {
+
     public ItemStack[] inventory = new ItemStack[27];
 
     public EntitySkycrate(World world) {
@@ -29,23 +32,17 @@ public class EntitySkycrate extends EntitySkylineHook {
         this.height = .05f;
         this.renderDistanceWeight = 100.0D;
         ignoreFrustumCheck = true;
-        //		this.setSize(.05f,.05f);
+        // this.setSize(.05f,.05f);
     }
 
-    public EntitySkycrate(
-            World world,
-            double x,
-            double y,
-            double z,
-            Connection connection,
-            ChunkCoordinates target,
-            Vec3[] subPoints) {
+    public EntitySkycrate(World world, double x, double y, double z, Connection connection, ChunkCoordinates target,
+        Vec3[] subPoints) {
         super(world, x, y, z, connection, target, subPoints);
         this.setSize(1, 1.5f);
         this.width = .05f;
         this.height = .05f;
         ignoreFrustumCheck = true;
-        //		this.setSize(.05f,.05f);
+        // this.setSize(.05f,.05f);
     }
 
     @Override
@@ -63,13 +60,12 @@ public class EntitySkycrate extends EntitySkylineHook {
             NBTTagCompound nbt = new NBTTagCompound();
 
             NBTTagList invList = new NBTTagList();
-            for (int i = 0; i < this.inventory.length; i++)
-                if (this.inventory[i] != null) {
-                    NBTTagCompound itemTag = new NBTTagCompound();
-                    itemTag.setByte("Slot", (byte) i);
-                    this.inventory[i].writeToNBT(itemTag);
-                    invList.appendTag(itemTag);
-                }
+            for (int i = 0; i < this.inventory.length; i++) if (this.inventory[i] != null) {
+                NBTTagCompound itemTag = new NBTTagCompound();
+                itemTag.setByte("Slot", (byte) i);
+                this.inventory[i].writeToNBT(itemTag);
+                invList.appendTag(itemTag);
+            }
             nbt.setTag("inventory", invList);
 
             if (!nbt.hasNoTags()) stack.setTagCompound(nbt);
@@ -87,9 +83,9 @@ public class EntitySkycrate extends EntitySkylineHook {
         IELogger.info("last tick at " + System.currentTimeMillis());
         IELogger.info("killing Skycrate!");
 
-        //		ItemStack hook = ((EntityPlayer)this.riddenByEntity).getCurrentEquippedItem();
-        //		if(hook==null || !(hook.getItem() instanceof ItemSkyhook))
-        //			return;
+        // ItemStack hook = ((EntityPlayer)this.riddenByEntity).getCurrentEquippedItem();
+        // if(hook==null || !(hook.getItem() instanceof ItemSkyhook))
+        // return;
 
         if (!(worldObj.getTileEntity(target.posX, target.posY, target.posZ) instanceof IImmersiveConnectable)) {
             this.setDead();
@@ -98,27 +94,30 @@ public class EntitySkycrate extends EntitySkylineHook {
         Set<Connection> outputs = ImmersiveNetHandler.INSTANCE.getConnections(worldObj, target);
         if (outputs != null && outputs.size() > 0) {
             Vec3 vec = Vec3.createVectorHelper(
-                    connection.end.posX - connection.start.posX,
-                    connection.end.posY - connection.start.posY,
-                    connection.end.posZ - connection.start.posZ);
-            //					getLookVec();
+                connection.end.posX - connection.start.posX,
+                connection.end.posY - connection.start.posY,
+                connection.end.posZ - connection.start.posZ);
+            // getLookVec();
             vec = vec.normalize();
             Connection line = null;
-            for (Connection c : outputs)
-                if (c != null && !c.hasSameConnectors(this.connection)) {
-                    if (line == null) line = c;
-                    else {
-                        Vec3 lineVec = Vec3.createVectorHelper(
-                                        line.end.posX - line.start.posX,
-                                        line.end.posY - line.start.posY,
-                                        line.end.posZ - line.start.posZ)
-                                .normalize();
-                        Vec3 conVec = Vec3.createVectorHelper(
-                                        c.end.posX - c.start.posX, c.end.posY - c.start.posY, c.end.posZ - c.start.posZ)
-                                .normalize();
-                        if (conVec.distanceTo(vec) < lineVec.distanceTo(vec)) line = c;
-                    }
+            for (Connection c : outputs) if (c != null && !c.hasSameConnectors(this.connection)) {
+                if (line == null) line = c;
+                else {
+                    Vec3 lineVec = Vec3
+                        .createVectorHelper(
+                            line.end.posX - line.start.posX,
+                            line.end.posY - line.start.posY,
+                            line.end.posZ - line.start.posZ)
+                        .normalize();
+                    Vec3 conVec = Vec3
+                        .createVectorHelper(
+                            c.end.posX - c.start.posX,
+                            c.end.posY - c.start.posY,
+                            c.end.posZ - c.start.posZ)
+                        .normalize();
+                    if (conVec.distanceTo(vec) < lineVec.distanceTo(vec)) line = c;
                 }
+            }
 
             if (line != null) {
                 ChunkCoordinates cc0 = line.end == target ? line.start : line.end;
@@ -151,25 +150,25 @@ public class EntitySkycrate extends EntitySkylineHook {
             return;
         }
 
-        //		if(line!=null)
-        //		{
-        //			((EntityPlayer)this.riddenByEntity).setItemInUse(hook, hook.getItem().getMaxItemUseDuration(hook));
-        //			SkylineHelper.spawnHook((EntityPlayer)this.riddenByEntity, end, line);
-        //			//					ChunkCoordinates cc0 = line.end==target?line.start:line.end;
-        //			//					ChunkCoordinates cc1 = line.end==target?line.end:line.start;
-        //			//					double dx = cc0.posX-cc1.posX;
-        //			//					double dy = cc0.posY-cc1.posY;
-        //			//					double dz = cc0.posZ-cc1.posZ;
-        //			//
-        //			//					EntityZiplineHook zip = new EntityZiplineHook(worldObj,
+        // if(line!=null)
+        // {
+        // ((EntityPlayer)this.riddenByEntity).setItemInUse(hook, hook.getItem().getMaxItemUseDuration(hook));
+        // SkylineHelper.spawnHook((EntityPlayer)this.riddenByEntity, end, line);
+        // // ChunkCoordinates cc0 = line.end==target?line.start:line.end;
+        // // ChunkCoordinates cc1 = line.end==target?line.end:line.start;
+        // // double dx = cc0.posX-cc1.posX;
+        // // double dy = cc0.posY-cc1.posY;
+        // // double dz = cc0.posZ-cc1.posZ;
+        // //
+        // // EntityZiplineHook zip = new EntityZiplineHook(worldObj,
         // target.posX+.5,target.posY+.5,target.posZ+.5, line, cc0);
-        //			//					zip.motionX = dx*.05f;
-        //			//					zip.motionY = dy*.05f;
-        //			//					zip.motionZ = dz*.05f;
-        //			//					if(!worldObj.isRemote)
-        //			//						worldObj.spawnEntityInWorld(zip);
-        //			//					ItemSkyHook.existingHooks.put(this.riddenByEntity.getCommandSenderName(), zip);
-        //			//					this.riddenByEntity.mountEntity(zip);
-        //		}
+        // // zip.motionX = dx*.05f;
+        // // zip.motionY = dy*.05f;
+        // // zip.motionZ = dz*.05f;
+        // // if(!worldObj.isRemote)
+        // // worldObj.spawnEntityInWorld(zip);
+        // // ItemSkyHook.existingHooks.put(this.riddenByEntity.getCommandSenderName(), zip);
+        // // this.riddenByEntity.mountEntity(zip);
+        // }
     }
 }

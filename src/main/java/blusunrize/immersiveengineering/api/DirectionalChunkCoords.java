@@ -6,6 +6,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class DirectionalChunkCoords extends ChunkCoordinates {
+
     public ForgeDirection direction;
 
     public DirectionalChunkCoords(ChunkCoordinates chunkCoordinates) {
@@ -22,8 +23,14 @@ public class DirectionalChunkCoords extends ChunkCoordinates {
     }
 
     public String toString() {
-        return "DirectionalChunkCoords{x=" + this.posX + ", y=" + this.posY + ", z=" + this.posZ + ", direction="
-                + this.direction.toString() + "}";
+        return "DirectionalChunkCoords{x=" + this.posX
+            + ", y="
+            + this.posY
+            + ", z="
+            + this.posZ
+            + ", direction="
+            + this.direction.toString()
+            + "}";
     }
 
     public TileEntity getTile(World world) {

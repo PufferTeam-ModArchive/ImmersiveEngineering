@@ -3,10 +3,9 @@ package blusunrize.immersiveengineering.common.blocks;
 import static net.minecraftforge.common.util.ForgeDirection.DOWN;
 import static net.minecraftforge.common.util.ForgeDirection.UP;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
@@ -19,7 +18,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class BlockIESlabs extends BlockIEBase {
+
     String iconKey;
 
     public BlockIESlabs(String name, String iconKey, Material material, String... subNames) {
@@ -42,17 +45,16 @@ public class BlockIESlabs extends BlockIEBase {
     @Override
     public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest) {
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof TileEntityIESlab
-                && !player.capabilities.isCreativeMode
-                && willHarvest
-                && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+        if (te instanceof TileEntityIESlab && !player.capabilities.isCreativeMode
+            && willHarvest
+            && world.getGameRules()
+                .getGameRuleBooleanValue("doTileDrops")) {
             EntityItem drop = new EntityItem(
-                    world,
-                    x + .5,
-                    y + .5,
-                    z + .5,
-                    new ItemStack(
-                            this, ((TileEntityIESlab) te).slabType == 2 ? 2 : 1, world.getBlockMetadata(x, y, z)));
+                world,
+                x + .5,
+                y + .5,
+                z + .5,
+                new ItemStack(this, ((TileEntityIESlab) te).slabType == 2 ? 2 : 1, world.getBlockMetadata(x, y, z)));
             if (!world.isRemote) world.spawnEntityInWorld(drop);
         }
         return super.removedByPlayer(world, player, x, y, z, willHarvest);
@@ -100,11 +102,11 @@ public class BlockIESlabs extends BlockIEBase {
     public boolean renderAsNormalBlock() {
         return false;
     }
-    //	@Override
-    //	public int getRenderType()
-    //	{
-    //		return BlockRenderIESlab.renderID;
-    //	}
+    // @Override
+    // public int getRenderType()
+    // {
+    // return BlockRenderIESlab.renderID;
+    // }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {

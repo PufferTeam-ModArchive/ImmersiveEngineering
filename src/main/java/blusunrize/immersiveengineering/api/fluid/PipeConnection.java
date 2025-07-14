@@ -9,6 +9,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 public class PipeConnection {
+
     public ChunkCoordinates from, to;
     public ForgeDirection direction;
     public Type type;
@@ -44,10 +45,10 @@ public class PipeConnection {
         int[] fromArr = compound.getIntArray("From");
         int directionOrdinal = compound.getInteger("Direction");
         return new PipeConnection(
-                new ChunkCoordinates(toArr[0], toArr[1], toArr[2]),
-                new ChunkCoordinates(fromArr[0], fromArr[1], fromArr[2]),
-                ForgeDirection.getOrientation(directionOrdinal),
-                Type.fromOrdinal(compound.getInteger("Type")));
+            new ChunkCoordinates(toArr[0], toArr[1], toArr[2]),
+            new ChunkCoordinates(fromArr[0], fromArr[1], fromArr[2]),
+            ForgeDirection.getOrientation(directionOrdinal),
+            Type.fromOrdinal(compound.getInteger("Type")));
     }
 
     public static boolean isTank(TileEntity tileEntity, ForgeDirection direction) {
@@ -62,8 +63,8 @@ public class PipeConnection {
 
     public NBTTagCompound toNBT() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setIntArray("To", new int[] {to.posX, to.posY, to.posZ});
-        compound.setIntArray("From", new int[] {from.posX, from.posY, from.posZ});
+        compound.setIntArray("To", new int[] { to.posX, to.posY, to.posZ });
+        compound.setIntArray("From", new int[] { from.posX, from.posY, from.posZ });
         compound.setInteger("Direction", direction.ordinal());
         compound.setInteger("Type", type.ordinal());
         return compound;
@@ -79,20 +80,20 @@ public class PipeConnection {
     }
 
     public boolean equals(PipeConnection connection) {
-        return connection.direction == direction
-                && connection.to.posX == to.posX
-                && connection.to.posY == to.posY
-                && connection.to.posZ == to.posZ
-                && connection.from.posX == from.posX
-                && connection.from.posY == from.posY
-                && connection.from.posZ == from.posZ;
+        return connection.direction == direction && connection.to.posX == to.posX
+            && connection.to.posY == to.posY
+            && connection.to.posZ == to.posZ
+            && connection.from.posX == from.posX
+            && connection.from.posY == from.posY
+            && connection.from.posZ == from.posZ;
     }
 
     public enum Type {
+
         PIPE,
         TANK;
 
-        private static Type[] TYPES = new Type[] {PIPE, TANK};
+        private static Type[] TYPES = new Type[] { PIPE, TANK };
 
         public static Type fromOrdinal(int type) {
             return TYPES[type];

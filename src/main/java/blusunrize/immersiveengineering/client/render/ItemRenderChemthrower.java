@@ -1,9 +1,5 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.api.shader.IShaderItem;
-import blusunrize.immersiveengineering.api.shader.ShaderCase;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.items.ItemChemthrower;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,9 +9,16 @@ import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.model.obj.GroupObject;
 import net.minecraftforge.client.model.obj.WavefrontObject;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.api.shader.IShaderItem;
+import blusunrize.immersiveengineering.api.shader.ShaderCase;
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.items.ItemChemthrower;
+
 public class ItemRenderChemthrower implements IItemRenderer {
+
     static WavefrontObject modelobj = ClientUtils.getModel("immersiveengineering:models/chemthrower.obj");
 
     @Override
@@ -71,7 +74,7 @@ public class ItemRenderChemthrower implements IItemRenderer {
             GL11.glScalef(.625f, .625f, .625f);
         }
 
-        //		ClientUtils.mc().renderEngine.bindTexture(ClientProxy.revolverTextureResource);
+        // ClientUtils.mc().renderEngine.bindTexture(ClientProxy.revolverTextureResource);
         GL11.glColor4f(1, 1, 1, 1);
         GL11.glEnable(3042);
         OpenGlHelper.glBlendFunc(770, 771, 0, 1);
@@ -79,8 +82,8 @@ public class ItemRenderChemthrower implements IItemRenderer {
         IIcon icon = item.getIconIndex();
         ItemStack shader = ((ItemChemthrower) item.getItem()).getShaderItem(item);
         ShaderCase sCase = (shader != null && shader.getItem() instanceof IShaderItem)
-                ? ((IShaderItem) shader.getItem()).getShaderCase(shader, item, "chemthrower")
-                : null;
+            ? ((IShaderItem) shader.getItem()).getShaderCase(shader, item, "chemthrower")
+            : null;
 
         if (sCase == null) {
             ClientUtils.renderWavefrontWithIconUVs(modelobj, icon, "base", "grip", "tank", "tanks");
@@ -95,13 +98,16 @@ public class ItemRenderChemthrower implements IItemRenderer {
                     IIcon ic = sCase.getReplacementIcon(shader, item, obj.name, pass);
                     if (ic == null) ic = icon;
                     int[] col = sCase.getRGBAColourModifier(shader, item, obj.name, pass);
-                    if (col == null || col.length < 4) col = new int[] {255, 255, 255, 255};
+                    if (col == null || col.length < 4) col = new int[] { 255, 255, 255, 255 };
 
                     sCase.modifyRender(shader, item, obj.name, pass, true, inventory);
-                    ClientUtils.tes().startDrawing(obj.glDrawingMode);
-                    ClientUtils.tes().setColorRGBA(col[0], col[1], col[2], col[3]);
+                    ClientUtils.tes()
+                        .startDrawing(obj.glDrawingMode);
+                    ClientUtils.tes()
+                        .setColorRGBA(col[0], col[1], col[2], col[3]);
                     ClientUtils.tessellateWavefrontGroupObjectWithIconUVs(obj, ic);
-                    ClientUtils.tes().draw();
+                    ClientUtils.tes()
+                        .draw();
                     sCase.modifyRender(shader, item, obj.name, pass, false, inventory);
                 }
                 if (obj.name == "cage") GL11.glEnable(GL11.GL_CULL_FACE);

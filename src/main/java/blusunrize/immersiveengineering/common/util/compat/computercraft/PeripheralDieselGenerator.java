@@ -2,14 +2,16 @@ package blusunrize.immersiveengineering.common.util.compat.computercraft;
 
 import static blusunrize.immersiveengineering.common.util.Utils.saveFluidTank;
 
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityDieselGenerator;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import net.minecraft.world.World;
 
 public class PeripheralDieselGenerator extends IEPeripheral {
-    public static String[] cmds = {"setEnabled", "isActive", "getTankInfo"};
+
+    public static String[] cmds = { "setEnabled", "isActive", "getTankInfo" };
 
     public PeripheralDieselGenerator(World w, int _x, int _y, int _z) {
         super(w, _x, _y, _z);
@@ -27,7 +29,7 @@ public class PeripheralDieselGenerator extends IEPeripheral {
 
     @Override
     public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments)
-            throws LuaException, InterruptedException {
+        throws LuaException, InterruptedException {
         TileEntityDieselGenerator te = (TileEntityDieselGenerator) getTileEntity(TileEntityDieselGenerator.class);
         if (te == null) throw new LuaException("The diesel generator was removed");
         switch (method) {
@@ -38,9 +40,9 @@ public class PeripheralDieselGenerator extends IEPeripheral {
                 te.computerActivated = param;
                 return null;
             case 1: // is active
-                return new Object[] {te.active};
+                return new Object[] { te.active };
             case 2: // tank
-                return new Object[] {saveFluidTank(te.tank)};
+                return new Object[] { saveFluidTank(te.tank) };
         }
         return null;
     }

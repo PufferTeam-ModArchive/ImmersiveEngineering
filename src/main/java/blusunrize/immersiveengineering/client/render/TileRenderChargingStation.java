@@ -1,11 +1,5 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.models.ModelIEObj;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices2;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityChargingStation;
-import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -14,10 +8,20 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.models.ModelIEObj;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices2;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityChargingStation;
+import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
+
 public class TileRenderChargingStation extends TileRenderIE {
+
     ModelIEObj model = new ModelIEObj("immersiveengineering:models/charger.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockMetalDevice2.getIcon(0, BlockMetalDevices2.META_chargingStation);
@@ -69,7 +73,7 @@ public class TileRenderChargingStation extends TileRenderIE {
             }
             if (charger.inventory != null) {
                 if (!RenderManager.instance.options.fancyGraphics
-                        && MinecraftForgeClient.getItemRenderer(charger.inventory, ItemRenderType.ENTITY) == null) {
+                    && MinecraftForgeClient.getItemRenderer(charger.inventory, ItemRenderType.ENTITY) == null) {
                     float rot = charger.facing == 3 ? 180 : charger.facing == 4 ? -90 : charger.facing == 5 ? 90 : 0;
                     GL11.glRotatef(rot - RenderManager.instance.playerViewY, 0.0F, 1.0F, 0.0F);
                 }

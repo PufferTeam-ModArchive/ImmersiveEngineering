@@ -1,5 +1,17 @@
 package blusunrize.immersiveengineering.client.nei;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
+import net.minecraftforge.oredict.OreDictionary;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.MetalPressRecipe;
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -7,18 +19,11 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMetalPress;
 import blusunrize.immersiveengineering.common.util.Utils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.oredict.OreDictionary;
-import org.lwjgl.opengl.GL11;
 
 public class NEIMetalPressHandler extends TemplateRecipeHandler {
+
     public class CachedMetalPressRecipe extends CachedRecipe {
+
         PositionedStack input;
         PositionedStack mould;
         PositionedStack output;
@@ -33,11 +38,10 @@ public class NEIMetalPressHandler extends TemplateRecipeHandler {
             }
             input = new PositionedStack(in, 44, 9);
             mould = new PositionedStack(
-                    recipe.mold.oreID != -1
-                            ? OreDictionary.getOres(OreDictionary.getOreName(recipe.mold.oreID))
-                            : recipe.mold.stack,
-                    75,
-                    9);
+                recipe.mold.oreID != -1 ? OreDictionary.getOres(OreDictionary.getOreName(recipe.mold.oreID))
+                    : recipe.mold.stack,
+                75,
+                9);
             output = new PositionedStack(recipe.output, 107, 9);
             energy = recipe.energy;
         }
@@ -94,20 +98,17 @@ public class NEIMetalPressHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result != null)
-            for (MetalPressRecipe r : MetalPressRecipe.recipeList.values())
-                if (r != null && Utils.stackMatchesObject(result, r.output))
-                    this.arecipes.add(new CachedMetalPressRecipe(r));
+        if (result != null) for (MetalPressRecipe r : MetalPressRecipe.recipeList.values())
+            if (r != null && Utils.stackMatchesObject(result, r.output))
+                this.arecipes.add(new CachedMetalPressRecipe(r));
     }
 
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
-        if (ingredient != null)
-            for (MetalPressRecipe r : MetalPressRecipe.recipeList.values())
-                if (r != null
-                        && (Utils.stackMatchesObject(ingredient, r.input)
-                                || r.mold.equals(ApiUtils.createComparableItemStack(ingredient))))
-                    this.arecipes.add(new CachedMetalPressRecipe(r));
+        if (ingredient != null) for (MetalPressRecipe r : MetalPressRecipe.recipeList.values())
+            if (r != null && (Utils.stackMatchesObject(ingredient, r.input)
+                || r.mold.equals(ApiUtils.createComparableItemStack(ingredient))))
+                this.arecipes.add(new CachedMetalPressRecipe(r));
     }
 
     @Override
@@ -127,9 +128,11 @@ public class NEIMetalPressHandler extends TemplateRecipeHandler {
                 tile.pos = 4;
                 tile.formed = true;
                 ClientUtils.bindAtlas(0);
-                ClientUtils.tes().startDrawingQuads();
+                ClientUtils.tes()
+                    .startDrawingQuads();
                 ClientUtils.handleStaticTileRenderer(tile, false);
-                ClientUtils.tes().draw();
+                ClientUtils.tes()
+                    .draw();
                 TileEntityRendererDispatcher.instance.renderTileEntityAt(tile, 0.0D, 0.0D, 0.0D, 0.0F);
                 GL11.glPopMatrix();
 

@@ -1,6 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -8,7 +7,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+
 public class TileEntityConveyorBelt extends TileEntityIEBase implements ISidedInventory {
+
     public boolean transportUp = false;
     public boolean transportDown = false;
     public int facing = 2;
@@ -105,7 +107,7 @@ public class TileEntityConveyorBelt extends TileEntityIEBase implements ISidedIn
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
         if (side == ForgeDirection.OPPOSITES[facing]) return new int[0];
-        return new int[] {0};
+        return new int[] { 0 };
     }
 
     @Override

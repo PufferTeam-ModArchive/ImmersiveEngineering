@@ -1,13 +1,16 @@
 package blusunrize.immersiveengineering.client.render;
 
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.models.ModelWatermill;
 import blusunrize.immersiveengineering.common.blocks.wooden.TileEntityWatermill;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
-import org.lwjgl.opengl.GL11;
 
 public class TileRenderWatermill extends TileEntitySpecialRenderer {
+
     static ModelWatermill model = new ModelWatermill();
 
     @Override
@@ -21,9 +24,8 @@ public class TileRenderWatermill extends TileEntitySpecialRenderer {
         if (wheel.facing == 4 || wheel.facing == 5) GL11.glRotated(90, 0, 1, 0);
 
         float rot = 360 * wheel.rotation
-                - (!wheel.canTurn || wheel.rotation == 0 || wheel.rotation - wheel.prevRotation < 4
-                        ? 0
-                        : wheel.facing > 3 ? -f : f);
+            - (!wheel.canTurn || wheel.rotation == 0 || wheel.rotation - wheel.prevRotation < 4 ? 0
+                : wheel.facing > 3 ? -f : f);
         model.setRotateAngle(model.Axle, 0, 0, (float) Math.toRadians(rot));
         ClientUtils.bindTexture("immersiveengineering:textures/models/watermill.png");
         model.render(null, 0, 0, 0, 0, 0, .0625f);

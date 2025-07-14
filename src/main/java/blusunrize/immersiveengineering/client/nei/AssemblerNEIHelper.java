@@ -1,14 +1,8 @@
 package blusunrize.immersiveengineering.client.nei;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.client.gui.GuiAssembler;
-import blusunrize.immersiveengineering.common.util.network.MessageTileSync;
-import codechicken.nei.PositionedStack;
-import codechicken.nei.api.IStackPositioner;
-import codechicken.nei.recipe.DefaultOverlayHandler;
-import codechicken.nei.recipe.IRecipeHandler;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -16,8 +10,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.client.gui.GuiAssembler;
+import blusunrize.immersiveengineering.common.util.network.MessageTileSync;
+import codechicken.nei.PositionedStack;
+import codechicken.nei.api.IStackPositioner;
+import codechicken.nei.recipe.DefaultOverlayHandler;
+import codechicken.nei.recipe.IRecipeHandler;
+
 public class AssemblerNEIHelper {
+
     public static class StackPositioner implements IStackPositioner {
+
         @Override
         public ArrayList<PositionedStack> positionStacks(ArrayList<PositionedStack> list) {
             return list;
@@ -25,6 +29,7 @@ public class AssemblerNEIHelper {
     }
 
     public static class OverlayHandler extends DefaultOverlayHandler {
+
         @Override
         public void overlayRecipe(GuiContainer gui, IRecipeHandler recipe, int recipeIndex, boolean shift) {
             if (gui instanceof GuiAssembler) {
@@ -37,13 +42,12 @@ public class AssemblerNEIHelper {
                         for (PositionedStack ps : ingredients) {
                             boolean found = false;
                             for (Slot slot : (List<Slot>) gui.inventorySlots.inventorySlots) {
-                                for (ItemStack s : ps.items)
-                                    if (OreDictionary.itemMatches(s, slot.getStack(), false)) {
-                                        ps.item = s;
-                                        foundIngredients.add(ps);
-                                        found = true;
-                                        break;
-                                    }
+                                for (ItemStack s : ps.items) if (OreDictionary.itemMatches(s, slot.getStack(), false)) {
+                                    ps.item = s;
+                                    foundIngredients.add(ps);
+                                    found = true;
+                                    break;
+                                }
                                 if (found) break;
                             }
                         }
@@ -64,8 +68,8 @@ public class AssemblerNEIHelper {
                         NBTTagCompound tag = new NBTTagCompound();
                         tag.setTag("patternSync", tagList);
                         tag.setInteger("recipe", i);
-                        ImmersiveEngineering.packetHandler.sendToServer(
-                                new MessageTileSync(((GuiAssembler) gui).tile, tag));
+                        ImmersiveEngineering.packetHandler
+                            .sendToServer(new MessageTileSync(((GuiAssembler) gui).tile, tag));
                         break;
                     }
             }
@@ -75,21 +79,21 @@ public class AssemblerNEIHelper {
         public boolean canMoveFrom(Slot slot, GuiContainer gui) {
             return super.canMoveFrom(slot, gui);
         }
-        //		@Override
-        //		public void overlayRecipe(GuiContainer gui, IRecipeHandler recipe, int recipeIndex, boolean shift)
-        //		{
-        //			List<PositionedStack> ingredients = recipe.getIngredientStacks(recipeIndex);
-        //			List<DistributedIngred> ingredStacks = getPermutationIngredients(ingredients);
-        //			if(!clearIngredients(gui, ingredients))
-        //				return;
-        //			findInventoryQuantities(gui, ingredStacks);
-        //			List<IngredientDistribution> assignedIngredients = assignIngredients(ingredients, ingredStacks);
-        //			if(assignedIngredients == null)
-        //				return;
-        //			assignIngredSlots(gui, ingredients, assignedIngredients);
-        //			int quantity = calculateRecipeQuantity(assignedIngredients);
-        //			if(quantity != 0)
-        //				moveIngredients(gui, assignedIngredients, quantity);
-        //		}
+        // @Override
+        // public void overlayRecipe(GuiContainer gui, IRecipeHandler recipe, int recipeIndex, boolean shift)
+        // {
+        // List<PositionedStack> ingredients = recipe.getIngredientStacks(recipeIndex);
+        // List<DistributedIngred> ingredStacks = getPermutationIngredients(ingredients);
+        // if(!clearIngredients(gui, ingredients))
+        // return;
+        // findInventoryQuantities(gui, ingredStacks);
+        // List<IngredientDistribution> assignedIngredients = assignIngredients(ingredients, ingredStacks);
+        // if(assignedIngredients == null)
+        // return;
+        // assignIngredSlots(gui, ingredients, assignedIngredients);
+        // int quantity = calculateRecipeQuantity(assignedIngredients);
+        // if(quantity != 0)
+        // moveIngredients(gui, assignedIngredients, quantity);
+        // }
     }
 }

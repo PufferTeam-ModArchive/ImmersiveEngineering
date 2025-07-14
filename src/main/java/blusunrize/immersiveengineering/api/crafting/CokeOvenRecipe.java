@@ -1,18 +1,21 @@
 package blusunrize.immersiveengineering.api.crafting;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
+
 /**
  * @author BluSunrize - 23.03.2015
- * <br>
- * The recipe for the coke oven
+ *         <br>
+ *         The recipe for the coke oven
  */
 public class CokeOvenRecipe {
+
     public final Object input;
     public final ItemStack output;
     public final int time;

@@ -1,20 +1,22 @@
 package blusunrize.immersiveengineering.common.util.compat.opencomputers;
 
+import java.util.HashMap;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+
 import blusunrize.immersiveengineering.api.energy.DieselHandler.RefineryRecipe;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityRefinery;
-import java.util.HashMap;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.prefab.DriverTileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
 
 public class RefineryDriver extends DriverTileEntity {
 
@@ -26,11 +28,11 @@ public class RefineryDriver extends DriverTileEntity {
             if (pos == 9) {
                 TileEntityRefinery ref = (TileEntityRefinery) te;
                 return new RefineryEnvironment(
-                        w,
-                        ref.xCoord - ref.offset[0],
-                        ref.yCoord - ref.offset[1],
-                        ref.zCoord - ref.offset[2],
-                        TileEntityRefinery.class);
+                    w,
+                    ref.xCoord - ref.offset[0],
+                    ref.yCoord - ref.offset[1],
+                    ref.zCoord - ref.offset[2],
+                    TileEntityRefinery.class);
             }
         }
         return null;
@@ -80,12 +82,12 @@ public class RefineryDriver extends DriverTileEntity {
 
         @Callback(doc = "function():number -- get energy storage capacity")
         public Object[] getEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().energyStorage.getEnergyStored()};
+            return new Object[] { getTileEntity().energyStorage.getEnergyStored() };
         }
 
         @Callback(doc = "function():number -- get currently stored energy")
         public Object[] getMaxEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().energyStorage.getMaxEnergyStored()};
+            return new Object[] { getTileEntity().energyStorage.getMaxEnergyStored() };
         }
 
         @Callback(doc = "function():table -- get tankinfo for input tanks")
@@ -94,12 +96,12 @@ public class RefineryDriver extends DriverTileEntity {
             HashMap<String, FluidTankInfo> ret = new HashMap<>(2);
             ret.put("input1", master.tank0.getInfo());
             ret.put("input2", master.tank1.getInfo());
-            return new Object[] {ret};
+            return new Object[] { ret };
         }
 
         @Callback(doc = "function():table -- get tankinfo for output tank")
         public Object[] getOutputTank(Context context, Arguments args) {
-            return new Object[] {getTileEntity().tank2.getInfo()};
+            return new Object[] { getTileEntity().tank2.getInfo() };
         }
 
         @Callback(doc = "function():table -- get current recipe")
@@ -110,12 +112,12 @@ public class RefineryDriver extends DriverTileEntity {
             ret.put("input1", recipe.input0);
             ret.put("input2", recipe.input1);
             ret.put("output", recipe.output);
-            return new Object[] {ret};
+            return new Object[] { ret };
         }
 
         @Callback(doc = "function():boolean -- check whether a valid recipe exists for the current inputs")
         public Object[] isValidRecipe(Context context, Arguments args) {
-            return new Object[] {getTileEntity().getRecipe(false) != null};
+            return new Object[] { getTileEntity().getRecipe(false) != null };
         }
 
         @Callback(doc = "function():table -- return item input slot contents for both input and output tanks")
@@ -125,7 +127,7 @@ public class RefineryDriver extends DriverTileEntity {
             ret.put("input1", te.inventory[1]);
             ret.put("input2", te.inventory[3]);
             ret.put("output", te.inventory[4]);
-            return new Object[] {ret};
+            return new Object[] { ret };
         }
 
         @Callback(doc = "function():table -- return item output slot contents for both input and output tanks")
@@ -135,7 +137,7 @@ public class RefineryDriver extends DriverTileEntity {
             ret.put("input1", te.inventory[0]);
             ret.put("input2", te.inventory[2]);
             ret.put("output", te.inventory[5]);
-            return new Object[] {ret};
+            return new Object[] { ret };
         }
     }
 }

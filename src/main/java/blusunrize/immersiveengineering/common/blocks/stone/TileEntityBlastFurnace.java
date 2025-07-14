@@ -1,9 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.stone;
 
-import blusunrize.immersiveengineering.api.crafting.BlastFurnaceRecipe;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockPart;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +9,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.crafting.BlastFurnaceRecipe;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockPart;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements ISidedInventory {
+
     ItemStack[] inventory = new ItemStack[4];
     public int facing = 2;
     public int process = 0;
@@ -35,7 +37,7 @@ public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements 
 
     @Override
     public float[] getBlockBounds() {
-        return new float[] {0, 0, 0, 1, 1, 1};
+        return new float[] { 0, 0, 0, 1, 1, 1 };
     }
 
     @Override
@@ -67,7 +69,8 @@ public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements 
                         BlastFurnaceRecipe recipe = getRecipe();
                         if (recipe != null) {
                             this.decrStackSize(
-                                    0, recipe.input instanceof ItemStack ? ((ItemStack) recipe.input).stackSize : 1);
+                                0,
+                                recipe.input instanceof ItemStack ? ((ItemStack) recipe.input).stackSize : 1);
                             if (inventory[2] != null) inventory[2].stackSize += recipe.output.copy().stackSize;
                             else inventory[2] = recipe.output.copy();
                             if (recipe.slag != null) {
@@ -107,19 +110,18 @@ public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements 
                 int zMax = facing == 3 ? 0 : facing == 2 ? 2 : 1;
                 TileEntity tileEntity;
                 for (int yy = -1; yy <= 1; yy++)
-                    for (int xx = xMin; xx <= xMax; xx++)
-                        for (int zz = zMin; zz <= zMax; zz++) {
-                            tileEntity = worldObj.getTileEntity(xCoord + xx, yCoord + yy, zCoord + zz);
-                            if (tileEntity != null) tileEntity.markDirty();
-                            worldObj.markBlockForUpdate(xCoord + xx, yCoord + yy, zCoord + zz);
-                            worldObj.addBlockEvent(
-                                    xCoord + xx,
-                                    yCoord + yy,
-                                    zCoord + zz,
-                                    IEContent.blockStoneDevice,
-                                    1,
-                                    active ? 1 : 0);
-                        }
+                    for (int xx = xMin; xx <= xMax; xx++) for (int zz = zMin; zz <= zMax; zz++) {
+                        tileEntity = worldObj.getTileEntity(xCoord + xx, yCoord + yy, zCoord + zz);
+                        if (tileEntity != null) tileEntity.markDirty();
+                        worldObj.markBlockForUpdate(xCoord + xx, yCoord + yy, zCoord + zz);
+                        worldObj.addBlockEvent(
+                            xCoord + xx,
+                            yCoord + yy,
+                            zCoord + zz,
+                            IEContent.blockStoneDevice,
+                            1,
+                            active ? 1 : 0);
+                    }
             }
         }
     }
@@ -129,13 +131,12 @@ public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements 
         if (recipe == null) return null;
         if (recipe.input instanceof ItemStack && ((ItemStack) recipe.input).stackSize > inventory[0].stackSize)
             return null;
-        if (inventory[2] != null
-                && (!OreDictionary.itemMatches(inventory[2], recipe.output, true)
-                        || inventory[2].stackSize + recipe.output.stackSize > getInventoryStackLimit())) return null;
-        if (inventory[3] != null
-                && recipe.slag != null
-                && (!OreDictionary.itemMatches(inventory[3], recipe.slag, true)
-                        || inventory[3].stackSize + recipe.slag.stackSize > getInventoryStackLimit())) return null;
+        if (inventory[2] != null && (!OreDictionary.itemMatches(inventory[2], recipe.output, true)
+            || inventory[2].stackSize + recipe.output.stackSize > getInventoryStackLimit())) return null;
+        if (inventory[3] != null && recipe.slag != null
+            && (!OreDictionary.itemMatches(inventory[3], recipe.slag, true)
+                || inventory[3].stackSize + recipe.slag.stackSize > getInventoryStackLimit()))
+            return null;
         return recipe;
     }
 
@@ -175,12 +176,11 @@ public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements 
         TileEntityBlastFurnace master = master();
         if (master != null) return master.decrStackSize(slot, amount);
         ItemStack stack = getStackInSlot(slot);
-        if (stack != null)
-            if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-            else {
-                stack = stack.splitStack(amount);
-                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-            }
+        if (stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+        else {
+            stack = stack.splitStack(amount);
+            if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+        }
         return stack;
     }
 
@@ -231,9 +231,8 @@ public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements 
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this
-                ? false
-                : player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
+        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false
+            : player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
     }
 
     @Override
@@ -256,12 +255,12 @@ public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
         // You're no longer automateable, hah!
-        //		if(!formed)
+        // if(!formed)
         return new int[0];
-        //		TileEntityBlastFurnace master = master();
-        //		if(master!=null)
-        //			return master.getAccessibleSlotsFromSide(side);
-        //		return new int[]{0,1,2};
+        // TileEntityBlastFurnace master = master();
+        // if(master!=null)
+        // return master.getAccessibleSlotsFromSide(side);
+        // return new int[]{0,1,2};
     }
 
     @Override
@@ -320,40 +319,38 @@ public class TileEntityBlastFurnace extends TileEntityMultiblockPart implements 
             int startY = yCoord - offset[1];
             int startZ = zCoord - offset[2];
             if (!(offset[0] == 0 && offset[1] == 0 && offset[2] == 0)
-                    && !(worldObj.getTileEntity(startX, startY, startZ) instanceof TileEntityBlastFurnace)) return;
+                && !(worldObj.getTileEntity(startX, startY, startZ) instanceof TileEntityBlastFurnace)) return;
 
             int xMin = facing == 5 ? -2 : facing == 4 ? 0 : -1;
             int xMax = facing == 5 ? 0 : facing == 4 ? 2 : 1;
             int zMin = facing == 3 ? -2 : facing == 2 ? 0 : -1;
             int zMax = facing == 3 ? 0 : facing == 2 ? 2 : 1;
             for (int yy = -1; yy <= 1; yy++)
-                for (int xx = xMin; xx <= xMax; xx++)
-                    for (int zz = zMin; zz <= zMax; zz++) {
-                        ItemStack s = null;
-                        TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (te instanceof TileEntityBlastFurnace) {
-                            s = ((TileEntityBlastFurnace) te).getOriginalBlock();
-                            ((TileEntityBlastFurnace) te).formed = false;
-                        }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockStoneDevice)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
+                for (int xx = xMin; xx <= xMax; xx++) for (int zz = zMin; zz <= zMax; zz++) {
+                    ItemStack s = null;
+                    TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                    if (te instanceof TileEntityBlastFurnace) {
+                        s = ((TileEntityBlastFurnace) te).getOriginalBlock();
+                        ((TileEntityBlastFurnace) te).formed = false;
+                    }
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        s = this.getOriginalBlock();
+                    if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord) worldObj
+                            .spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                        else {
+                            if (Block.getBlockFromItem(s.getItem()) == IEContent.blockStoneDevice)
+                                worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                            worldObj.setBlock(
+                                startX + xx,
+                                startY + yy,
+                                startZ + zz,
+                                Block.getBlockFromItem(s.getItem()),
+                                s.getItemDamage(),
+                                0x3);
                         }
                     }
+                }
         }
     }
 }

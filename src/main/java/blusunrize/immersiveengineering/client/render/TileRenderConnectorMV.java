@@ -1,16 +1,19 @@
 package blusunrize.immersiveengineering.client.render;
 
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+
 import blusunrize.immersiveengineering.client.models.ModelIEObj;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorLV;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 
 public class TileRenderConnectorMV extends TileRenderImmersiveConnectable {
+
     ModelIEObj model = new ModelIEObj("immersiveengineering:models/connectorMV.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockMetalDevice.getIcon(0, BlockMetalDevices.META_connectorMV);

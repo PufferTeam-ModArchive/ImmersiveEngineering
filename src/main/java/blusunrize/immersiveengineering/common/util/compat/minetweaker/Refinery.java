@@ -1,33 +1,39 @@
 package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 
-import blusunrize.immersiveengineering.api.energy.DieselHandler;
-import blusunrize.immersiveengineering.api.energy.DieselHandler.RefineryRecipe;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import net.minecraftforge.fluids.FluidStack;
+
+import blusunrize.immersiveengineering.api.energy.DieselHandler;
+import blusunrize.immersiveengineering.api.energy.DieselHandler.RefineryRecipe;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
 import minetweaker.api.liquid.ILiquidStack;
-import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersiveengineering.Refinery")
 public class Refinery {
+
     @ZenMethod
     public static void addRecipe(ILiquidStack output, ILiquidStack input0, ILiquidStack input1) {
-        if (MTHelper.toFluidStack(input0) == null
-                || MTHelper.toFluidStack(input0).getFluid() == null) return;
-        if (MTHelper.toFluidStack(input1) == null
-                || MTHelper.toFluidStack(input1).getFluid() == null) return;
-        if (MTHelper.toFluidStack(output) == null
-                || MTHelper.toFluidStack(output).getFluid() == null) return;
+        if (MTHelper.toFluidStack(input0) == null || MTHelper.toFluidStack(input0)
+            .getFluid() == null) return;
+        if (MTHelper.toFluidStack(input1) == null || MTHelper.toFluidStack(input1)
+            .getFluid() == null) return;
+        if (MTHelper.toFluidStack(output) == null || MTHelper.toFluidStack(output)
+            .getFluid() == null) return;
 
         RefineryRecipe r = new RefineryRecipe(
-                MTHelper.toFluidStack(input0), MTHelper.toFluidStack(input1), MTHelper.toFluidStack(output));
+            MTHelper.toFluidStack(input0),
+            MTHelper.toFluidStack(input1),
+            MTHelper.toFluidStack(output));
         MineTweakerAPI.apply(new Add(r));
     }
 
     private static class Add implements IUndoableAction {
+
         private final RefineryRecipe recipe;
 
         public Add(RefineryRecipe recipe) {
@@ -71,6 +77,7 @@ public class Refinery {
     }
 
     private static class Remove implements IUndoableAction {
+
         private final FluidStack output;
         ArrayList<RefineryRecipe> removedRecipes = new ArrayList<RefineryRecipe>();
 

@@ -1,17 +1,7 @@
 package blusunrize.immersiveengineering.common.entities;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.util.IEAchievements;
-import blusunrize.immersiveengineering.common.util.IEDamageSources;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
-import blusunrize.immersiveengineering.common.util.compat.EtFuturumHelper;
-import blusunrize.immersiveengineering.common.util.compat.IC2Helper;
-import cofh.api.energy.IEnergyContainerItem;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,7 +19,20 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.util.IEAchievements;
+import blusunrize.immersiveengineering.common.util.IEDamageSources;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
+import blusunrize.immersiveengineering.common.util.compat.EtFuturumHelper;
+import blusunrize.immersiveengineering.common.util.compat.IC2Helper;
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class EntityRevolvershot extends Entity {
+
     private int field_145795_e = -1;
     private int field_145793_f = -1;
     private int field_145794_g = -1;
@@ -58,17 +61,17 @@ public class EntityRevolvershot extends Entity {
         this.bulletType = type;
     }
 
-    public EntityRevolvershot(
-            World world, EntityLivingBase living, double ax, double ay, double az, int type, ItemStack stack) {
+    public EntityRevolvershot(World world, EntityLivingBase living, double ax, double ay, double az, int type,
+        ItemStack stack) {
         super(world);
         this.shootingEntity = living;
         this.setSize(0.125F, 0.125F);
         this.setLocationAndAngles(
-                living.posX + ax,
-                living.posY + living.getEyeHeight() + ay,
-                living.posZ + az,
-                living.rotationYaw,
-                living.rotationPitch);
+            living.posX + ax,
+            living.posY + living.getEyeHeight() + ay,
+            living.posZ + az,
+            living.rotationYaw,
+            living.rotationPitch);
         this.setPosition(this.posX, this.posY, this.posZ);
         this.yOffset = 0.0F;
         this.motionX = this.motionY = this.motionZ = 0.0D;
@@ -91,16 +94,14 @@ public class EntityRevolvershot extends Entity {
 
     @Override
     public void onUpdate() {
-        if (!this.worldObj.isRemote
-                && (this.shootingEntity != null && this.shootingEntity.isDead
-                        || !this.worldObj.blockExists((int) this.posX, (int) this.posY, (int) this.posZ)))
-            this.setDead();
+        if (!this.worldObj.isRemote && (this.shootingEntity != null && this.shootingEntity.isDead
+            || !this.worldObj.blockExists((int) this.posX, (int) this.posY, (int) this.posZ))) this.setDead();
         else {
             super.onUpdate();
 
             if (this.inGround) {
                 if (this.worldObj.getBlock(this.field_145795_e, this.field_145793_f, this.field_145794_g)
-                        == this.field_145796_h) {
+                    == this.field_145796_h) {
                     ++this.ticksAlive;
                     if (this.ticksAlive == 600) this.setDead();
 
@@ -113,7 +114,7 @@ public class EntityRevolvershot extends Entity {
                 this.motionZ *= (double) (this.rand.nextFloat() * 0.2F);
                 this.ticksAlive = 0;
                 this.ticksInAir = 0;
-            } else ++this.ticksInAir;
+            } else++this.ticksInAir;
 
             if (ticksInAir >= tickLimit) {
                 this.onExpire();
@@ -122,25 +123,23 @@ public class EntityRevolvershot extends Entity {
             }
 
             Vec3 vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-            Vec3 vec31 = Vec3.createVectorHelper(
-                    this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+            Vec3 vec31 = Vec3
+                .createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
             MovingObjectPosition movingobjectposition = this.worldObj.rayTraceBlocks(vec3, vec31);
             vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-            vec31 = Vec3.createVectorHelper(
-                    this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+            vec31 = Vec3
+                .createVectorHelper(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
-            if (movingobjectposition != null)
-                vec31 = Vec3.createVectorHelper(
-                        movingobjectposition.hitVec.xCoord,
-                        movingobjectposition.hitVec.yCoord,
-                        movingobjectposition.hitVec.zCoord);
+            if (movingobjectposition != null) vec31 = Vec3.createVectorHelper(
+                movingobjectposition.hitVec.xCoord,
+                movingobjectposition.hitVec.yCoord,
+                movingobjectposition.hitVec.zCoord);
 
             Entity entity = null;
             List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(
-                    this,
-                    this.boundingBox
-                            .addCoord(this.motionX, this.motionY, this.motionZ)
-                            .expand(1.0D, 1.0D, 1.0D));
+                this,
+                this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ)
+                    .expand(1.0D, 1.0D, 1.0D));
             double d0 = 0.0D;
 
             for (int i = 0; i < list.size(); ++i) {
@@ -170,10 +169,8 @@ public class EntityRevolvershot extends Entity {
             float f1 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
             this.rotationYaw = (float) (Math.atan2(this.motionZ, this.motionX) * 180.0D / Math.PI) + 90.0F;
 
-            for (this.rotationPitch = (float) (Math.atan2((double) f1, this.motionY) * 180.0D / Math.PI) - 90.0F;
-                    this.rotationPitch - this.prevRotationPitch < -180.0F;
-                    this.prevRotationPitch -= 360.0F)
-                ;
+            for (this.rotationPitch = (float) (Math.atan2((double) f1, this.motionY) * 180.0D / Math.PI)
+                - 90.0F; this.rotationPitch - this.prevRotationPitch < -180.0F; this.prevRotationPitch -= 360.0F);
 
             while (this.rotationPitch - this.prevRotationPitch >= 180.0F) this.prevRotationPitch += 360.0F;
             while (this.rotationYaw - this.prevRotationYaw < -180.0F) this.prevRotationYaw -= 360.0F;
@@ -186,13 +183,13 @@ public class EntityRevolvershot extends Entity {
                 for (int j = 0; j < 4; ++j) {
                     float f3 = 0.25F;
                     this.worldObj.spawnParticle(
-                            "bubble",
-                            this.posX - this.motionX * (double) f3,
-                            this.posY - this.motionY * (double) f3,
-                            this.posZ - this.motionZ * (double) f3,
-                            this.motionX,
-                            this.motionY,
-                            this.motionZ);
+                        "bubble",
+                        this.posX - this.motionX * (double) f3,
+                        this.posY - this.motionY * (double) f3,
+                        this.posZ - this.motionZ * (double) f3,
+                        this.motionX,
+                        this.motionY,
+                        this.motionZ);
                 }
             }
 
@@ -206,37 +203,34 @@ public class EntityRevolvershot extends Entity {
         boolean headshot = false;
 
         if (mop.entityHit != null) {
-            if (mop.entityHit instanceof EntityLivingBase)
-                headshot = Utils.isVecInEntityHead(
-                        (EntityLivingBase) mop.entityHit, Vec3.createVectorHelper(posX, posY, posZ));
+            if (mop.entityHit instanceof EntityLivingBase) headshot = Utils
+                .isVecInEntityHead((EntityLivingBase) mop.entityHit, Vec3.createVectorHelper(posX, posY, posZ));
 
-            String dmgKey = bulletType == 0
-                    ? "Casull"
-                    : bulletType == 1
-                            ? "AP"
-                            : bulletType == 2
-                                    ? "Buck"
-                                    : bulletType == 4
-                                            ? "Dragon"
-                                            : bulletType == 5
-                                                    ? "Homing"
-                                                    : bulletType == 6
-                                                            ? "Wolfpack"
-                                                            : bulletType == 7
-                                                                    ? "Silver"
-                                                                    : bulletType == 8 ? "Potion" : "";
+            String dmgKey = bulletType == 0 ? "Casull"
+                : bulletType == 1 ? "AP"
+                    : bulletType == 2 ? "Buck"
+                        : bulletType == 4 ? "Dragon"
+                            : bulletType == 5 ? "Homing"
+                                : bulletType == 6 ? "Wolfpack"
+                                    : bulletType == 7 ? "Silver" : bulletType == 8 ? "Potion" : "";
             double damage = Config.getDouble("BulletDamage-" + dmgKey);
             if (headshot) {
                 damage *= 1.5;
                 EntityLivingBase living = (EntityLivingBase) mop.entityHit;
-                if (living.isChild()
-                        && !living.isEntityInvulnerable()
-                        && (living.hurtResistantTime > 0 ? living.getHealth() <= 0 : living.getHealth() <= damage)) {
+                if (living.isChild() && !living.isEntityInvulnerable()
+                    && (living.hurtResistantTime > 0 ? living.getHealth() <= 0 : living.getHealth() <= damage)) {
                     if (this.worldObj.isRemote) {
                         worldObj.makeFireworks(
-                                posX, posY, posZ, 0, 0, 0, Utils.getRandomFireworkExplosion(worldObj.rand, 4));
+                            posX,
+                            posY,
+                            posZ,
+                            0,
+                            0,
+                            0,
+                            Utils.getRandomFireworkExplosion(worldObj.rand, 4));
                         worldObj.playSound(posX, posY, posZ, "immersiveengineering:birthdayParty", 1.5f, 1, false);
-                        mop.entityHit.getEntityData().setBoolean("headshot", true);
+                        mop.entityHit.getEntityData()
+                            .setBoolean("headshot", true);
                     } else if (this.shootingEntity instanceof EntityPlayer)
                         ((EntityPlayer) this.shootingEntity).triggerAchievement(IEAchievements.secret_birthdayParty);
                 }
@@ -245,38 +239,41 @@ public class EntityRevolvershot extends Entity {
             if (!this.worldObj.isRemote) {
                 switch (bulletType) {
                     case 0:
-                        mop.entityHit.attackEntityFrom(
-                                IEDamageSources.causeCasullDamage(this, shootingEntity), (float) damage);
+                        mop.entityHit
+                            .attackEntityFrom(IEDamageSources.causeCasullDamage(this, shootingEntity), (float) damage);
                         break;
                     case 1:
                         mop.entityHit.attackEntityFrom(
-                                IEDamageSources.causePiercingDamage(this, shootingEntity), (float) damage);
+                            IEDamageSources.causePiercingDamage(this, shootingEntity),
+                            (float) damage);
                         break;
                     case 2:
                         mop.entityHit.attackEntityFrom(
-                                IEDamageSources.causeBuckshotDamage(this, shootingEntity), (float) damage);
+                            IEDamageSources.causeBuckshotDamage(this, shootingEntity),
+                            (float) damage);
                         mop.entityHit.hurtResistantTime = 0;
                         break;
                     case 4:
                         if (mop.entityHit.attackEntityFrom(
-                                IEDamageSources.causeDragonsbreathDamage(this, shootingEntity), (float) damage))
-                            mop.entityHit.setFire(3);
+                            IEDamageSources.causeDragonsbreathDamage(this, shootingEntity),
+                            (float) damage)) mop.entityHit.setFire(3);
                         break;
                     case 5:
-                        mop.entityHit.attackEntityFrom(
-                                IEDamageSources.causeHomingDamage(this, shootingEntity), (float) damage);
+                        mop.entityHit
+                            .attackEntityFrom(IEDamageSources.causeHomingDamage(this, shootingEntity), (float) damage);
                         break;
                     case 6:
                         mop.entityHit.attackEntityFrom(
-                                IEDamageSources.causeWolfpackDamage(this, shootingEntity), (float) damage);
+                            IEDamageSources.causeWolfpackDamage(this, shootingEntity),
+                            (float) damage);
                         break;
                     case 7:
-                        mop.entityHit.attackEntityFrom(
-                                IEDamageSources.causeSilverDamage(this, shootingEntity), (float) damage);
+                        mop.entityHit
+                            .attackEntityFrom(IEDamageSources.causeSilverDamage(this, shootingEntity), (float) damage);
                         break;
                     case 8:
-                        mop.entityHit.attackEntityFrom(
-                                IEDamageSources.causePotionDamage(this, shootingEntity), (float) damage);
+                        mop.entityHit
+                            .attackEntityFrom(IEDamageSources.causePotionDamage(this, shootingEntity), (float) damage);
                         break;
                 }
             }
@@ -295,8 +292,8 @@ public class EntityRevolvershot extends Entity {
                 ItemStack stack = ((EntityLivingBase) mop.entityHit).getEquipmentInSlot(i);
                 if (stack != null && stack.getItem() instanceof IEnergyContainerItem) {
                     int maxStore = ((IEnergyContainerItem) stack.getItem()).getMaxEnergyStored(stack);
-                    int drain = Math.min(
-                            (int) (maxStore * .15f), ((IEnergyContainerItem) stack.getItem()).getEnergyStored(stack));
+                    int drain = Math
+                        .min((int) (maxStore * .15f), ((IEnergyContainerItem) stack.getItem()).getEnergyStored(stack));
                     int hasDrained = 0;
                     while (hasDrained < drain) {
                         int actualDrain = ((IEnergyContainerItem) stack.getItem()).extractEnergy(stack, drain, false);
@@ -322,13 +319,13 @@ public class EntityRevolvershot extends Entity {
                 matrix.apply(vecDir);
 
                 EntityWolfpackShot bullet = new EntityWolfpackShot(
-                        worldObj,
-                        this.shootingEntity,
-                        vecDir.xCoord * 1.5,
-                        vecDir.yCoord * 1.5,
-                        vecDir.zCoord * 1.5,
-                        this.bulletType,
-                        null);
+                    worldObj,
+                    this.shootingEntity,
+                    vecDir.xCoord * 1.5,
+                    vecDir.yCoord * 1.5,
+                    vecDir.zCoord * 1.5,
+                    this.bulletType,
+                    null);
                 if (mop.entityHit instanceof EntityLivingBase) bullet.targetOverride = (EntityLivingBase) mop.entityHit;
                 bullet.setPosition(posX + vecDir.xCoord, posY + vecDir.yCoord, posZ + vecDir.zCoord);
                 bullet.motionX = vecDir.xCoord * .375;
@@ -339,47 +336,42 @@ public class EntityRevolvershot extends Entity {
         }
         if (bulletType == 8 && bulletPotion != null && bulletPotion.getItem() instanceof ItemPotion) {
             List<PotionEffect> effects = ((ItemPotion) bulletPotion.getItem()).getEffects(bulletPotion);
-            if (effects != null)
-                if (bulletPotion
-                        .getItem()
-                        .getClass()
-                        .getName()
-                        .equalsIgnoreCase("ganymedes01.etfuturum.items.LingeringPotion"))
-                    EtFuturumHelper.createLingeringPotionEffect(
-                            worldObj, posX, posY, posZ, bulletPotion, shootingEntity);
-                else if (ItemPotion.isSplash(bulletPotion.getItemDamage())) {
-                    List<EntityLivingBase> livingEntities = this.worldObj.getEntitiesWithinAABB(
-                            EntityLivingBase.class, this.boundingBox.expand(4.0D, 2.0D, 4.0D));
-                    if (livingEntities != null && !livingEntities.isEmpty())
-                        for (EntityLivingBase living : livingEntities) {
-                            double dist = this.getDistanceSqToEntity(living);
-                            if (dist < 16D) {
-                                double dist2 = 1 - Math.sqrt(dist) / 4D;
-                                if (living == mop.entityHit) dist2 = 1D;
-                                for (PotionEffect p : effects) {
-                                    int id = p.getPotionID();
-                                    if (Potion.potionTypes[id].isInstant())
-                                        Potion.potionTypes[id].affectEntity(
-                                                this.shootingEntity, living, p.getAmplifier(), dist2);
-                                    else {
-                                        int j = (int) (dist2 * p.getDuration() + .5D);
-                                        if (j > 20) living.addPotionEffect(new PotionEffect(id, j, p.getAmplifier()));
-                                    }
+            if (effects != null) if (bulletPotion.getItem()
+                .getClass()
+                .getName()
+                .equalsIgnoreCase("ganymedes01.etfuturum.items.LingeringPotion"))
+                EtFuturumHelper.createLingeringPotionEffect(worldObj, posX, posY, posZ, bulletPotion, shootingEntity);
+            else if (ItemPotion.isSplash(bulletPotion.getItemDamage())) {
+                List<EntityLivingBase> livingEntities = this.worldObj
+                    .getEntitiesWithinAABB(EntityLivingBase.class, this.boundingBox.expand(4.0D, 2.0D, 4.0D));
+                if (livingEntities != null && !livingEntities.isEmpty())
+                    for (EntityLivingBase living : livingEntities) {
+                        double dist = this.getDistanceSqToEntity(living);
+                        if (dist < 16D) {
+                            double dist2 = 1 - Math.sqrt(dist) / 4D;
+                            if (living == mop.entityHit) dist2 = 1D;
+                            for (PotionEffect p : effects) {
+                                int id = p.getPotionID();
+                                if (Potion.potionTypes[id].isInstant()) Potion.potionTypes[id]
+                                    .affectEntity(this.shootingEntity, living, p.getAmplifier(), dist2);
+                                else {
+                                    int j = (int) (dist2 * p.getDuration() + .5D);
+                                    if (j > 20) living.addPotionEffect(new PotionEffect(id, j, p.getAmplifier()));
                                 }
                             }
                         }
-
-                } else if (mop.entityHit instanceof EntityLivingBase)
-                    for (PotionEffect p : effects) {
-                        if (p.getDuration() < 1) p = new PotionEffect(p.getPotionID(), 1);
-                        ((EntityLivingBase) mop.entityHit).addPotionEffect(p);
                     }
+
+            } else if (mop.entityHit instanceof EntityLivingBase) for (PotionEffect p : effects) {
+                if (p.getDuration() < 1) p = new PotionEffect(p.getPotionID(), 1);
+                ((EntityLivingBase) mop.entityHit).addPotionEffect(p);
+            }
             worldObj.playAuxSFX(
-                    2002,
-                    (int) Math.round(posX),
-                    (int) Math.round(posY),
-                    (int) Math.round(posZ),
-                    bulletPotion.getItemDamage());
+                2002,
+                (int) Math.round(posX),
+                (int) Math.round(posY),
+                (int) Math.round(posZ),
+                bulletPotion.getItemDamage());
         }
     }
 
@@ -390,23 +382,23 @@ public class EntityRevolvershot extends Entity {
     }
 
     @Override
-    //	public void writeToNBT(NBTTagCompound nbt)
+    // public void writeToNBT(NBTTagCompound nbt)
     protected void writeEntityToNBT(NBTTagCompound nbt) {
-        //		super.writeToNBT(nbt);
+        // super.writeToNBT(nbt);
         nbt.setShort("xTile", (short) this.field_145795_e);
         nbt.setShort("yTile", (short) this.field_145793_f);
         nbt.setShort("zTile", (short) this.field_145794_g);
         nbt.setByte("inTile", (byte) Block.getIdFromBlock(this.field_145796_h));
         nbt.setByte("inGround", (byte) (this.inGround ? 1 : 0));
-        nbt.setTag("direction", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
+        nbt.setTag("direction", this.newDoubleNBTList(new double[] { this.motionX, this.motionY, this.motionZ }));
         nbt.setShort("bulletType", (short) this.bulletType);
         if (bulletPotion != null) nbt.setTag("bulletPotion", bulletPotion.writeToNBT(new NBTTagCompound()));
     }
 
     @Override
-    //	public void readFromNBT(NBTTagCompound nbt)
+    // public void readFromNBT(NBTTagCompound nbt)
     protected void readEntityFromNBT(NBTTagCompound nbt) {
-        //		super.readFromNBT(nbt);
+        // super.readFromNBT(nbt);
         this.field_145795_e = nbt.getShort("xTile");
         this.field_145793_f = nbt.getShort("yTile");
         this.field_145794_g = nbt.getShort("zTile");

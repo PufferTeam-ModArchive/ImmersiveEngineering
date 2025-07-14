@@ -1,16 +1,9 @@
 package blusunrize.immersiveengineering.common.items;
 
-import blusunrize.immersiveengineering.api.crafting.BlueprintCraftingRecipe;
-import blusunrize.immersiveengineering.common.gui.ContainerModWorkbench;
-import blusunrize.immersiveengineering.common.gui.IESlot;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.immersiveengineering.common.util.Lib;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -21,17 +14,28 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraftforge.common.ChestGenHooks;
+
 import org.lwjgl.input.Keyboard;
 
+import blusunrize.immersiveengineering.api.crafting.BlueprintCraftingRecipe;
+import blusunrize.immersiveengineering.common.gui.ContainerModWorkbench;
+import blusunrize.immersiveengineering.common.gui.IESlot;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.Lib;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class ItemEngineersBlueprint extends ItemUpgradeableTool {
+
     public ItemEngineersBlueprint() {
         super("blueprint", 1, null);
     }
 
     @Override
     public String[] getSubNames() {
-        return BlueprintCraftingRecipe.blueprintCategories.toArray(
-                new String[BlueprintCraftingRecipe.blueprintCategories.size()]);
+        return BlueprintCraftingRecipe.blueprintCategories
+            .toArray(new String[BlueprintCraftingRecipe.blueprintCategories.size()]);
     }
 
     @Override
@@ -55,7 +59,7 @@ public class ItemEngineersBlueprint extends ItemUpgradeableTool {
         String[] sub = getSubNames();
         if (stack.getItemDamage() < sub.length) {
             list.add(
-                    StatCollector.translateToLocalFormatted(Lib.DESC_INFO + "blueprint." + sub[stack.getItemDamage()]));
+                StatCollector.translateToLocalFormatted(Lib.DESC_INFO + "blueprint." + sub[stack.getItemDamage()]));
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                 list.add(StatCollector.translateToLocal(Lib.DESC_INFO + "blueprint.creates1"));
                 BlueprintCraftingRecipe[] recipes = BlueprintCraftingRecipe.findRecipes(sub[stack.getItemDamage()]);
@@ -66,8 +70,8 @@ public class ItemEngineersBlueprint extends ItemUpgradeableTool {
     }
 
     @Override
-    public WeightedRandomChestContent getChestGenBase(
-            ChestGenHooks chest, Random random, WeightedRandomChestContent original) {
+    public WeightedRandomChestContent getChestGenBase(ChestGenHooks chest, Random random,
+        WeightedRandomChestContent original) {
         original.theItemId.setTagCompound(null);
         if (random.nextDouble() < .125f) {
             original.theItemId.setStackDisplayName("Super Special BluPrintz");
@@ -95,9 +99,15 @@ public class ItemEngineersBlueprint extends ItemUpgradeableTool {
         String[] sub = getSubNames();
         if (stack.getItemDamage() < sub.length) {
             BlueprintCraftingRecipe[] recipes = BlueprintCraftingRecipe.findRecipes(sub[stack.getItemDamage()]);
-            for (int i = 0; i < recipes.length; i++)
-                slots.add(new IESlot.BlueprintOutput(
-                        container, invItem, 6 + i, 134 + (i % 2 * 18), 57 - (i / 2 * 18), stack, recipes[i]));
+            for (int i = 0; i < recipes.length; i++) slots.add(
+                new IESlot.BlueprintOutput(
+                    container,
+                    invItem,
+                    6 + i,
+                    134 + (i % 2 * 18),
+                    57 - (i / 2 * 18),
+                    stack,
+                    recipes[i]));
         }
 
         return slots.toArray(new Slot[slots.size()]);
@@ -109,15 +119,14 @@ public class ItemEngineersBlueprint extends ItemUpgradeableTool {
             BlueprintCraftingRecipe[] recipes = BlueprintCraftingRecipe.findRecipes(sub[stack.getItemDamage()]);
             ItemStack[] stored = this.getContainedItems(stack);
             ItemStack[] query = new ItemStack[6];
-            for (int i = 0; i < stored.length; i++)
-                if (i < 6) query[i] = stored[i];
-                else {
-                    stored[i] = null;
-                    int craftable = recipes[i - 6].getMaxCrafted(query);
-                    if (craftable > 0)
-                        stored[i] = Utils.copyStackWithAmount(
-                                recipes[i - 6].output, Math.min(recipes[i - 6].output.stackSize * craftable, 64));
-                }
+            for (int i = 0; i < stored.length; i++) if (i < 6) query[i] = stored[i];
+            else {
+                stored[i] = null;
+                int craftable = recipes[i - 6].getMaxCrafted(query);
+                if (craftable > 0) stored[i] = Utils.copyStackWithAmount(
+                    recipes[i - 6].output,
+                    Math.min(recipes[i - 6].output.stackSize * craftable, 64));
+            }
             this.setContainedItems(stack, stored);
         }
     }

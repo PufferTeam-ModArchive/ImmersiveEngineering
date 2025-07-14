@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 4.1.1
  */
 public class ModelRevolver extends ModelBase {
+
     public ModelRenderer Cylinder;
     public ModelRenderer trigger;
     public ModelRenderer Grip;
@@ -185,42 +186,42 @@ public class ModelRevolver extends ModelBase {
         this.Cylinder.render(f5);
         this.Body3.render(f5);
         // SUB
-        //		this.Body2.render(f5);
-        //		this.Body1.render(f5);
-        //		this.trigger.render(f5);
-        //		this.guard1.render(f5);
-        //		this.guard2.render(f5);
-        //		this.guard3.render(f5);
-        //		this.guard4.render(f5);
-        //		this.guard5.render(f5);
+        // this.Body2.render(f5);
+        // this.Body1.render(f5);
+        // this.trigger.render(f5);
+        // this.guard1.render(f5);
+        // this.guard2.render(f5);
+        // this.guard3.render(f5);
+        // this.guard4.render(f5);
+        // this.guard5.render(f5);
 
-        //				this.Grip.render(f5);
-        //		this.Grip2.render(f5);
+        // this.Grip.render(f5);
+        // this.Grip2.render(f5);
 
         this.Frontgrip.render(f5);
         // SUB
-        //		this.Frontgrip2.render(f5);
+        // this.Frontgrip2.render(f5);
 
         this.Barrel.render(f5);
-        //		this.knife1.render(f5);
-        //		this.knife2.render(f5);
+        // this.knife1.render(f5);
+        // this.knife2.render(f5);
 
         this.knife5.render(f5);
         // Sub
-        //		this.knife3.render(f5);
-        //		this.knife4.render(f5);
+        // this.knife3.render(f5);
+        // this.knife4.render(f5);
         // Front
-        //		this.knife6.render(f5);
-        //		this.knife7.render(f5);
-        //		this.knife8.render(f5);
-        //		this.knife9.render(f5);
-        //		this.knife10.render(f5);
-        //		this.knife11.render(f5);
+        // this.knife6.render(f5);
+        // this.knife7.render(f5);
+        // this.knife8.render(f5);
+        // this.knife9.render(f5);
+        // this.knife10.render(f5);
+        // this.knife11.render(f5);
 
         this.scope2.render(f5);
-        //		this.scope1.render(f5);
-        //		this.scope3.render(f5);
-        //		this.scope4.render(f5);
+        // this.scope1.render(f5);
+        // this.scope3.render(f5);
+        // this.scope4.render(f5);
     }
 
     /**

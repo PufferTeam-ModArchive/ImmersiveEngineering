@@ -1,5 +1,8 @@
 package blusunrize.immersiveengineering.common.util.compat.computercraft;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityArcFurnace;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityAssembler;
@@ -19,8 +22,6 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySampleDrill
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySqueezer;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class IEPeripheralProvider implements IPeripheralProvider {
 
@@ -61,7 +62,10 @@ public class IEPeripheralProvider implements IPeripheralProvider {
                 if (master == null) return null;
                 if (((gen.pos == 21 && !master.mirrored) || (gen.pos == 23 && master.mirrored)))
                     return new PeripheralDieselGenerator(
-                            world, x - gen.offset[0], y - gen.offset[1], z - gen.offset[2]);
+                        world,
+                        x - gen.offset[0],
+                        y - gen.offset[1],
+                        z - gen.offset[2]);
                 else return null;
             }
             if (te instanceof TileEntitySampleDrill) {
@@ -79,9 +83,11 @@ public class IEPeripheralProvider implements IPeripheralProvider {
             }
             if (te instanceof TileEntityAssembler) {
                 TileEntityAssembler assembler = (TileEntityAssembler) te;
-                if (assembler.offset[1] == -1)
-                    return new PeripheralAssembler(
-                            world, x - assembler.offset[0], y - assembler.offset[1], z - assembler.offset[2]);
+                if (assembler.offset[1] == -1) return new PeripheralAssembler(
+                    world,
+                    x - assembler.offset[0],
+                    y - assembler.offset[1],
+                    z - assembler.offset[2]);
                 else return null;
             }
             if (te instanceof TileEntityBottlingMachine) {

@@ -1,17 +1,8 @@
 package blusunrize.immersiveengineering.common.items;
 
-import blusunrize.immersiveengineering.api.shader.IShaderEquipableItem;
-import blusunrize.immersiveengineering.api.tool.ITool;
-import blusunrize.immersiveengineering.api.tool.RailgunHandler;
-import blusunrize.immersiveengineering.api.tool.ZoomHandler.IZoomTool;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.entities.EntityRailgunShot;
-import blusunrize.immersiveengineering.common.gui.IESlot;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cofh.api.energy.IEnergyContainerItem;
 import java.util.HashSet;
 import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -25,8 +16,20 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.api.shader.IShaderEquipableItem;
+import blusunrize.immersiveengineering.api.tool.ITool;
+import blusunrize.immersiveengineering.api.tool.RailgunHandler;
+import blusunrize.immersiveengineering.api.tool.ZoomHandler.IZoomTool;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.entities.EntityRailgunShot;
+import blusunrize.immersiveengineering.common.gui.IESlot;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cofh.api.energy.IEnergyContainerItem;
+
 public class ItemRailgun extends ItemUpgradeableTool
-        implements IShaderEquipableItem, IEnergyContainerItem, IZoomTool, ITool {
+    implements IShaderEquipableItem, IEnergyContainerItem, IZoomTool, ITool {
+
     public ItemRailgun() {
         super("railgun", 1, "RAILGUN");
     }
@@ -38,11 +41,9 @@ public class ItemRailgun extends ItemUpgradeableTool
 
     @Override
     public Slot[] getWorkbenchSlots(Container container, ItemStack stack, IInventory invItem) {
-        return new Slot[] {
-            new IESlot.Upgrades(container, invItem, 0, 80, 32, "RAILGUN", stack, true),
+        return new Slot[] { new IESlot.Upgrades(container, invItem, 0, 80, 32, "RAILGUN", stack, true),
             new IESlot.Upgrades(container, invItem, 1, 100, 32, "RAILGUN", stack, true),
-            new IESlot.Shader(container, invItem, 2, 130, 32, stack)
-        };
+            new IESlot.Shader(container, invItem, 2, 130, 32, stack) };
     }
 
     @Override
@@ -92,12 +93,12 @@ public class ItemRailgun extends ItemUpgradeableTool
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        //		if(stack.getItemDamage()!=1)
-        //		{
-        //			String tag = getRevolverDisplayTag(stack);
-        //			if(!tag.isEmpty())
-        //				return this.getUnlocalizedName()+"."+tag;
-        //		}
+        // if(stack.getItemDamage()!=1)
+        // {
+        // String tag = getRevolverDisplayTag(stack);
+        // if(!tag.isEmpty())
+        // return this.getUnlocalizedName()+"."+tag;
+        // }
         return super.getUnlocalizedName(stack);
     }
 
@@ -106,20 +107,20 @@ public class ItemRailgun extends ItemUpgradeableTool
         return true;
     }
 
-    //	@Override
-    //	public Multimap getAttributeModifiers(ItemStack stack)
-    //	{
-    //		Multimap multimap = super.getAttributeModifiers(stack);
-    //		double melee = getUpgrades(stack).getDouble("melee");
-    //		if(melee!=0)
-    //			multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new
+    // @Override
+    // public Multimap getAttributeModifiers(ItemStack stack)
+    // {
+    // Multimap multimap = super.getAttributeModifiers(stack);
+    // double melee = getUpgrades(stack).getDouble("melee");
+    // if(melee!=0)
+    // multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new
     // AttributeModifier(field_111210_e, "Weapon modifier", melee, 0));
-    //		double speed = getUpgrades(stack).getDouble("speed");
-    //		if(speed!=0)
-    //			multimap.put(SharedMonsterAttributes.movementSpeed.getAttributeUnlocalizedName(), new
+    // double speed = getUpgrades(stack).getDouble("speed");
+    // if(speed!=0)
+    // multimap.put(SharedMonsterAttributes.movementSpeed.getAttributeUnlocalizedName(), new
     // AttributeModifier(field_111210_e, "Weapon modifier", speed, 1));
-    //		return multimap;
-    //	}
+    // return multimap;
+    // }
 
     @Override
     public EnumAction getItemUseAction(ItemStack p_77661_1_) {
@@ -128,27 +129,28 @@ public class ItemRailgun extends ItemUpgradeableTool
 
     @Override
     public void onUpdate(ItemStack stack, World world, Entity ent, int slot, boolean inHand) {
-        //		if(!world.isRemote && stack.getItemDamage()!=1 && ent!=null && ItemNBTHelper.hasKey(stack, "blocked"))
-        //		{
-        //			int l = ItemNBTHelper.handleDelayedSoundsForStack(stack, "casings", ent);
-        //			if(l==0)
-        //				ItemNBTHelper.setDelayedSoundsForStack(stack, "cylinderFill", "tile.piston.in",.3f,3, 1,6,1);
-        //			l = ItemNBTHelper.handleDelayedSoundsForStack(stack, "cylinderFill", ent);
-        //			if(l==0)
-        //				ItemNBTHelper.setDelayedSoundsForStack(stack, "cylinderClose", "fire.ignite",.6f,5, 1,6,1);
-        //			l = ItemNBTHelper.handleDelayedSoundsForStack(stack, "cylinderClose", ent);
-        //			if(l==0)
-        //				ItemNBTHelper.setDelayedSoundsForStack(stack, "cylinderSpin", "note.hat",.1f,5, 5,8,1);
-        //			l = ItemNBTHelper.handleDelayedSoundsForStack(stack, "cylinderSpin", ent);
-        //			if(l==0)
-        //				ItemNBTHelper.remove(stack, "blocked");
-        //		}
+        // if(!world.isRemote && stack.getItemDamage()!=1 && ent!=null && ItemNBTHelper.hasKey(stack, "blocked"))
+        // {
+        // int l = ItemNBTHelper.handleDelayedSoundsForStack(stack, "casings", ent);
+        // if(l==0)
+        // ItemNBTHelper.setDelayedSoundsForStack(stack, "cylinderFill", "tile.piston.in",.3f,3, 1,6,1);
+        // l = ItemNBTHelper.handleDelayedSoundsForStack(stack, "cylinderFill", ent);
+        // if(l==0)
+        // ItemNBTHelper.setDelayedSoundsForStack(stack, "cylinderClose", "fire.ignite",.6f,5, 1,6,1);
+        // l = ItemNBTHelper.handleDelayedSoundsForStack(stack, "cylinderClose", ent);
+        // if(l==0)
+        // ItemNBTHelper.setDelayedSoundsForStack(stack, "cylinderSpin", "note.hat",.1f,5, 5,8,1);
+        // l = ItemNBTHelper.handleDelayedSoundsForStack(stack, "cylinderSpin", ent);
+        // if(l==0)
+        // ItemNBTHelper.remove(stack, "blocked");
+        // }
     }
 
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         int energy = Config.getInt("railgun_consumption");
-        float energyMod = 1 + this.getUpgrades(stack).getFloat("consumption");
+        float energyMod = 1 + this.getUpgrades(stack)
+            .getFloat("consumption");
         energy = (int) (energy * energyMod);
         if (this.extractEnergy(stack, energy, true) == energy && findAmmo(player) != null) {
             player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
@@ -162,11 +164,13 @@ public class ItemRailgun extends ItemUpgradeableTool
     @Override
     public void onUsingTick(ItemStack stack, EntityPlayer player, int count) {
         int inUse = this.getMaxItemUseDuration(stack) - count;
-        if (inUse > getChargeTime(stack) && inUse % 20 == player.getRNG().nextInt(20))
-            player.playSound(
-                    "immersiveengineering:spark",
-                    .8f + (.2f * player.getRNG().nextFloat()),
-                    .5f + (.5f * player.getRNG().nextFloat()));
+        if (inUse > getChargeTime(stack) && inUse % 20 == player.getRNG()
+            .nextInt(20)) player.playSound(
+                "immersiveengineering:spark",
+                .8f + (.2f * player.getRNG()
+                    .nextFloat()),
+                .5f + (.5f * player.getRNG()
+                    .nextFloat()));
     }
 
     @Override
@@ -174,7 +178,8 @@ public class ItemRailgun extends ItemUpgradeableTool
         int inUse = this.getMaxItemUseDuration(stack) - timeLeft;
         if (inUse < getChargeTime(stack)) return;
         int energy = Config.getInt("railgun_consumption");
-        float energyMod = 1 + this.getUpgrades(stack).getFloat("consumption");
+        float energyMod = 1 + this.getUpgrades(stack)
+            .getFloat("consumption");
         energy = (int) (energy * energyMod);
         if (this.extractEnergy(stack, energy, true) == energy) {
             int ammoSlot = findAmmoSlot(player);
@@ -183,17 +188,18 @@ public class ItemRailgun extends ItemUpgradeableTool
                 Vec3 vec = player.getLookVec();
                 float speed = 20;
                 EntityRailgunShot shot = new EntityRailgunShot(
-                        player.worldObj,
-                        player,
-                        vec.xCoord * speed,
-                        vec.yCoord * speed,
-                        vec.zCoord * speed,
-                        Utils.copyStackWithAmount(ammo, 1));
+                    player.worldObj,
+                    player,
+                    vec.xCoord * speed,
+                    vec.yCoord * speed,
+                    vec.zCoord * speed,
+                    Utils.copyStackWithAmount(ammo, 1));
                 player.inventory.decrStackSize(ammoSlot, 1);
                 player.playSound(
-                        "immersiveengineering:railgunFire",
-                        1,
-                        .5f + (.5f * player.getRNG().nextFloat()));
+                    "immersiveengineering:railgunFire",
+                    1,
+                    .5f + (.5f * player.getRNG()
+                        .nextFloat()));
                 this.extractEnergy(stack, energy, false);
                 if (!world.isRemote) player.worldObj.spawnEntityInWorld(shot);
             }
@@ -217,7 +223,8 @@ public class ItemRailgun extends ItemUpgradeableTool
     }
 
     public int getChargeTime(ItemStack railgun) {
-        return (int) (40 / (1 + this.getUpgrades(railgun).getFloat("speed")));
+        return (int) (40 / (1 + this.getUpgrades(railgun)
+            .getFloat("speed")));
     }
 
     @Override
@@ -227,9 +234,9 @@ public class ItemRailgun extends ItemUpgradeableTool
 
     @Override
     public void removeFromWorkbench(EntityPlayer player, ItemStack stack) {
-        //		ItemStack[] contents = this.getContainedItems(stack);
-        //		if(contents[18]!=null&&contents[19]!=null)
-        //			player.triggerAchievement(IEAchievements.upgradeRevolver);
+        // ItemStack[] contents = this.getContainedItems(stack);
+        // if(contents[18]!=null&&contents[19]!=null)
+        // player.triggerAchievement(IEAchievements.upgradeRevolver);
     }
 
     @Override
@@ -261,7 +268,8 @@ public class ItemRailgun extends ItemUpgradeableTool
 
     @Override
     public int getMaxEnergyStored(ItemStack container) {
-        return 8000 + this.getUpgrades(container).getInteger("capacity");
+        return 8000 + this.getUpgrades(container)
+            .getInteger("capacity");
     }
 
     public String[] compileRender(ItemStack stack) {
@@ -280,10 +288,11 @@ public class ItemRailgun extends ItemUpgradeableTool
 
     @Override
     public boolean canZoom(ItemStack stack, EntityPlayer player) {
-        return this.getUpgrades(stack).getBoolean("scope");
+        return this.getUpgrades(stack)
+            .getBoolean("scope");
     }
 
-    float[] zoomSteps = new float[] {.1f, .15625f, .2f, .25f, .3125f, .4f, .5f, .625f};
+    float[] zoomSteps = new float[] { .1f, .15625f, .2f, .25f, .3125f, .4f, .5f, .625f };
 
     @Override
     public float[] getZoomSteps(ItemStack stack, EntityPlayer player) {

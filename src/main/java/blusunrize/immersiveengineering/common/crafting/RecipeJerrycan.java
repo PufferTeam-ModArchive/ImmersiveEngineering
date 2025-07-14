@@ -1,8 +1,5 @@
 package blusunrize.immersiveengineering.common.crafting;
 
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -10,22 +7,23 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class RecipeJerrycan implements IRecipe {
+
     @Override
     public boolean matches(InventoryCrafting inv, World world) {
         ItemStack jerrycan = null;
         ItemStack container = null;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stackInSlot = inv.getStackInSlot(i);
-            if (stackInSlot != null)
-                if (jerrycan == null
-                        && IEContent.itemJerrycan.equals(stackInSlot.getItem())
-                        && ItemNBTHelper.hasKey(stackInSlot, "fluid")) jerrycan = stackInSlot;
-                else if (container == null
-                        && stackInSlot.getItem() instanceof IFluidContainerItem
-                        && ((IFluidContainerItem) stackInSlot.getItem()).getFluid(stackInSlot) == null)
-                    container = stackInSlot;
-                else return false;
+            if (stackInSlot != null) if (jerrycan == null && IEContent.itemJerrycan.equals(stackInSlot.getItem())
+                && ItemNBTHelper.hasKey(stackInSlot, "fluid")) jerrycan = stackInSlot;
+            else if (container == null && stackInSlot.getItem() instanceof IFluidContainerItem
+                && ((IFluidContainerItem) stackInSlot.getItem()).getFluid(stackInSlot) == null) container = stackInSlot;
+            else return false;
         }
         return jerrycan != null && container != null;
     }
@@ -37,14 +35,12 @@ public class RecipeJerrycan implements IRecipe {
         FluidStack fs = null;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stackInSlot = inv.getStackInSlot(i);
-            if (stackInSlot != null)
-                if (jerrycan == null
-                        && IEContent.itemJerrycan.equals(stackInSlot.getItem())
-                        && ItemNBTHelper.hasKey(stackInSlot, "fluid")) {
+            if (stackInSlot != null) if (jerrycan == null && IEContent.itemJerrycan.equals(stackInSlot.getItem())
+                && ItemNBTHelper.hasKey(stackInSlot, "fluid")) {
                     jerrycan = stackInSlot;
                     fs = ((IFluidContainerItem) IEContent.itemJerrycan).getFluid(jerrycan);
-                } else if (container == null && stackInSlot.getItem() instanceof IFluidContainerItem)
-                    container = stackInSlot;
+                } else
+                if (container == null && stackInSlot.getItem() instanceof IFluidContainerItem) container = stackInSlot;
         }
         if (fs != null && container != null) {
             ItemStack newContainer = Utils.copyStackWithAmount(container, 1);

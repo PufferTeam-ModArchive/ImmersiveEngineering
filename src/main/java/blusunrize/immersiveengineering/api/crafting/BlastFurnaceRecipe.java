@@ -1,20 +1,23 @@
 package blusunrize.immersiveengineering.api.crafting;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
+
 /**
  * @author BluSunrize - 23.03.2015
- * <br>
- * The recipe for the blast furnace
+ *         <br>
+ *         The recipe for the blast furnace
  */
 public class BlastFurnaceRecipe {
+
     public final Object input;
     public final ItemStack output;
     public final ItemStack slag;

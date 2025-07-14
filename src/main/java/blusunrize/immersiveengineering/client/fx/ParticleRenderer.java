@@ -1,11 +1,14 @@
 package blusunrize.immersiveengineering.client.fx;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import net.minecraft.profiler.Profiler;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.client.ClientUtils;
+
 public class ParticleRenderer {
+
     public static void dispatch() {
         Profiler profiler = ClientUtils.mc().mcProfiler;
         profiler.startSection(ImmersiveEngineering.MODID + "-particles");
@@ -18,12 +21,16 @@ public class ParticleRenderer {
         for (String key : EntityFXIEBase.queuedRenders.keySet()) {
             profiler.endStartSection(key);
             int i = 0;
-            ClientUtils.tes().startDrawingQuads();
+            ClientUtils.tes()
+                .startDrawingQuads();
             for (EntityFXIEBase particle : EntityFXIEBase.queuedRenders.get(key)) {
-                if ((i++) == 0) ClientUtils.mc().getTextureManager().bindTexture(particle.getParticleTexture());
+                if ((i++) == 0) ClientUtils.mc()
+                    .getTextureManager()
+                    .bindTexture(particle.getParticleTexture());
                 particle.tessellateFromQueue(ClientUtils.tes());
             }
-            ClientUtils.tes().draw();
+            ClientUtils.tes()
+                .draw();
         }
         EntityFXIEBase.queuedRenders.clear();
 
@@ -32,12 +39,16 @@ public class ParticleRenderer {
         for (String key : EntityFXIEBase.queuedDepthIgnoringRenders.keySet()) {
             profiler.endStartSection(key);
             int i = 0;
-            ClientUtils.tes().startDrawingQuads();
+            ClientUtils.tes()
+                .startDrawingQuads();
             for (EntityFXIEBase particle : EntityFXIEBase.queuedDepthIgnoringRenders.get(key)) {
-                if ((i++) == 0) ClientUtils.mc().getTextureManager().bindTexture(particle.getParticleTexture());
+                if ((i++) == 0) ClientUtils.mc()
+                    .getTextureManager()
+                    .bindTexture(particle.getParticleTexture());
                 particle.tessellateFromQueue(ClientUtils.tes());
             }
-            ClientUtils.tes().draw();
+            ClientUtils.tes()
+                .draw();
         }
         EntityFXIEBase.queuedDepthIgnoringRenders.clear();
         GL11.glEnable(GL11.GL_DEPTH_TEST);

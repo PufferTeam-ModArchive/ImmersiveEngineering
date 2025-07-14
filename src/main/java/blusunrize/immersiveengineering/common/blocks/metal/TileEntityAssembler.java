@@ -1,15 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockAssembler;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyReceiver;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,15 +26,24 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockAssembler;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyReceiver;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class TileEntityAssembler extends TileEntityMultiblockPart
-        implements ISidedInventory, IEnergyReceiver, IFluidHandler {
+    implements ISidedInventory, IEnergyReceiver, IFluidHandler {
+
     public int facing = 2;
     public EnergyStorage energyStorage = new EnergyStorage(16000);
     public ItemStack[] inventory = new ItemStack[18 + 3];
-    public CrafterPatternInventory[] patterns = {
-        new CrafterPatternInventory(this), new CrafterPatternInventory(this), new CrafterPatternInventory(this)
-    };
-    public FluidTank[] tanks = {new FluidTank(8000), new FluidTank(8000), new FluidTank(8000)};
+    public CrafterPatternInventory[] patterns = { new CrafterPatternInventory(this), new CrafterPatternInventory(this),
+        new CrafterPatternInventory(this) };
+    public FluidTank[] tanks = { new FluidTank(8000), new FluidTank(8000), new FluidTank(8000) };
     public boolean computerControlled = false;
     public boolean[] computerOn = new boolean[3];
 
@@ -79,10 +81,10 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
 
                 int consumed = Config.getInt("assembler_consumption");
                 if (this.hasIngredients(pattern, queryList)
-                        && this.energyStorage.extractEnergy(consumed, true) == consumed) {
+                    && this.energyStorage.extractEnergy(consumed, true) == consumed) {
                     this.energyStorage.extractEnergy(consumed, false);
-                    ArrayList<ItemStack> outputList = new ArrayList<
-                            ItemStack>(); // List of all outputs for the current recipe. This includes discarded
+                    ArrayList<ItemStack> outputList = new ArrayList<ItemStack>(); // List of all outputs for the current
+                                                                                  // recipe. This includes discarded
                     // containers
                     outputList.add(output);
 
@@ -90,62 +92,56 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
                     ArrayList<Integer> usedOreSlots = new ArrayList();
                     if (pattern.recipe instanceof ShapedOreRecipe || pattern.recipe instanceof ShapelessOreRecipe) {
                         oreInputs = pattern.recipe instanceof ShapedOreRecipe
-                                ? ((ShapedOreRecipe) pattern.recipe).getInput()
-                                : ((ShapelessOreRecipe) pattern.recipe)
-                                        .getInput()
-                                        .toArray();
+                            ? ((ShapedOreRecipe) pattern.recipe).getInput()
+                            : ((ShapelessOreRecipe) pattern.recipe).getInput()
+                                .toArray();
                     }
-                    for (int i = 0; i < 9; i++)
-                        if (pattern.inv[i] != null) {
-                            Object query = pattern.inv[i].copy();
-                            int querySize = pattern.inv[i].stackSize;
-                            if (FluidContainerRegistry.getFluidForFilledItem(pattern.inv[i]) != null) {
-                                FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(pattern.inv[i]);
-                                fs.amount *= querySize;
-                                boolean hasFluid = false;
-                                for (FluidTank tank : tanks)
-                                    if (tank.getFluid() != null
-                                            && tank.getFluid().containsFluid(fs)) {
-                                        hasFluid = true;
+                    for (int i = 0; i < 9; i++) if (pattern.inv[i] != null) {
+                        Object query = pattern.inv[i].copy();
+                        int querySize = pattern.inv[i].stackSize;
+                        if (FluidContainerRegistry.getFluidForFilledItem(pattern.inv[i]) != null) {
+                            FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(pattern.inv[i]);
+                            fs.amount *= querySize;
+                            boolean hasFluid = false;
+                            for (FluidTank tank : tanks) if (tank.getFluid() != null && tank.getFluid()
+                                .containsFluid(fs)) {
+                                    hasFluid = true;
+                                    break;
+                                }
+                            if (hasFluid) query = fs;
+                        }
+
+                        if (query instanceof ItemStack && oreInputs != null)
+                            for (int iOre = 0; iOre < oreInputs.length; iOre++)
+                                if (!usedOreSlots.contains(Integer.valueOf(iOre)))
+                                    if (Utils.stackMatchesObject((ItemStack) query, oreInputs[iOre], true)) {
+                                        query = oreInputs[iOre];
+                                        querySize = 1;
                                         break;
                                     }
-                                if (hasFluid) query = fs;
-                            }
-
-                            if (query instanceof ItemStack && oreInputs != null)
-                                for (int iOre = 0; iOre < oreInputs.length; iOre++)
-                                    if (!usedOreSlots.contains(Integer.valueOf(iOre)))
-                                        if (Utils.stackMatchesObject((ItemStack) query, oreInputs[iOre], true)) {
-                                            query = oreInputs[iOre];
-                                            querySize = 1;
-                                            break;
-                                        }
-                            boolean taken = false;
-                            for (int j = 0; j < outputBuffer.length; j++) {
-                                if (taken = consumeItem(query, querySize, outputBuffer[j], outputList)) break;
-                            }
-                            if (!taken) this.consumeItem(query, querySize, inventory, outputList);
+                        boolean taken = false;
+                        for (int j = 0; j < outputBuffer.length; j++) {
+                            if (taken = consumeItem(query, querySize, outputBuffer[j], outputList)) break;
                         }
+                        if (!taken) this.consumeItem(query, querySize, inventory, outputList);
+                    }
                     outputBuffer[p] = outputList.toArray(new ItemStack[outputList.size()]);
                     update = true;
                 }
             }
         }
         TileEntity inventory = this.worldObj.getTileEntity(
-                xCoord + (facing == 4 ? 2 : facing == 5 ? -2 : 0),
-                yCoord,
-                zCoord + (facing == 2 ? 2 : facing == 3 ? -2 : 0));
+            xCoord + (facing == 4 ? 2 : facing == 5 ? -2 : 0),
+            yCoord,
+            zCoord + (facing == 2 ? 2 : facing == 3 ? -2 : 0));
         for (int buffer = 0; buffer < outputBuffer.length; buffer++)
             if (outputBuffer[buffer] != null && outputBuffer[buffer].length > 0)
                 for (int iOutput = 0; iOutput < outputBuffer[buffer].length; iOutput++) {
                     ItemStack output = outputBuffer[buffer][iOutput];
                     if (output != null && output.stackSize > 0) {
-                        if (!isRecipeIngredient(output, buffer))
-                            if ((inventory instanceof ISidedInventory
-                                            && ((ISidedInventory) inventory).getAccessibleSlotsFromSide(facing).length
-                                                    > 0)
-                                    || (inventory instanceof IInventory
-                                            && ((IInventory) inventory).getSizeInventory() > 0)) {
+                        if (!isRecipeIngredient(output, buffer)) if ((inventory instanceof ISidedInventory
+                            && ((ISidedInventory) inventory).getAccessibleSlotsFromSide(facing).length > 0)
+                            || (inventory instanceof IInventory && ((IInventory) inventory).getSizeInventory() > 0)) {
                                 output = Utils.insertStackIntoInventory((IInventory) inventory, output, facing);
                                 if (output == null || output.stackSize <= 0) continue;
                             }
@@ -155,59 +151,58 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
                         {
                             if (this.inventory[18 + buffer] == null && free < 0) free = 18 + buffer;
                             else if (this.inventory[18 + buffer] != null
-                                    && OreDictionary.itemMatches(output, this.inventory[18 + buffer], true)
-                                    && this.inventory[18 + buffer].stackSize + output.stackSize
-                                            <= this.inventory[18 + buffer].getMaxStackSize()) {
-                                this.inventory[18 + buffer].stackSize += output.stackSize;
-                                free = -1;
-                                break;
-                            }
-                        } else
-                            for (int i = 0; i < this.inventory.length; i++) {
-                                if (this.inventory[i] == null && free < 0) free = i;
-                                else if (this.inventory[i] != null
-                                        && OreDictionary.itemMatches(output, this.inventory[i], true)
-                                        && this.inventory[i].stackSize + output.stackSize
-                                                <= this.inventory[i].getMaxStackSize()) {
-                                    this.inventory[i].stackSize += output.stackSize;
-                                    free = -1;
-                                    break;
-                                }
-                            }
+                                && OreDictionary.itemMatches(output, this.inventory[18 + buffer], true)
+                                && this.inventory[18 + buffer].stackSize + output.stackSize
+                                    <= this.inventory[18 + buffer].getMaxStackSize()) {
+                                        this.inventory[18 + buffer].stackSize += output.stackSize;
+                                        free = -1;
+                                        break;
+                                    }
+                        } else for (int i = 0; i < this.inventory.length; i++) {
+                            if (this.inventory[i] == null && free < 0) free = i;
+                            else if (this.inventory[i] != null
+                                && OreDictionary.itemMatches(output, this.inventory[i], true)
+                                && this.inventory[i].stackSize + output.stackSize
+                                    <= this.inventory[i].getMaxStackSize()) {
+                                        this.inventory[i].stackSize += output.stackSize;
+                                        free = -1;
+                                        break;
+                                    }
+                        }
                         if (free >= 0) this.inventory[free] = output.copy();
                     }
                 }
-        for (int i = 0; i < 3; i++)
-            if ((inventory instanceof ISidedInventory
-                            && ((ISidedInventory) inventory).getAccessibleSlotsFromSide(facing).length > 0)
-                    || (inventory instanceof IInventory && ((IInventory) inventory).getSizeInventory() > 0))
-                if (!isRecipeIngredient(this.inventory[18 + i], i))
-                    this.inventory[18 + i] =
-                            Utils.insertStackIntoInventory((IInventory) inventory, this.inventory[18 + i], facing);
+        for (int i = 0; i < 3; i++) if ((inventory instanceof ISidedInventory
+            && ((ISidedInventory) inventory).getAccessibleSlotsFromSide(facing).length > 0)
+            || (inventory instanceof IInventory && ((IInventory) inventory).getSizeInventory() > 0))
+            if (!isRecipeIngredient(this.inventory[18 + i], i)) this.inventory[18 + i] = Utils
+                .insertStackIntoInventory((IInventory) inventory, this.inventory[18 + i], facing);
         if (update) {
             this.markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
     }
 
-    public boolean consumeItem(
-            Object query, int querySize, ItemStack[] inventory, ArrayList<ItemStack> containerItems) {
-        if (query instanceof FluidStack)
-            for (FluidTank tank : tanks)
-                if (tank.getFluid() != null && tank.getFluid().containsFluid((FluidStack) query)) {
-                    tank.drain(((FluidStack) query).amount, true);
-                    markDirty();
-                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-                    return true;
-                }
+    public boolean consumeItem(Object query, int querySize, ItemStack[] inventory,
+        ArrayList<ItemStack> containerItems) {
+        if (query instanceof FluidStack) for (FluidTank tank : tanks) if (tank.getFluid() != null && tank.getFluid()
+            .containsFluid((FluidStack) query)) {
+                tank.drain(((FluidStack) query).amount, true);
+                markDirty();
+                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                return true;
+            }
 
         for (int i = 0; i < inventory.length; i++)
             if (inventory[i] != null && Utils.stackMatchesObject(inventory[i], query, true)) {
                 int taken = Math.min(querySize, inventory[i].stackSize);
                 boolean doTake = true;
-                if (inventory[i].getItem().hasContainerItem(inventory[i])) {
-                    ItemStack container = inventory[i].getItem().getContainerItem(inventory[i]);
-                    if (container != null && inventory[i].getItem().doesContainerItemLeaveCraftingGrid(inventory[i])) {
+                if (inventory[i].getItem()
+                    .hasContainerItem(inventory[i])) {
+                    ItemStack container = inventory[i].getItem()
+                        .getContainerItem(inventory[i]);
+                    if (container != null && inventory[i].getItem()
+                        .doesContainerItemLeaveCraftingGrid(inventory[i])) {
                         containerItems.add(container.copy());
                         if (inventory[i].stackSize - taken <= 0) {
                             inventory[i] = null;
@@ -232,61 +227,60 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
         Object[] oreInputs = null;
         ArrayList<Integer> usedOreSlots = new ArrayList();
         if (pattern.recipe instanceof ShapedOreRecipe || pattern.recipe instanceof ShapelessOreRecipe) {
-            oreInputs = pattern.recipe instanceof ShapedOreRecipe
-                    ? ((ShapedOreRecipe) pattern.recipe).getInput()
-                    : ((ShapelessOreRecipe) pattern.recipe).getInput().toArray();
+            oreInputs = pattern.recipe instanceof ShapedOreRecipe ? ((ShapedOreRecipe) pattern.recipe).getInput()
+                : ((ShapelessOreRecipe) pattern.recipe).getInput()
+                    .toArray();
         }
         boolean match = true;
-        for (int i = 0; i < 9; i++)
-            if (pattern.inv[i] != null) {
-                if (FluidContainerRegistry.getFluidForFilledItem(pattern.inv[i]) != null) {
-                    FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(pattern.inv[i]);
-                    boolean hasFluid = false;
-                    for (FluidTank tank : tanks)
-                        if (tank.getFluid() != null && tank.getFluid().containsFluid(fs)) {
-                            hasFluid = true;
-                            break;
-                        }
-                    if (hasFluid) continue;
-                }
-
-                Object query = pattern.inv[i].copy();
-                int querySize = pattern.inv[i].stackSize;
-                if (oreInputs != null) {
-                    for (int iOre = 0; iOre < oreInputs.length; iOre++)
-                        if (!usedOreSlots.contains(Integer.valueOf(iOre)))
-                            if (Utils.stackMatchesObject((ItemStack) query, oreInputs[iOre], true)) {
-                                query = oreInputs[iOre];
-                                querySize = 1;
-                                break;
-                            }
-                }
-
-                Iterator<ItemStack> it = queryList.iterator();
-                while (it.hasNext()) {
-                    ItemStack next = it.next();
-                    if (Utils.stackMatchesObject(next, query, true)) {
-                        int taken = Math.min(querySize, next.stackSize);
-                        next.stackSize -= taken;
-                        if (next.stackSize <= 0) it.remove();
-                        querySize -= taken;
-                        if (querySize <= 0) break;
+        for (int i = 0; i < 9; i++) if (pattern.inv[i] != null) {
+            if (FluidContainerRegistry.getFluidForFilledItem(pattern.inv[i]) != null) {
+                FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(pattern.inv[i]);
+                boolean hasFluid = false;
+                for (FluidTank tank : tanks) if (tank.getFluid() != null && tank.getFluid()
+                    .containsFluid(fs)) {
+                        hasFluid = true;
+                        break;
                     }
-                }
-                if (querySize > 0) {
-                    match = false;
-                    break;
+                if (hasFluid) continue;
+            }
+
+            Object query = pattern.inv[i].copy();
+            int querySize = pattern.inv[i].stackSize;
+            if (oreInputs != null) {
+                for (int iOre = 0; iOre < oreInputs.length; iOre++) if (!usedOreSlots.contains(Integer.valueOf(iOre)))
+                    if (Utils.stackMatchesObject((ItemStack) query, oreInputs[iOre], true)) {
+                        query = oreInputs[iOre];
+                        querySize = 1;
+                        break;
+                    }
+            }
+
+            Iterator<ItemStack> it = queryList.iterator();
+            while (it.hasNext()) {
+                ItemStack next = it.next();
+                if (Utils.stackMatchesObject(next, query, true)) {
+                    int taken = Math.min(querySize, next.stackSize);
+                    next.stackSize -= taken;
+                    if (next.stackSize <= 0) it.remove();
+                    querySize -= taken;
+                    if (querySize <= 0) break;
                 }
             }
+            if (querySize > 0) {
+                match = false;
+                break;
+            }
+        }
         return match;
     }
 
     public boolean canOutput(ItemStack output, int iPattern) {
         if (this.inventory[18 + iPattern] == null) return true;
         else if (OreDictionary.itemMatches(output, this.inventory[18 + iPattern], true)
-                && ItemStack.areItemStackTagsEqual(output, this.inventory[18 + iPattern])
-                && this.inventory[18 + iPattern].stackSize + output.stackSize
-                        <= this.inventory[18 + iPattern].getMaxStackSize()) return true;
+            && ItemStack.areItemStackTagsEqual(output, this.inventory[18 + iPattern])
+            && this.inventory[18 + iPattern].stackSize + output.stackSize
+                <= this.inventory[18 + iPattern].getMaxStackSize())
+            return true;
         return false;
     }
 
@@ -374,11 +368,9 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            if (pos == 4)
-                renderAABB = AxisAlignedBB.getBoundingBox(
-                        xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 3, zCoord + 2);
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (pos == 4) renderAABB = AxisAlignedBB
+            .getBoundingBox(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 3, zCoord + 2);
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 
@@ -390,7 +382,7 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
 
     @Override
     public float[] getBlockBounds() {
-        if (pos < 9 || pos == 10 || pos == 13 || pos == 16 || pos == 22) return new float[] {0, 0, 0, 1, 1, 1};
+        if (pos < 9 || pos == 10 || pos == 13 || pos == 16 || pos == 22) return new float[] { 0, 0, 0, 1, 1, 1 };
 
         float xMin = 0;
         float yMin = 0;
@@ -409,7 +401,7 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
         else if ((pos % 3 == 0 && facing == 3) || (pos % 3 == 2 && facing == 2)) xMin = .1875f;
         else if ((pos % 3 == 0 && facing == 2) || (pos % 3 == 2 && facing == 3)) xMax = .8125f;
 
-        return new float[] {xMin, yMin, zMin, xMax, yMax, zMax};
+        return new float[] { xMin, yMin, zMin, xMax, yMax, zMax };
     }
 
     @Override
@@ -417,7 +409,7 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
         super.invalidate();
 
         if (formed && !worldObj.isRemote) {
-            //			int f = facing;
+            // int f = facing;
             TileEntity master = master();
             if (master == null) master = this;
 
@@ -425,38 +417,34 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
             int startY = master.yCoord;
             int startZ = master.zCoord;
 
-            for (int yy = -1; yy <= 1; yy++)
-                for (int zz = -1; zz <= 1; zz++)
-                    for (int xx = -1; xx <= 1; xx++) {
-                        ItemStack s = null;
-                        TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (te instanceof TileEntityAssembler) {
-                            s = ((TileEntityAssembler) te).getOriginalBlock();
-                            ((TileEntityAssembler) te).formed = false;
-                        }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
-                            TileEntity tile = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                            if (tile instanceof TileEntityStructuralArm)
-                                ((TileEntityStructuralArm) tile).facing =
-                                        facing < 4 ? (xx == -1 ? 4 : 5) : (zz == -1 ? 2 : 3);
-                        }
+            for (int yy = -1; yy <= 1; yy++) for (int zz = -1; zz <= 1; zz++) for (int xx = -1; xx <= 1; xx++) {
+                ItemStack s = null;
+                TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                if (te instanceof TileEntityAssembler) {
+                    s = ((TileEntityAssembler) te).getOriginalBlock();
+                    ((TileEntityAssembler) te).formed = false;
+                }
+                if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                    s = this.getOriginalBlock();
+                if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                    else {
+                        if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                            worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                        worldObj.setBlock(
+                            startX + xx,
+                            startY + yy,
+                            startZ + zz,
+                            Block.getBlockFromItem(s.getItem()),
+                            s.getItemDamage(),
+                            0x3);
                     }
+                    TileEntity tile = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                    if (tile instanceof TileEntityStructuralArm)
+                        ((TileEntityStructuralArm) tile).facing = facing < 4 ? (xx == -1 ? 4 : 5) : (zz == -1 ? 2 : 3);
+                }
+            }
         }
     }
 
@@ -481,12 +469,11 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
         TileEntityAssembler master = master();
         if (master != null) return master.decrStackSize(slot, amount);
         ItemStack stack = getStackInSlot(slot);
-        if (stack != null)
-            if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-            else {
-                stack = stack.splitStack(amount);
-                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-            }
+        if (stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+        else {
+            stack = stack.splitStack(amount);
+            if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+        }
         this.markDirty();
         return stack;
     }
@@ -531,9 +518,8 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this
-                ? false
-                : formed && player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
+        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false
+            : formed && player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
     }
 
     @Override
@@ -553,7 +539,7 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
         if (!formed) return new int[0];
-        if (pos == 10 || pos == 16) return new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+        if (pos == 10 || pos == 16) return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
         return new int[0];
     }
 
@@ -612,16 +598,15 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
         TileEntityAssembler master = master();
         if (master != null) return master.fill(from, resource, doFill);
         int fill = -1;
-        for (FluidTank tank : tanks)
-            if (tank.getFluid() != null && tank.getFluid().isFluidEqual(resource)) {
+        for (FluidTank tank : tanks) if (tank.getFluid() != null && tank.getFluid()
+            .isFluidEqual(resource)) {
                 fill = tank.fill(resource, doFill);
                 break;
             }
-        if (fill == -1)
-            for (FluidTank tank : tanks) {
-                fill = tank.fill(resource, doFill);
-                if (fill > 0) break;
-            }
+        if (fill == -1) for (FluidTank tank : tanks) {
+            fill = tank.fill(resource, doFill);
+            if (fill > 0) break;
+        }
         if (fill > 0) {
             markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -653,16 +638,15 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
         if (pos == 1 && from == ForgeDirection.getOrientation(facing)) {
             TileEntityAssembler master = master();
-            if (master != null)
-                return new FluidTankInfo[] {
-                    master.tanks[0].getInfo(), master.tanks[1].getInfo(), master.tanks[2].getInfo()
-                };
-            else return new FluidTankInfo[] {tanks[0].getInfo(), tanks[1].getInfo(), tanks[2].getInfo()};
+            if (master != null) return new FluidTankInfo[] { master.tanks[0].getInfo(), master.tanks[1].getInfo(),
+                master.tanks[2].getInfo() };
+            else return new FluidTankInfo[] { tanks[0].getInfo(), tanks[1].getInfo(), tanks[2].getInfo() };
         }
         return new FluidTankInfo[0];
     }
 
     public static class CrafterPatternInventory implements IInventory {
+
         public ItemStack[] inv = new ItemStack[10];
         public IRecipe recipe;
         final TileEntityAssembler tile;
@@ -685,12 +669,11 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
         public ItemStack decrStackSize(int slot, int amount) {
             ItemStack stack = getStackInSlot(slot);
 
-            if (slot < 9 && stack != null)
-                if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-                else {
-                    stack = stack.splitStack(amount);
-                    if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-                }
+            if (slot < 9 && stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+            else {
+                stack = stack.splitStack(amount);
+                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+            }
             return stack;
         }
 
@@ -725,16 +708,17 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
                 if (FluidContainerRegistry.getFluidForFilledItem(inv[i]) != null) {
                     FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(inv[i]);
                     boolean hasFluid = false;
-                    for (FluidTank tank : tile.tanks)
-                        if (tank.getFluid() != null && tank.getFluid().containsFluid(fs)) {
+                    for (FluidTank tank : tile.tanks) if (tank.getFluid() != null && tank.getFluid()
+                        .containsFluid(fs)) {
                             hasFluid = true;
                             break;
                         }
                     if (hasFluid) continue;
                 }
-                ItemStack container = inv[i].getItem().getContainerItem(inv[i]);
-                if (container != null && inv[i].getItem().doesContainerItemLeaveCraftingGrid(inv[i]))
-                    outputList.add(container.copy());
+                ItemStack container = inv[i].getItem()
+                    .getContainerItem(inv[i]);
+                if (container != null && inv[i].getItem()
+                    .doesContainerItemLeaveCraftingGrid(inv[i])) outputList.add(container.copy());
             }
             return outputList;
         }
@@ -776,13 +760,12 @@ public class TileEntityAssembler extends TileEntityMultiblockPart
         }
 
         public void writeToNBT(NBTTagList list) {
-            for (int i = 0; i < this.inv.length; i++)
-                if (this.inv[i] != null) {
-                    NBTTagCompound itemTag = new NBTTagCompound();
-                    itemTag.setByte("Slot", (byte) i);
-                    this.inv[i].writeToNBT(itemTag);
-                    list.appendTag(itemTag);
-                }
+            for (int i = 0; i < this.inv.length; i++) if (this.inv[i] != null) {
+                NBTTagCompound itemTag = new NBTTagCompound();
+                itemTag.setByte("Slot", (byte) i);
+                this.inv[i].writeToNBT(itemTag);
+                list.appendTag(itemTag);
+            }
         }
 
         public void readFromNBT(NBTTagList list) {

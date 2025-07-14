@@ -1,5 +1,25 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.ComparableItemStack;
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
@@ -15,29 +35,12 @@ import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyReceiver;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 import mods.railcraft.api.crafting.IRockCrusherRecipe;
 import mods.railcraft.api.crafting.RailcraftCraftingManager;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityCrusher extends TileEntityMultiblockPart
-        implements IEnergyReceiver, ISidedInventory, ISoundTile {
+    implements IEnergyReceiver, ISidedInventory, ISoundTile {
+
     public int facing = 2;
     public EnergyStorage energyStorage = new EnergyStorage(32000);
     public List<ItemStack> inputs = new ArrayList();
@@ -85,7 +88,11 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
 
         if (worldObj.isRemote) {
             ImmersiveEngineering.proxy.handleTileSound(
-                    "crusher", this, hasPower && ((active && process > 0) || mobGrinding || grindingTimer > 0), 1, 1);
+                "crusher",
+                this,
+                hasPower && ((active && process > 0) || mobGrinding || grindingTimer > 0),
+                1,
+                1);
             if (particleStack != null && active && hasPower && process > 0)
                 ImmersiveEngineering.proxy.spawnCrusherFX(this, particleStack);
             else if (particleStack != null) particleStack = null;
@@ -97,46 +104,49 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
             }
             boolean canWork;
             if (computerControlled) canWork = computerOn;
-            else
-                canWork = !worldObj.isBlockIndirectlyGettingPowered(
-                        xCoord + (facing == 4 ? -1 : facing == 5 ? 1 : facing == (mirrored ? 2 : 3) ? 2 : -2),
-                        yCoord + 1,
-                        zCoord + (facing == 2 ? -1 : facing == 3 ? 1 : facing == (mirrored ? 5 : 4) ? 2 : -2));
+            else canWork = !worldObj.isBlockIndirectlyGettingPowered(
+                xCoord + (facing == 4 ? -1 : facing == 5 ? 1 : facing == (mirrored ? 2 : 3) ? 2 : -2),
+                yCoord + 1,
+                zCoord + (facing == 2 ? -1 : facing == 3 ? 1 : facing == (mirrored ? 5 : 4) ? 2 : -2));
             if (canWork) {
                 int power = Config.getInt("crusher_consumption");
                 AxisAlignedBB aabb = AxisAlignedBB.getBoundingBox(
-                        xCoord - .5625, yCoord + 1.5, zCoord - .5625, xCoord + 1.5625, yCoord + 2.875, zCoord + 1.5625);
+                    xCoord - .5625,
+                    yCoord + 1.5,
+                    zCoord - .5625,
+                    xCoord + 1.5625,
+                    yCoord + 2.875,
+                    zCoord + 1.5625);
                 List entityList = worldObj.getEntitiesWithinAABB(Entity.class, aabb);
                 boolean hurtLiving = false;
-                if (!entityList.isEmpty() && hasPower)
-                    for (Object o : entityList) {
-                        if (o instanceof EntityItem) {
-                            EntityItem e = (EntityItem) o;
-                            ItemStack input = e.getEntityItem();
-                            if (!isValidInput(input)) {
-                                e.setDead();
-                                grindingTimer = 10;
-                                update = true;
-                                continue;
-                            }
-                            addStackToInputs(input);
-                            update = true;
+                if (!entityList.isEmpty() && hasPower) for (Object o : entityList) {
+                    if (o instanceof EntityItem) {
+                        EntityItem e = (EntityItem) o;
+                        ItemStack input = e.getEntityItem();
+                        if (!isValidInput(input)) {
                             e.setDead();
+                            grindingTimer = 10;
+                            update = true;
+                            continue;
                         }
-                        if (o instanceof EntityLivingBase) {
-                            EntityLivingBase e = (EntityLivingBase) o;
-                            if (!e.isDead && e.getHealth() > 0) {
-                                int consumed = this.energyStorage.extractEnergy(power, false);
-                                if (consumed > 0) {
-                                    e.attackEntityFrom(IEDamageSources.causeCrusherDamage(), consumed / 20f);
-                                    EventHandler.crusherMap.put(e.getUniqueID(), this);
-                                    mobGrinding = true;
-                                }
-                                update = true;
-                            }
-                            hurtLiving = true;
-                        }
+                        addStackToInputs(input);
+                        update = true;
+                        e.setDead();
                     }
+                    if (o instanceof EntityLivingBase) {
+                        EntityLivingBase e = (EntityLivingBase) o;
+                        if (!e.isDead && e.getHealth() > 0) {
+                            int consumed = this.energyStorage.extractEnergy(power, false);
+                            if (consumed > 0) {
+                                e.attackEntityFrom(IEDamageSources.causeCrusherDamage(), consumed / 20f);
+                                EventHandler.crusherMap.put(e.getUniqueID(), this);
+                                mobGrinding = true;
+                            }
+                            update = true;
+                        }
+                        hurtLiving = true;
+                    }
+                }
                 if (!hurtLiving && process <= 0 && mobGrinding) {
                     mobGrinding = false;
                     update = true;
@@ -156,41 +166,40 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
                     }
                 }
 
-                if (process <= 0 && !inputs.isEmpty())
-                    if (active) {
-                        ItemStack inputStack = inputs.get(0);
+                if (process <= 0 && !inputs.isEmpty()) if (active) {
+                    ItemStack inputStack = inputs.get(0);
 
-                        CrusherRecipe recipe = getRecipe(inputStack);
-                        if (recipe != null) {
-                            if (inputStack.stackSize
-                                    >= (recipe.input instanceof ItemStack ? ((ItemStack) recipe.input).stackSize : 1)) {
-                                ArrayList<ItemStack> out = new ArrayList<>();
-                                ItemStack outputStack = recipe.output;
-                                if (outputStack != null) out.add(outputStack);
-                                if (recipe.secondaryOutput != null)
-                                    for (int i = 0; i < recipe.secondaryOutput.length; i++)
-                                        if (worldObj.rand.nextFloat() < recipe.secondaryChance[i])
-                                            out.add(recipe.secondaryOutput[i]);
-                                outputItems(out);
-                                inputStack.stackSize -=
-                                        (recipe.input instanceof ItemStack) ? ((ItemStack) recipe.input).stackSize : 1;
-                                if (inputStack.stackSize > 0) inputs.set(0, inputStack);
-                                else inputs.remove(0);
-                                if (!startRecipe()) {
-                                    active = false;
-                                }
-                                update = true;
-                            } else {
+                    CrusherRecipe recipe = getRecipe(inputStack);
+                    if (recipe != null) {
+                        if (inputStack.stackSize
+                            >= (recipe.input instanceof ItemStack ? ((ItemStack) recipe.input).stackSize : 1)) {
+                            ArrayList<ItemStack> out = new ArrayList<>();
+                            ItemStack outputStack = recipe.output;
+                            if (outputStack != null) out.add(outputStack);
+                            if (recipe.secondaryOutput != null) for (int i = 0; i < recipe.secondaryOutput.length; i++)
+                                if (worldObj.rand.nextFloat() < recipe.secondaryChance[i])
+                                    out.add(recipe.secondaryOutput[i]);
+                            outputItems(out);
+                            inputStack.stackSize -= (recipe.input instanceof ItemStack)
+                                ? ((ItemStack) recipe.input).stackSize
+                                : 1;
+                            if (inputStack.stackSize > 0) inputs.set(0, inputStack);
+                            else inputs.remove(0);
+                            if (!startRecipe()) {
                                 active = false;
-                                update = true;
                             }
-                        }
-                    } else {
-                        if (startRecipe()) {
-                            active = true;
+                            update = true;
+                        } else {
+                            active = false;
                             update = true;
                         }
                     }
+                } else {
+                    if (startRecipe()) {
+                        active = true;
+                        update = true;
+                    }
+                }
             } else if (active) {
                 active = false;
                 mobGrinding = false;
@@ -257,10 +266,8 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
     }
 
     public boolean addStackToInputs(ItemStack stack) {
-        for (int i = 0; i < inputs.size(); i++)
-            if (this.inputs.get(i) != null
-                    && this.inputs.get(i).isItemEqual(stack)
-                    && (this.inputs.get(i).stackSize + stack.stackSize <= stack.getMaxStackSize())) {
+        for (int i = 0; i < inputs.size(); i++) if (this.inputs.get(i) != null && this.inputs.get(i)
+            .isItemEqual(stack) && (this.inputs.get(i).stackSize + stack.stackSize <= stack.getMaxStackSize())) {
                 this.inputs.get(i).stackSize += stack.stackSize;
                 return true;
             }
@@ -270,9 +277,9 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
 
     public void outputItems(List<ItemStack> stacks) {
         TileEntity inventory = this.worldObj.getTileEntity(
-                xCoord + (facing == 4 ? -2 : facing == 5 ? 2 : 0),
-                yCoord,
-                zCoord + (facing == 2 ? -2 : facing == 3 ? 2 : 0));
+            xCoord + (facing == 4 ? -2 : facing == 5 ? 2 : 0),
+            yCoord,
+            zCoord + (facing == 2 ? -2 : facing == 3 ? 2 : 0));
         boolean isInv = isInventory(inventory, ForgeDirection.OPPOSITES[facing]);
 
         for (int i = 0; i < stacks.size(); i++) {
@@ -284,11 +291,11 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
             if (stack != null) {
                 ForgeDirection fd = ForgeDirection.getOrientation(facing);
                 EntityItem ei = new EntityItem(
-                        worldObj,
-                        xCoord + .5 + fd.offsetX * 2,
-                        yCoord + .5,
-                        zCoord + .5 + fd.offsetZ * 2,
-                        stack.copy());
+                    worldObj,
+                    xCoord + .5 + fd.offsetX * 2,
+                    yCoord + .5,
+                    zCoord + .5 + fd.offsetZ * 2,
+                    stack.copy());
                 ei.motionX = (0.075F * fd.offsetX);
                 ei.motionY = 0.025000000372529D;
                 ei.motionZ = (0.075F * fd.offsetZ);
@@ -322,8 +329,8 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
                 inputs.add(ItemStack.loadItemStackFromNBT(invList.getCompoundTagAt(i)));
         } else {
             particleStack = nbt.hasKey("particleStack")
-                    ? ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("particleStack"))
-                    : null;
+                ? ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("particleStack"))
+                : null;
         }
     }
 
@@ -344,7 +351,8 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
             nbt.setTag("inputs", invList);
         } else {
             if (!inputs.isEmpty()) {
-                NBTTagCompound t = inputs.get(0).writeToNBT(new NBTTagCompound());
+                NBTTagCompound t = inputs.get(0)
+                    .writeToNBT(new NBTTagCompound());
                 nbt.setTag("particleStack", t);
             }
         }
@@ -356,16 +364,14 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            if (pos == 17)
-                renderAABB = AxisAlignedBB.getBoundingBox(
-                        xCoord - (facing == 2 || facing == 3 ? 2 : 1),
-                        yCoord,
-                        zCoord - (facing == 4 || facing == 5 ? 2 : 1),
-                        xCoord + (facing == 2 || facing == 3 ? 3 : 2),
-                        yCoord + 3,
-                        zCoord + (facing == 4 || facing == 5 ? 3 : 2));
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (pos == 17) renderAABB = AxisAlignedBB.getBoundingBox(
+            xCoord - (facing == 2 || facing == 3 ? 2 : 1),
+            yCoord,
+            zCoord - (facing == 4 || facing == 5 ? 2 : 1),
+            xCoord + (facing == 2 || facing == 3 ? 3 : 2),
+            yCoord + 3,
+            zCoord + (facing == 4 || facing == 5 ? 3 : 2));
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 
@@ -384,108 +390,52 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
         if (pos % 15 >= 6 && pos % 15 <= 8) {
             if (pos / 15 == 0) {
                 if (pos % 5 == 1)
-                    return new float[] {
-                        fw == 3 || fl == 4 ? .1875f : 0,
-                        .5f,
-                        fl == 2 || fw == 4 ? .1875f : 0,
-                        fw == 2 || fl == 5 ? .8125f : 1,
-                        1,
-                        fl == 3 || fw == 5 ? .8125f : 1
-                    };
-                else if (pos % 5 == 2)
-                    return new float[] {
-                        fl == 4 ? .1875f : 0, .5f, fl == 2 ? .1875f : 0, fl == 5 ? .8125f : 1, 1, fl == 3 ? .8125f : 1
-                    };
+                    return new float[] { fw == 3 || fl == 4 ? .1875f : 0, .5f, fl == 2 || fw == 4 ? .1875f : 0,
+                        fw == 2 || fl == 5 ? .8125f : 1, 1, fl == 3 || fw == 5 ? .8125f : 1 };
+                else if (pos % 5 == 2) return new float[] { fl == 4 ? .1875f : 0, .5f, fl == 2 ? .1875f : 0,
+                    fl == 5 ? .8125f : 1, 1, fl == 3 ? .8125f : 1 };
                 else if (pos % 5 == 3)
-                    return new float[] {
-                        fw == 2 || fl == 4 ? .1875f : 0,
-                        .5f,
-                        fl == 2 || fw == 5 ? .1875f : 0,
-                        fw == 3 || fl == 5 ? .8125f : 1,
-                        1,
-                        fl == 3 || fw == 4 ? .8125f : 1
-                    };
+                    return new float[] { fw == 2 || fl == 4 ? .1875f : 0, .5f, fl == 2 || fw == 5 ? .1875f : 0,
+                        fw == 3 || fl == 5 ? .8125f : 1, 1, fl == 3 || fw == 4 ? .8125f : 1 };
             } else if (pos / 15 == 1) {
-                if (pos % 5 == 1)
-                    return new float[] {
-                        fw == 3 ? .1875f : 0, .5f, fw == 4 ? .1875f : 0, fw == 2 ? .8125f : 1, 1, fw == 5 ? .8125f : 1
-                    };
-                else if (pos % 5 == 2) return new float[] {0, 0, 0, 1, 1, 1};
-                else if (pos % 5 == 3)
-                    return new float[] {
-                        fw == 2 ? .1875f : 0, .5f, fw == 5 ? .1875f : 0, fw == 3 ? .8125f : 1, 1, fw == 4 ? .8125f : 1
-                    };
+                if (pos % 5 == 1) return new float[] { fw == 3 ? .1875f : 0, .5f, fw == 4 ? .1875f : 0,
+                    fw == 2 ? .8125f : 1, 1, fw == 5 ? .8125f : 1 };
+                else if (pos % 5 == 2) return new float[] { 0, 0, 0, 1, 1, 1 };
+                else if (pos % 5 == 3) return new float[] { fw == 2 ? .1875f : 0, .5f, fw == 5 ? .1875f : 0,
+                    fw == 3 ? .8125f : 1, 1, fw == 4 ? .8125f : 1 };
             } else if (pos / 15 == 2) {
                 if (pos % 5 == 1)
-                    return new float[] {
-                        fw == 3 || fl == 5 ? .1875f : 0,
-                        .5f,
-                        fl == 3 || fw == 4 ? .1875f : 0,
-                        fw == 2 || fl == 4 ? .8125f : 1,
-                        1,
-                        fl == 2 || fw == 5 ? .8125f : 1
-                    };
-                else if (pos % 5 == 2)
-                    return new float[] {
-                        fl == 5 ? .1875f : 0, .5f, fl == 3 ? .1875f : 0, fl == 4 ? .8125f : 1, 1, fl == 2 ? .8125f : 1
-                    };
+                    return new float[] { fw == 3 || fl == 5 ? .1875f : 0, .5f, fl == 3 || fw == 4 ? .1875f : 0,
+                        fw == 2 || fl == 4 ? .8125f : 1, 1, fl == 2 || fw == 5 ? .8125f : 1 };
+                else if (pos % 5 == 2) return new float[] { fl == 5 ? .1875f : 0, .5f, fl == 3 ? .1875f : 0,
+                    fl == 4 ? .8125f : 1, 1, fl == 2 ? .8125f : 1 };
                 else if (pos % 5 == 3)
-                    return new float[] {
-                        fw == 2 || fl == 5 ? .1875f : 0,
-                        .5f,
-                        fl == 3 || fw == 5 ? .1875f : 0,
-                        fw == 3 || fl == 4 ? .8125f : 1,
-                        1,
-                        fl == 2 || fw == 4 ? .8125f : 1
-                    };
+                    return new float[] { fw == 2 || fl == 5 ? .1875f : 0, .5f, fl == 3 || fw == 5 ? .1875f : 0,
+                        fw == 3 || fl == 4 ? .8125f : 1, 1, fl == 2 || fw == 4 ? .8125f : 1 };
             }
         } else if (pos % 15 >= 11 && pos % 15 <= 13) {
             if (pos / 15 == 0) {
-                if (pos % 5 == 2)
-                    return new float[] {
-                        fl == 4 ? .1875f : fl == 5 ? .5625f : 0,
-                        0,
-                        fl == 2 ? .1875f : fl == 3 ? .5625f : 0,
-                        fl == 5 ? .8125f : fl == 4 ? .4375f : 1,
-                        1,
-                        fl == 3 ? .8125f : fl == 2 ? .4375f : 1
-                    };
+                if (pos % 5 == 2) return new float[] { fl == 4 ? .1875f : fl == 5 ? .5625f : 0, 0,
+                    fl == 2 ? .1875f : fl == 3 ? .5625f : 0, fl == 5 ? .8125f : fl == 4 ? .4375f : 1, 1,
+                    fl == 3 ? .8125f : fl == 2 ? .4375f : 1 };
             } else if (pos / 15 == 1) {
-                if (pos % 5 == 1)
-                    return new float[] {
-                        fw == 3 ? .1875f : fw == 2 ? .5625f : 0,
-                        0,
-                        fw == 4 ? .1875f : fw == 5 ? .5625f : 0,
-                        fw == 2 ? .8125f : fw == 3 ? .4375f : 1,
-                        1,
-                        fw == 5 ? .8125f : fw == 4 ? .4375f : 1
-                    };
-                else if (pos % 5 == 2) return new float[] {0, 0, 0, 0, 0, 0};
-                else if (pos % 5 == 3)
-                    return new float[] {
-                        fw == 2 ? .1875f : fw == 3 ? .5625f : 0,
-                        0,
-                        fw == 5 ? .1875f : fw == 4 ? .5625f : 0,
-                        fw == 3 ? .8125f : fw == 2 ? .4375f : 1,
-                        1,
-                        fw == 4 ? .8125f : fw == 5 ? .4375f : 1
-                    };
+                if (pos % 5 == 1) return new float[] { fw == 3 ? .1875f : fw == 2 ? .5625f : 0, 0,
+                    fw == 4 ? .1875f : fw == 5 ? .5625f : 0, fw == 2 ? .8125f : fw == 3 ? .4375f : 1, 1,
+                    fw == 5 ? .8125f : fw == 4 ? .4375f : 1 };
+                else if (pos % 5 == 2) return new float[] { 0, 0, 0, 0, 0, 0 };
+                else if (pos % 5 == 3) return new float[] { fw == 2 ? .1875f : fw == 3 ? .5625f : 0, 0,
+                    fw == 5 ? .1875f : fw == 4 ? .5625f : 0, fw == 3 ? .8125f : fw == 2 ? .4375f : 1, 1,
+                    fw == 4 ? .8125f : fw == 5 ? .4375f : 1 };
             } else if (pos / 15 == 2) {
-                if (pos % 5 == 2)
-                    return new float[] {
-                        fl == 5 ? .1875f : fl == 4 ? .5625f : 0,
-                        0,
-                        fl == 3 ? .1875f : fl == 2 ? .5625f : 0,
-                        fl == 4 ? .8125f : fl == 5 ? .4375f : 1,
-                        1,
-                        fl == 2 ? .8125f : fl == 3 ? .4375f : 1
-                    };
+                if (pos % 5 == 2) return new float[] { fl == 5 ? .1875f : fl == 4 ? .5625f : 0, 0,
+                    fl == 3 ? .1875f : fl == 2 ? .5625f : 0, fl == 4 ? .8125f : fl == 5 ? .4375f : 1, 1,
+                    fl == 2 ? .8125f : fl == 3 ? .4375f : 1 };
             }
         } else if (pos == 9)
-            return new float[] {fl == 5 ? .5f : 0, 0, fl == 3 ? .5f : 0, fl == 4 ? .5f : 1, 1, fl == 2 ? .5f : 1};
+            return new float[] { fl == 5 ? .5f : 0, 0, fl == 3 ? .5f : 0, fl == 4 ? .5f : 1, 1, fl == 2 ? .5f : 1 };
         else if (pos == 1 || pos == 3 || pos == 16 || pos == 18 || pos == 24 || (pos >= 31 && pos <= 34))
-            return new float[] {0, 0, 0, 1, .5f, 1};
-        return new float[] {0, 0, 0, 1, 1, 1};
+            return new float[] { 0, 0, 0, 1, .5f, 1 };
+        return new float[] { 0, 0, 0, 1, 1, 1 };
     }
 
     @Override
@@ -502,39 +452,36 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
             int startY = yCoord - ih;
             int startZ = zCoord - (f == 2 ? il : f == 3 ? -il : f == 5 ? -iw : iw);
 
-            for (int l = 0; l < 3; l++)
-                for (int w = -2; w <= 2; w++)
-                    for (int h = -1; h <= 1; h++) {
-                        int ww = mirrored ? -w : w;
-                        int xx = (f == 4 ? l : f == 5 ? -l : f == 2 ? -ww : ww);
-                        int yy = h;
-                        int zz = (f == 2 ? l : f == 3 ? -l : f == 5 ? -ww : ww);
+            for (int l = 0; l < 3; l++) for (int w = -2; w <= 2; w++) for (int h = -1; h <= 1; h++) {
+                int ww = mirrored ? -w : w;
+                int xx = (f == 4 ? l : f == 5 ? -l : f == 2 ? -ww : ww);
+                int yy = h;
+                int zz = (f == 2 ? l : f == 3 ? -l : f == 5 ? -ww : ww);
 
-                        ItemStack s = null;
-                        TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (te instanceof TileEntityCrusher) {
-                            s = ((TileEntityCrusher) te).getOriginalBlock();
-                            ((TileEntityCrusher) te).formed = false;
-                        }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
-                        }
+                ItemStack s = null;
+                TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                if (te instanceof TileEntityCrusher) {
+                    s = ((TileEntityCrusher) te).getOriginalBlock();
+                    ((TileEntityCrusher) te).formed = false;
+                }
+                if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                    s = this.getOriginalBlock();
+                if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                    else {
+                        if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                            worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                        worldObj.setBlock(
+                            startX + xx,
+                            startY + yy,
+                            startZ + zz,
+                            Block.getBlockFromItem(s.getItem()),
+                            s.getItemDamage(),
+                            0x3);
                     }
+                }
+            }
         }
     }
 
@@ -600,7 +547,7 @@ public class TileEntityCrusher extends TileEntityMultiblockPart
 
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return formed && pos == 27 && side == ForgeDirection.UP.ordinal() ? new int[] {0} : new int[0];
+        return formed && pos == 27 && side == ForgeDirection.UP.ordinal() ? new int[] { 0 } : new int[0];
     }
 
     @Override

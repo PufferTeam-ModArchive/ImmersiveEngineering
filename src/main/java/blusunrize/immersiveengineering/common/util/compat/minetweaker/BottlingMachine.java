@@ -1,29 +1,35 @@
 package blusunrize.immersiveengineering.common.util.compat.minetweaker;
 
-import blusunrize.immersiveengineering.api.crafting.BottlingMachineRecipe;
 import java.util.List;
+
+import net.minecraft.item.ItemStack;
+
+import blusunrize.immersiveengineering.api.crafting.BottlingMachineRecipe;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
 import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
 import minetweaker.api.liquid.ILiquidStack;
-import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenClass("mods.immersiveengineering.BottlingMachine")
 public class BottlingMachine {
+
     @ZenMethod
     public static void addRecipe(IItemStack output, IIngredient input, ILiquidStack fluid) {
         Object oInput = MTHelper.toObject(input);
         if (oInput == null || output == null || fluid == null) return;
 
-        BottlingMachineRecipe r =
-                new BottlingMachineRecipe(MTHelper.toStack(output), oInput, MTHelper.toFluidStack(fluid));
+        BottlingMachineRecipe r = new BottlingMachineRecipe(
+            MTHelper.toStack(output),
+            oInput,
+            MTHelper.toFluidStack(fluid));
         MineTweakerAPI.apply(new Add(r));
     }
 
     private static class Add implements IUndoableAction {
+
         private final BottlingMachineRecipe recipe;
 
         public Add(BottlingMachineRecipe recipe) {
@@ -67,6 +73,7 @@ public class BottlingMachine {
     }
 
     private static class Remove implements IUndoableAction {
+
         private final ItemStack output;
         List<BottlingMachineRecipe> removedRecipes;
 
@@ -82,9 +89,8 @@ public class BottlingMachine {
 
         @Override
         public void undo() {
-            if (removedRecipes != null)
-                for (BottlingMachineRecipe recipe : removedRecipes)
-                    if (recipe != null) BottlingMachineRecipe.recipeList.add(recipe);
+            if (removedRecipes != null) for (BottlingMachineRecipe recipe : removedRecipes)
+                if (recipe != null) BottlingMachineRecipe.recipeList.add(recipe);
         }
 
         @Override

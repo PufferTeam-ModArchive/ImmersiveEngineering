@@ -1,11 +1,5 @@
 package blusunrize.immersiveengineering.common.gui;
 
-import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.IWireCoil;
-import blusunrize.immersiveengineering.api.tool.ITool;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.gui.IESlot.ICallbackContainer;
-import blusunrize.immersiveengineering.common.items.ItemToolbox;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -17,7 +11,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
+import blusunrize.immersiveengineering.api.energy.IWireCoil;
+import blusunrize.immersiveengineering.api.tool.ITool;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.gui.IESlot.ICallbackContainer;
+import blusunrize.immersiveengineering.common.items.ItemToolbox;
+
 public class ContainerToolbox extends Container implements ICallbackContainer {
+
     private World worldObj;
     private int blockedSlot;
     public IInventory input;
@@ -53,13 +55,12 @@ public class ContainerToolbox extends Container implements ICallbackContainer {
 
         bindPlayerInventory(iinventory);
 
-        if (!world.isRemote)
-            try {
-                ((InventoryStorageItem) this.input).stackList =
-                        ((ItemToolbox) this.toolbox.getItem()).getContainedItems(this.toolbox);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (!world.isRemote) try {
+            ((InventoryStorageItem) this.input).stackList = ((ItemToolbox) this.toolbox.getItem())
+                .getContainedItems(this.toolbox);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.onCraftMatrixChanged(this.input);
     }
 
@@ -73,10 +74,10 @@ public class ContainerToolbox extends Container implements ICallbackContainer {
             if (stack.getItem() instanceof ItemTool) return true;
         } else if (slotNumer < 16) {
             if (stack.getItem() instanceof IWireCoil) return true;
-            if (Block.getBlockFromItem(stack.getItem()) != null
-                    && Block.getBlockFromItem(stack.getItem()).hasTileEntity(stack.getItemDamage()))
-                return Block.getBlockFromItem(stack.getItem()).createTileEntity(worldObj, stack.getItemDamage())
-                        instanceof IImmersiveConnectable;
+            if (Block.getBlockFromItem(stack.getItem()) != null && Block.getBlockFromItem(stack.getItem())
+                .hasTileEntity(stack.getItemDamage()))
+                return Block.getBlockFromItem(stack.getItem())
+                    .createTileEntity(worldObj, stack.getItemDamage()) instanceof IImmersiveConnectable;
         } else {
             return true;
         }
@@ -89,9 +90,8 @@ public class ContainerToolbox extends Container implements ICallbackContainer {
     }
 
     protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 9; j++)
-                this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 157 + i * 18));
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++)
+            this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 157 + i * 18));
 
         for (int i = 0; i < 9; i++) this.addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 215));
     }
@@ -111,11 +111,10 @@ public class ContainerToolbox extends Container implements ICallbackContainer {
                 boolean b = true;
                 for (int i = 0; i < internalSlots; i++) {
                     Slot s = (Slot) inventorySlots.get(i);
-                    if (s != null && s.isItemValid(stackInSlot))
-                        if (this.mergeItemStack(stackInSlot, i, i + 1, true)) {
-                            b = false;
-                            break;
-                        } else continue;
+                    if (s != null && s.isItemValid(stackInSlot)) if (this.mergeItemStack(stackInSlot, i, i + 1, true)) {
+                        b = false;
+                        break;
+                    } else continue;
                 }
                 if (b) return null;
             }
@@ -138,7 +137,7 @@ public class ContainerToolbox extends Container implements ICallbackContainer {
     public ItemStack slotClick(int par1, int par2, int par3, EntityPlayer par4EntityPlayer) {
         if (par1 == this.blockedSlot || (par3 != 0 && par2 == par4EntityPlayer.inventory.currentItem)) return null;
         ((ItemToolbox) this.toolbox.getItem())
-                .setContainedItems(this.toolbox, ((InventoryStorageItem) this.input).stackList);
+            .setContainedItems(this.toolbox, ((InventoryStorageItem) this.input).stackList);
 
         return super.slotClick(par1, par2, par3, par4EntityPlayer);
     }
@@ -148,7 +147,7 @@ public class ContainerToolbox extends Container implements ICallbackContainer {
         super.onContainerClosed(par1EntityPlayer);
         if (!this.worldObj.isRemote) {
             ((ItemToolbox) this.toolbox.getItem())
-                    .setContainedItems(this.toolbox, ((InventoryStorageItem) this.input).stackList);
+                .setContainedItems(this.toolbox, ((InventoryStorageItem) this.input).stackList);
             ItemStack hand = this.player.getCurrentEquippedItem();
             if (hand != null && !this.toolbox.equals(hand)) this.player.setCurrentItemOrArmor(0, this.toolbox);
             this.player.inventory.markDirty();

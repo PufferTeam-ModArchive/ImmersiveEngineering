@@ -1,15 +1,17 @@
 package blusunrize.immersiveengineering.api.energy;
 
+import net.minecraft.util.Vec3;
+
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import net.minecraft.util.Vec3;
 
 /**
  * @author BluSunrize - 08.03.2015
  *
- * An interface to be implemented by TileEntities, to allow them to connect to the IE net
+ *         An interface to be implemented by TileEntities, to allow them to connect to the IE net
  */
 public interface IImmersiveConnectable {
+
     /**
      * @return if wires can directly connect to this
      */
@@ -21,8 +23,8 @@ public interface IImmersiveConnectable {
     public boolean isEnergyOutput();
 
     /**
-     * @param amount The amount of power input, in RF
-     * @param simulate whether to actually perform the action or just simulate energy consumption
+     * @param amount     The amount of power input, in RF
+     * @param simulate   whether to actually perform the action or just simulate energy consumption
      * @param energyType 0 for RF, 1 for EU
      * @return the amount of power that was output
      */
@@ -45,8 +47,9 @@ public interface IImmersiveConnectable {
 
     /**
      * return false to stop checking for available outputs from this point onward
+     * 
      * @param con: the connection through which energy enters. May be null, in that
-     * case true should be returned if and only if all connections allow energy to pass
+     *             case true should be returned if and only if all connections allow energy to pass
      */
     public boolean allowEnergyToPass(Connection con);
 
@@ -65,8 +68,10 @@ public interface IImmersiveConnectable {
      * @return the offset used when RayTracing to or from this block. This vector is based from the blocks /origin/
      */
     public Vec3 getRaytraceOffset(IImmersiveConnectable link);
+
     /**
      * Used for rendering only
+     * 
      * @return Where the cable should attach
      */
     public Vec3 getConnectionOffset(Connection con);

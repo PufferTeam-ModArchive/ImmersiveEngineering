@@ -1,8 +1,5 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBucketWheel;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.init.Blocks;
@@ -13,9 +10,15 @@ import net.minecraftforge.client.model.obj.Face;
 import net.minecraftforge.client.model.obj.GroupObject;
 import net.minecraftforge.client.model.obj.TextureCoordinate;
 import net.minecraftforge.client.model.obj.WavefrontObject;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBucketWheel;
+
 public class TileRenderBucketWheel extends TileEntitySpecialRenderer {
+
     static WavefrontObject model = ClientUtils.getModel("immersiveengineering:models/bucketWheel.obj");
 
     @Override
@@ -39,8 +42,8 @@ public class TileRenderBucketWheel extends TileEntitySpecialRenderer {
 
         for (int i = 0; i < 8; i++) {
             ItemStack stack = wheel.digStacks[i];
-            //			String ss = ClientUtils.getResourceNameForItemStack(stack);
-            //			if(!ss.isEmpty())
+            // String ss = ClientUtils.getResourceNameForItemStack(stack);
+            // if(!ss.isEmpty())
             if (stack == null || stack.getItem() == null) continue;
             IIcon ic = null;
             Block b = Block.getBlockFromItem(stack.getItem());
@@ -48,7 +51,8 @@ public class TileRenderBucketWheel extends TileEntitySpecialRenderer {
             else ic = stack.getIconIndex();
             if (ic != null) {
                 ClientUtils.bindAtlas(stack.getItemSpriteNumber());
-                ClientUtils.tes().startDrawingQuads();
+                ClientUtils.tes()
+                    .startDrawingQuads();
                 for (GroupObject go : model.groupObjects) {
                     if (go.name.equals("dig" + i)) {
                         for (Face face : go.faces) {
@@ -62,17 +66,19 @@ public class TileRenderBucketWheel extends TileEntitySpecialRenderer {
                                 oldUVs[v] = face.textureCoordinates[v];
                                 TextureCoordinate textureCoordinate = face.textureCoordinates[v];
                                 face.textureCoordinates[v] = new TextureCoordinate(
-                                        minU + sizeU * textureCoordinate.u, minV + sizeV * textureCoordinate.v);
+                                    minU + sizeU * textureCoordinate.u,
+                                    minV + sizeV * textureCoordinate.v);
                             }
                             face.addFaceForRender(ClientUtils.tes(), 0);
                             for (int v = 0; v < face.vertices.length; ++v)
                                 face.textureCoordinates[v] = new TextureCoordinate(oldUVs[v].u, oldUVs[v].v);
-                            //							face.textureCoordinates = oldUVs;
+                            // face.textureCoordinates = oldUVs;
                         }
-                        //						go.render();
+                        // go.render();
                     }
                 }
-                ClientUtils.tes().draw();
+                ClientUtils.tes()
+                    .draw();
             }
         }
 

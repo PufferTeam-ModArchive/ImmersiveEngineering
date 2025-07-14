@@ -1,18 +1,9 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.ComparableItemStack;
-import blusunrize.immersiveengineering.api.crafting.MetalPressRecipe;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockMetalPress;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyReceiver;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +18,19 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.ComparableItemStack;
+import blusunrize.immersiveengineering.api.crafting.MetalPressRecipe;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockMetalPress;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyReceiver;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class TileEntityMetalPress extends TileEntityMultiblockPart implements ISidedInventory, IEnergyReceiver {
+
     public int facing = 2;
     public EnergyStorage energyStorage = new EnergyStorage(16000);
     public ItemStack[] inventory = new ItemStack[3];
@@ -77,71 +80,68 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
         }
 
         boolean update = false;
-        for (int i = 0; i < inventory.length; i++)
-            if (stopped != i && inventory[i] != null) {
-                if (process[i] >= MAX_PROCESS) {
-                    ItemStack output = inventory[i].copy();
-                    TileEntity inventoryTile = this.worldObj.getTileEntity(
-                            xCoord + (facing == 4 ? -2 : facing == 5 ? 2 : 0),
-                            yCoord,
-                            zCoord + (facing == 2 ? -2 : facing == 3 ? 2 : 0));
-                    if (inventoryTile instanceof IInventory)
-                        output = Utils.insertStackIntoInventory(
-                                (IInventory) inventoryTile, output, ForgeDirection.OPPOSITES[facing]);
-                    if (output != null) {
-                        ForgeDirection fd = ForgeDirection.getOrientation(facing);
-                        EntityItem ei = new EntityItem(
-                                worldObj,
-                                xCoord + .5 + (facing == 4 ? -2 : facing == 5 ? 2 : 0),
-                                yCoord,
-                                zCoord + .5 + (facing == 2 ? -2 : facing == 3 ? 2 : 0),
-                                output.copy());
-                        ei.motionX = (0.075F * fd.offsetX);
-                        ei.motionY = 0.025000000372529D;
-                        ei.motionZ = (0.075F * fd.offsetZ);
-                        this.worldObj.spawnEntityInWorld(ei);
-                    }
-                    curRecipes[i] = null;
-                    process[i] = -1;
-                    inventory[i] = null;
-                    update = true;
+        for (int i = 0; i < inventory.length; i++) if (stopped != i && inventory[i] != null) {
+            if (process[i] >= MAX_PROCESS) {
+                ItemStack output = inventory[i].copy();
+                TileEntity inventoryTile = this.worldObj.getTileEntity(
+                    xCoord + (facing == 4 ? -2 : facing == 5 ? 2 : 0),
+                    yCoord,
+                    zCoord + (facing == 2 ? -2 : facing == 3 ? 2 : 0));
+                if (inventoryTile instanceof IInventory) output = Utils
+                    .insertStackIntoInventory((IInventory) inventoryTile, output, ForgeDirection.OPPOSITES[facing]);
+                if (output != null) {
+                    ForgeDirection fd = ForgeDirection.getOrientation(facing);
+                    EntityItem ei = new EntityItem(
+                        worldObj,
+                        xCoord + .5 + (facing == 4 ? -2 : facing == 5 ? 2 : 0),
+                        yCoord,
+                        zCoord + .5 + (facing == 2 ? -2 : facing == 3 ? 2 : 0),
+                        output.copy());
+                    ei.motionX = (0.075F * fd.offsetX);
+                    ei.motionY = 0.025000000372529D;
+                    ei.motionZ = (0.075F * fd.offsetZ);
+                    this.worldObj.spawnEntityInWorld(ei);
                 }
-                if (curRecipes[i] == null) curRecipes[i] = MetalPressRecipe.findRecipe(mold, inventory[i], true);
+                curRecipes[i] = null;
+                process[i] = -1;
+                inventory[i] = null;
+                update = true;
+            }
+            if (curRecipes[i] == null) curRecipes[i] = MetalPressRecipe.findRecipe(mold, inventory[i], true);
 
-                int perTick = curRecipes[i] != null ? curRecipes[i].energy / MAX_PROCESS : 0;
-                if ((perTick == 0 || this.energyStorage.extractEnergy(perTick, true) == perTick) && process[i] >= 0) {
-                    this.energyStorage.extractEnergy(perTick, false);
-                    if (process[i]++ == 60 && curRecipes[i] != null) {
-                        this.inventory[i] = curRecipes[i].output.copy();
-                        update = true;
-                    } else if (process[i] == 61
-                            && mold != null
-                            && inventory[i].getItem() == Item.getItemFromBlock(Blocks.tnt)) {
+            int perTick = curRecipes[i] != null ? curRecipes[i].energy / MAX_PROCESS : 0;
+            if ((perTick == 0 || this.energyStorage.extractEnergy(perTick, true) == perTick) && process[i] >= 0) {
+                this.energyStorage.extractEnergy(perTick, false);
+                if (process[i]++ == 60 && curRecipes[i] != null) {
+                    this.inventory[i] = curRecipes[i].output.copy();
+                    update = true;
+                } else if (process[i] == 61 && mold != null
+                    && inventory[i].getItem() == Item.getItemFromBlock(Blocks.tnt)) {
                         worldObj.createExplosion(null, xCoord, yCoord, zCoord, 5, false);
                         inventory[i] = null;
                         process[i] = -1;
                         update = true;
                     }
-                    if (!active) {
-                        active = true;
-                        update = true;
-                    }
-                } else if (active) {
-                    active = false;
+                if (!active) {
+                    active = true;
                     update = true;
                 }
-            } else if (stopped == i) {
-                if (stoppedReqSize < 0) {
-                    MetalPressRecipe recipe = MetalPressRecipe.findRecipe(mold, inventory[i], false);
-                    if (recipe != null) stoppedReqSize = recipe.inputSize;
-                    else {
-                        stopped = -1;
-                        update = true;
-                        continue;
-                    }
-                }
-                if (stoppedReqSize <= inventory[i].stackSize) stopped = -1;
+            } else if (active) {
+                active = false;
+                update = true;
             }
+        } else if (stopped == i) {
+            if (stoppedReqSize < 0) {
+                MetalPressRecipe recipe = MetalPressRecipe.findRecipe(mold, inventory[i], false);
+                if (recipe != null) stoppedReqSize = recipe.inputSize;
+                else {
+                    stopped = -1;
+                    update = true;
+                    continue;
+                }
+            }
+            if (stoppedReqSize <= inventory[i].stackSize) stopped = -1;
+        }
         if (update) {
             this.markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -151,18 +151,17 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
     public int getNextProcessID() {
         if (master() != null) return master().getNextProcessID();
         int lowestProcess = Integer.MAX_VALUE;
-        for (int i = 0; i < inventory.length; i++)
-            if (inventory[i] == null) {
-                if (lowestProcess == Integer.MAX_VALUE) {
-                    lowestProcess = 200;
-                    for (int j = 0; j < inventory.length; j++) {
-                        if (inventory[j] != null && process[j] < lowestProcess && process[j] >= 0)
-                            lowestProcess = process[j];
-                    }
+        for (int i = 0; i < inventory.length; i++) if (inventory[i] == null) {
+            if (lowestProcess == Integer.MAX_VALUE) {
+                lowestProcess = 200;
+                for (int j = 0; j < inventory.length; j++) {
+                    if (inventory[j] != null && process[j] < lowestProcess && process[j] >= 0)
+                        lowestProcess = process[j];
                 }
-                if (lowestProcess > 40) return i;
-                else return -1;
             }
+            if (lowestProcess > 40) return i;
+            else return -1;
+        }
         return -1;
     }
 
@@ -204,11 +203,9 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         if (!formed) return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
-        if (renderAABB == null)
-            if (pos == 4)
-                renderAABB = AxisAlignedBB.getBoundingBox(
-                        xCoord - 1, yCoord - 1, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (pos == 4) renderAABB = AxisAlignedBB
+            .getBoundingBox(xCoord - 1, yCoord - 1, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 
@@ -220,7 +217,7 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
 
     @Override
     public float[] getBlockBounds() {
-        if (pos < 3) return new float[] {0, 0, 0, 1, 1, 1};
+        if (pos < 3) return new float[] { 0, 0, 0, 1, 1, 1 };
 
         float xMin = 0;
         float yMin = 0;
@@ -231,7 +228,7 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
 
         if (pos % 3 == 0 || pos % 3 == 2) yMax = .125f;
 
-        return new float[] {xMin, yMin, zMin, xMax, yMax, zMax};
+        return new float[] { xMin, yMin, zMin, xMax, yMax, zMax };
     }
 
     @Override
@@ -252,39 +249,37 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
             int startY = master.yCoord;
             int startZ = master.zCoord;
 
-            for (int yy = -1; yy <= 1; yy++)
-                for (int l = -1; l <= 1; l++) {
-                    int xx = f > 3 ? l : 0;
-                    int zz = f < 4 ? l : 0;
-                    ItemStack s = null;
-                    TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                    if (te instanceof TileEntityMetalPress) {
-                        s = ((TileEntityMetalPress) te).getOriginalBlock();
-                        ((TileEntityMetalPress) te).formed = false;
-                    }
-                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                        s = this.getOriginalBlock();
-                    if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            worldObj.spawnEntityInWorld(
-                                    new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                        else {
-                            if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                            int meta = s.getItemDamage();
-                            worldObj.setBlock(
-                                    startX + xx,
-                                    startY + yy,
-                                    startZ + zz,
-                                    Block.getBlockFromItem(s.getItem()),
-                                    meta,
-                                    0x3);
-                        }
-                        TileEntity tile = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (tile instanceof TileEntityConveyorBelt)
-                            ((TileEntityConveyorBelt) tile).facing = ForgeDirection.OPPOSITES[f];
-                    }
+            for (int yy = -1; yy <= 1; yy++) for (int l = -1; l <= 1; l++) {
+                int xx = f > 3 ? l : 0;
+                int zz = f < 4 ? l : 0;
+                ItemStack s = null;
+                TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                if (te instanceof TileEntityMetalPress) {
+                    s = ((TileEntityMetalPress) te).getOriginalBlock();
+                    ((TileEntityMetalPress) te).formed = false;
                 }
+                if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                    s = this.getOriginalBlock();
+                if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                    else {
+                        if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                            worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                        int meta = s.getItemDamage();
+                        worldObj.setBlock(
+                            startX + xx,
+                            startY + yy,
+                            startZ + zz,
+                            Block.getBlockFromItem(s.getItem()),
+                            meta,
+                            0x3);
+                    }
+                    TileEntity tile = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                    if (tile instanceof TileEntityConveyorBelt)
+                        ((TileEntityConveyorBelt) tile).facing = ForgeDirection.OPPOSITES[f];
+                }
+            }
         }
     }
 
@@ -309,12 +304,11 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
         TileEntityMetalPress master = master();
         if (master != null) return master.decrStackSize(slot, amount);
         ItemStack stack = getStackInSlot(slot);
-        if (stack != null)
-            if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-            else {
-                stack = stack.splitStack(amount);
-                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-            }
+        if (stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+        else {
+            stack = stack.splitStack(amount);
+            if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+        }
         this.markDirty();
         return stack;
     }
@@ -376,8 +370,8 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
         }
         if (minSizePerMold == null || minSizePerMold.isEmpty()) {
             minSizePerMold = new HashMap<>(MetalPressRecipe.recipeList.size());
-            for (Entry<ComparableItemStack, Collection<MetalPressRecipe>> r :
-                    MetalPressRecipe.recipeList.asMap().entrySet()) {
+            for (Entry<ComparableItemStack, Collection<MetalPressRecipe>> r : MetalPressRecipe.recipeList.asMap()
+                .entrySet()) {
                 int min = Integer.MAX_VALUE;
                 for (MetalPressRecipe p : r.getValue()) if (p.inputSize < min) min = p.inputSize;
                 minSizePerMold.put(r.getKey(), min);
@@ -390,9 +384,8 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this
-                ? false
-                : formed && player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
+        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false
+            : formed && player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
     }
 
     @Override
@@ -416,10 +409,10 @@ public class TileEntityMetalPress extends TileEntityMultiblockPart implements IS
         if (!formed) return new int[0];
         if (pos == 3) {
             TileEntityMetalPress master = master();
-            if (master.stopped >= 0) return new int[] {master.stopped};
+            if (master.stopped >= 0) return new int[] { master.stopped };
             int next = getNextProcessID();
             if (next == -1) return new int[0];
-            return new int[] {next};
+            return new int[] { next };
         }
         return new int[0];
     }

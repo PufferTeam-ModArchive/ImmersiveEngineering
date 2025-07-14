@@ -1,5 +1,9 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.Vec3;
+
 import blusunrize.immersiveengineering.api.TargetingInfo;
 import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler;
@@ -7,11 +11,9 @@ import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection
 import blusunrize.immersiveengineering.api.energy.WireType;
 import blusunrize.immersiveengineering.common.blocks.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.common.util.Utils;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.Vec3;
 
 public class TileEntityBreakerSwitch extends TileEntityImmersiveConnectable {
+
     public int sideAttached = 0;
     public int facing = 2;
     public int wires = 0;
@@ -100,32 +102,24 @@ public class TileEntityBreakerSwitch extends TileEntityImmersiveConnectable {
     public Vec3 getConnectionOffset(Connection con) {
         ChunkCoordinates here = Utils.toCC(this);
         if (sideAttached == 0) {
-            int xDif = (con == null || con.start == null || con.end == null)
-                    ? 0
-                    : (con.start.equals(here) && con.end != null)
-                            ? con.end.posX - xCoord
-                            : (con.end.equals(here) && con.start != null) ? con.start.posX - xCoord : 0;
-            int zDif = (con == null || con.start == null || con.end == null)
-                    ? 0
-                    : (con.start.equals(here) && con.end != null)
-                            ? con.end.posZ - zCoord
-                            : (con.end.equals(here) && con.start != null) ? con.start.posZ - zCoord : 0;
+            int xDif = (con == null || con.start == null || con.end == null) ? 0
+                : (con.start.equals(here) && con.end != null) ? con.end.posX - xCoord
+                    : (con.end.equals(here) && con.start != null) ? con.start.posX - xCoord : 0;
+            int zDif = (con == null || con.start == null || con.end == null) ? 0
+                : (con.start.equals(here) && con.end != null) ? con.end.posZ - zCoord
+                    : (con.end.equals(here) && con.start != null) ? con.start.posZ - zCoord : 0;
 
             return Vec3.createVectorHelper(
-                    facing == 4 ? .125 : facing == 5 ? .875 : xDif < 0 ? .25 : .75,
-                    .5,
-                    facing == 2 ? .125 : facing == 3 ? .875 : zDif < 0 ? .25 : .75);
+                facing == 4 ? .125 : facing == 5 ? .875 : xDif < 0 ? .25 : .75,
+                .5,
+                facing == 2 ? .125 : facing == 3 ? .875 : zDif < 0 ? .25 : .75);
         } else {
-            int xDif = (con == null || con.start == null || con.end == null)
-                    ? 0
-                    : (con.start.equals(here) && con.end != null)
-                            ? con.end.posX - xCoord
-                            : (con.end.equals(here) && con.start != null) ? con.start.posX - xCoord : 0;
-            int zDif = (con == null || con.start == null || con.end == null)
-                    ? 0
-                    : (con.start.equals(here) && con.end != null)
-                            ? con.end.posZ - zCoord
-                            : (con.end.equals(here) && con.start != null) ? con.start.posZ - zCoord : 0;
+            int xDif = (con == null || con.start == null || con.end == null) ? 0
+                : (con.start.equals(here) && con.end != null) ? con.end.posX - xCoord
+                    : (con.end.equals(here) && con.start != null) ? con.start.posX - xCoord : 0;
+            int zDif = (con == null || con.start == null || con.end == null) ? 0
+                : (con.start.equals(here) && con.end != null) ? con.end.posZ - zCoord
+                    : (con.end.equals(here) && con.start != null) ? con.start.posZ - zCoord : 0;
             double h = sideAttached == 1 ? .125 : .875;
             if (facing > 3) return Vec3.createVectorHelper(.5, h, zDif > 0 ? .75 : .25);
             else return Vec3.createVectorHelper(xDif > 0 ? .75 : .25, h, .5);

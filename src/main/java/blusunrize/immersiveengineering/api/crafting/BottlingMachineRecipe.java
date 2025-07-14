@@ -1,19 +1,22 @@
 package blusunrize.immersiveengineering.api.crafting;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
+
 /**
  * @author BluSunrize - 27.10.2015
- * <br>
- * The recipe for the bottling machine
+ *         <br>
+ *         The recipe for the bottling machine
  */
 public class BottlingMachineRecipe {
+
     public final Object input;
     public final FluidStack fluidInput;
     public final ItemStack output;
@@ -32,10 +35,9 @@ public class BottlingMachineRecipe {
     }
 
     public static BottlingMachineRecipe findRecipe(ItemStack input, FluidStack fluid) {
-        if (input != null && fluid != null)
-            for (BottlingMachineRecipe recipe : recipeList)
-                if (ApiUtils.stackMatchesObject(input, recipe.input) && fluid.containsFluid(recipe.fluidInput))
-                    return recipe;
+        if (input != null && fluid != null) for (BottlingMachineRecipe recipe : recipeList)
+            if (ApiUtils.stackMatchesObject(input, recipe.input) && fluid.containsFluid(recipe.fluidInput))
+                return recipe;
         return null;
     }
 

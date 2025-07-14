@@ -1,10 +1,12 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.api.energy.WireType;
 import net.minecraft.util.Vec3;
 
+import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.api.energy.WireType;
+
 public class TileEntityTransformerHV extends TileEntityTransformer {
+
     @Override
     protected boolean canTakeHV() {
         return true;

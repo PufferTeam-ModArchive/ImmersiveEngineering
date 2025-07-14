@@ -5,9 +5,10 @@ import net.minecraft.nbt.NBTTagCompound;
 /**
  * @author BluSunrize - 11.03.2015
  *
- * Similar too MovingObjectPosition.class, but this is specifically designed for sub-targets on a block
+ *         Similar too MovingObjectPosition.class, but this is specifically designed for sub-targets on a block
  */
 public class TargetingInfo {
+
     public final int side;
     public final float hitX;
     public final float hitY;
@@ -29,6 +30,9 @@ public class TargetingInfo {
 
     public static TargetingInfo readFromNBT(NBTTagCompound tag) {
         return new TargetingInfo(
-                tag.getInteger("side"), tag.getFloat("hitX"), tag.getFloat("hitY"), tag.getFloat("hitZ"));
+            tag.getInteger("side"),
+            tag.getFloat("hitX"),
+            tag.getFloat("hitY"),
+            tag.getFloat("hitZ"));
     }
 }

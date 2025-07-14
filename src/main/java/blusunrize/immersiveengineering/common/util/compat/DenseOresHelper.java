@@ -1,15 +1,18 @@
 package blusunrize.immersiveengineering.common.util.compat;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import net.minecraft.item.ItemStack;
+
 import blusunrize.immersiveengineering.api.crafting.ArcFurnaceRecipe;
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.common.util.IELogger;
 import blusunrize.immersiveengineering.common.util.Utils;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import net.minecraft.item.ItemStack;
 
 public class DenseOresHelper extends IECompatModule {
+
     @Override
     public void preInit() {}
 
@@ -26,9 +29,9 @@ public class DenseOresHelper extends IECompatModule {
             Class c_DenseOre = Class.forName("com.rwtema.denseores.DenseOre");
             f_baseOreDictionary = c_DenseOre.getField("baseOreDictionary");
             f_oreDictionary = c_DenseOre.getField("oreDictionary");
-            map = (HashMap) c_DenseOresRegistry.getField("ores").get(null);
-        } catch (Exception e) {
-        }
+            map = (HashMap) c_DenseOresRegistry.getField("ores")
+                .get(null);
+        } catch (Exception e) {}
 
         if (map != null && f_baseOreDictionary != null && f_oreDictionary != null) {
             ArrayList<CrusherRecipe> crushRecipes = new ArrayList<CrusherRecipe>();
@@ -47,7 +50,8 @@ public class DenseOresHelper extends IECompatModule {
                                 Object[] newSec = new Object[recipe.secondaryOutput.length * 2];
                                 for (int i = 0; i < recipe.secondaryOutput.length; i++) {
                                     newSec[i * 2] = Utils.copyStackWithAmount(
-                                            recipe.secondaryOutput[i], recipe.secondaryOutput[i].stackSize * 2);
+                                        recipe.secondaryOutput[i],
+                                        recipe.secondaryOutput[i].stackSize * 2);
                                     newSec[i * 2 + 1] = recipe.secondaryChance[i] * 2;
                                 }
                                 r.addToSecondaryOutput(newSec);
@@ -59,13 +63,23 @@ public class DenseOresHelper extends IECompatModule {
                     for (ArcFurnaceRecipe recipe : ArcFurnaceRecipe.recipeList)
                         if (recipe.oreInputString != null && ((String) recipe.oreInputString).equals(baseOre)) {
                             ItemStack out = Utils.copyStackWithAmount(recipe.output, recipe.output.stackSize * 4);
-                            ArcFurnaceRecipe r =
-                                    new ArcFurnaceRecipe(out, denseOre, recipe.slag, recipe.time, recipe.energyPerTick);
+                            ArcFurnaceRecipe r = new ArcFurnaceRecipe(
+                                out,
+                                denseOre,
+                                recipe.slag,
+                                recipe.time,
+                                recipe.energyPerTick);
                             arcRecipes.add(r);
                             a = true;
                         }
-                    IELogger.info("Supporting DenseOre: " + denseOre + "(" + baseOre + "), Crushing:"
-                            + (c ? "[X]" : "[ ]") + ", Arc Smelting:" + (a ? "[X]" : "[ ]"));
+                    IELogger.info(
+                        "Supporting DenseOre: " + denseOre
+                            + "("
+                            + baseOre
+                            + "), Crushing:"
+                            + (c ? "[X]" : "[ ]")
+                            + ", Arc Smelting:"
+                            + (a ? "[X]" : "[ ]"));
 
                 } catch (Exception e) {
                     e.printStackTrace();

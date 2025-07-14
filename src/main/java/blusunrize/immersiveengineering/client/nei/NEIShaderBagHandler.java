@@ -1,40 +1,42 @@
 package blusunrize.immersiveengineering.client.nei;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.item.EnumRarity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
+
 import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
 import blusunrize.immersiveengineering.api.shader.ShaderRegistry.ShaderRegistryEntry;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import net.minecraft.item.EnumRarity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
 
 public class NEIShaderBagHandler extends TemplateRecipeHandler {
+
     public class CachedShaderBagRecipe extends CachedRecipe {
+
         PositionedStack input;
         PositionedStack output;
 
         public CachedShaderBagRecipe(EnumRarity outputRarity, boolean inputBag) {
             ArrayList<EnumRarity> upperRarities = ShaderRegistry.getHigherRarities(outputRarity);
             ArrayList<ItemStack> inputList = new ArrayList();
-            if (inputBag)
-                for (EnumRarity r : upperRarities) {
-                    ItemStack bag = new ItemStack(IEContent.itemShaderBag);
-                    ItemNBTHelper.setString(bag, "rarity", r.toString());
-                    inputList.add(bag);
+            if (inputBag) for (EnumRarity r : upperRarities) {
+                ItemStack bag = new ItemStack(IEContent.itemShaderBag);
+                ItemNBTHelper.setString(bag, "rarity", r.toString());
+                inputList.add(bag);
+            }
+            else for (ShaderRegistryEntry entry : ShaderRegistry.shaderRegistry.values())
+                if (upperRarities.contains(entry.getRarity())) {
+                    ItemStack shader = new ItemStack(IEContent.itemShader);
+                    ItemNBTHelper.setString(shader, "shader_name", entry.getName());
+                    inputList.add(shader);
                 }
-            else
-                for (ShaderRegistryEntry entry : ShaderRegistry.shaderRegistry.values())
-                    if (upperRarities.contains(entry.getRarity())) {
-                        ItemStack shader = new ItemStack(IEContent.itemShader);
-                        ItemNBTHelper.setString(shader, "shader_name", entry.getName());
-                        inputList.add(shader);
-                    }
             this.input = new PositionedStack(inputList, 25, 6, true);
 
             ItemStack bag = new ItemStack(IEContent.itemShaderBag, inputBag ? 2 : 1);
@@ -66,11 +68,10 @@ public class NEIShaderBagHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(String outputId, Object... results) {
-        if (outputId == getOverlayIdentifier())
-            for (int i = 1; i < ShaderRegistry.sortedRarityMap.size(); i++) {
-                this.arecipes.add(new CachedShaderBagRecipe(ShaderRegistry.sortedRarityMap.get(i), true));
-                this.arecipes.add(new CachedShaderBagRecipe(ShaderRegistry.sortedRarityMap.get(i), false));
-            }
+        if (outputId == getOverlayIdentifier()) for (int i = 1; i < ShaderRegistry.sortedRarityMap.size(); i++) {
+            this.arecipes.add(new CachedShaderBagRecipe(ShaderRegistry.sortedRarityMap.get(i), true));
+            this.arecipes.add(new CachedShaderBagRecipe(ShaderRegistry.sortedRarityMap.get(i), false));
+        }
         else super.loadCraftingRecipes(outputId, results);
     }
 
@@ -109,13 +110,11 @@ public class NEIShaderBagHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
-        if (ingredient != null)
-            if (IEContent.itemShaderBag.equals(ingredient.getItem())
-                    || IEContent.itemShader.equals(ingredient.getItem())) {
+        if (ingredient != null) if (IEContent.itemShaderBag.equals(ingredient.getItem())
+            || IEContent.itemShader.equals(ingredient.getItem())) {
                 EnumRarity r = ShaderRegistry.getLowerRarity(ingredient.getRarity());
-                if (r != null)
-                    this.arecipes.add(
-                            new CachedShaderBagRecipe(r, IEContent.itemShaderBag.equals(ingredient.getItem())));
+                if (r != null) this.arecipes
+                    .add(new CachedShaderBagRecipe(r, IEContent.itemShaderBag.equals(ingredient.getItem())));
             }
     }
 

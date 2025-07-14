@@ -1,19 +1,23 @@
 package blusunrize.immersiveengineering.client.render;
 
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.client.model.obj.Vertex;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.models.ModelIEObj;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalMultiblocks;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityArcFurnace;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.client.model.obj.Vertex;
-import org.lwjgl.opengl.GL11;
 
 public class TileRenderArcFurnace extends TileRenderIE {
+
     ModelIEObj model0 = new ModelIEObj("immersiveengineering:models/arcFurnace.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockMetalMultiblocks.getIcon(0, BlockMetalMultiblocks.META_arcFurnace);
@@ -27,8 +31,8 @@ public class TileRenderArcFurnace extends TileRenderIE {
         TileEntityArcFurnace arc = (TileEntityArcFurnace) tile;
 
         translationMatrix.translate(.5, .5, .5);
-        rotationMatrix.rotate(
-                Math.toRadians(arc.facing == 2 ? 180 : arc.facing == 4 ? -90 : arc.facing == 5 ? 90 : 0), 0, 1, 0);
+        rotationMatrix
+            .rotate(Math.toRadians(arc.facing == 2 ? 180 : arc.facing == 4 ? -90 : arc.facing == 5 ? 90 : 0), 0, 1, 0);
         if (arc.mirrored) translationMatrix.scale(new Vertex(arc.facing < 4 ? -1 : 1, 1, arc.facing > 3 ? -1 : 1));
 
         String[] render = new String[5];
@@ -65,10 +69,8 @@ public class TileRenderArcFurnace extends TileRenderIE {
             int pour = process - arc.pouringMetal;
             GL11.glDisable(GL11.GL_LIGHTING);
             ClientUtils.bindAtlas(0);
-            float h = (pour > (process - speed)
-                            ? ((process - pour) / speed * 27)
-                            : pour > speed ? 27 : (pour / speed * 27))
-                    / 16f;
+            float h = (pour > (process - speed) ? ((process - pour) / speed * 27)
+                : pour > speed ? 27 : (pour / speed * 27)) / 16f;
             tes.addTranslation(-.5f, -.6875f, 1.5f);
             tes.startDrawingQuads();
             tes.setBrightness(0xf000f0);

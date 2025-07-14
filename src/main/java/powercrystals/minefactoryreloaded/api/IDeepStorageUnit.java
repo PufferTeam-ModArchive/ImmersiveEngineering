@@ -3,6 +3,7 @@ package powercrystals.minefactoryreloaded.api;
 import net.minecraft.item.ItemStack;
 
 public abstract interface IDeepStorageUnit {
+
     public abstract ItemStack getStoredItemType();
 
     public abstract void setStoredItemCount(int paramInt);

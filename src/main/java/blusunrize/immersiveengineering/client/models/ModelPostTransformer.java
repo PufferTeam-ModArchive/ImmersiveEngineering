@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 4.1.1
  */
 public class ModelPostTransformer extends ModelBase {
+
     public ModelRenderer PoleConnection1;
     public ModelRenderer Transformer;
     public ModelRenderer PoleConnection2;

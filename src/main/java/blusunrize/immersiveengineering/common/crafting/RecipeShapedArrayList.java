@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class RecipeShapedArrayList extends ShapedOreRecipe {
+
     static HashMap<Integer, List> replacements = new HashMap<Integer, List>();
 
     public RecipeShapedArrayList(ItemStack result, Object... recipe) {
@@ -36,11 +38,10 @@ public class RecipeShapedArrayList extends ShapedOreRecipe {
         boolean shapeDone = false;
         for (int i = 0; i < converted.length; i++) {
             converted[i] = recipe[i];
-            if (!shapeDone)
-                if (recipe[i] instanceof String[]) {
-                    String[] parts = ((String[]) recipe[i]);
-                    for (String s : parts) shape += s;
-                } else if (recipe[i] instanceof String) shape += (String) recipe[i];
+            if (!shapeDone) if (recipe[i] instanceof String[]) {
+                String[] parts = ((String[]) recipe[i]);
+                for (String s : parts) shape += s;
+            } else if (recipe[i] instanceof String) shape += (String) recipe[i];
 
             if (recipe[i] instanceof Character) {
                 shapeDone = true;

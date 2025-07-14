@@ -1,13 +1,8 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.api.shader.IShaderItem;
-import blusunrize.immersiveengineering.api.shader.ShaderCase;
-import blusunrize.immersiveengineering.client.ClientProxy;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.models.ModelRevolverVariable;
-import blusunrize.immersiveengineering.common.items.ItemRevolver;
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
@@ -15,9 +10,18 @@ import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.model.obj.GroupObject;
 import net.minecraftforge.client.model.obj.WavefrontObject;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.api.shader.IShaderItem;
+import blusunrize.immersiveengineering.api.shader.ShaderCase;
+import blusunrize.immersiveengineering.client.ClientProxy;
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.models.ModelRevolverVariable;
+import blusunrize.immersiveengineering.common.items.ItemRevolver;
+
 public class ItemRenderRevolver implements IItemRenderer {
+
     static ModelRevolverVariable model = new ModelRevolverVariable();
     static WavefrontObject modelobj = ClientUtils.getModel("immersiveengineering:models/revolver.obj");
 
@@ -70,29 +74,31 @@ public class ItemRenderRevolver implements IItemRenderer {
         String[] parts = ((ItemRevolver) item.getItem()).compileRender(item);
         ItemStack shader = ((ItemRevolver) item.getItem()).getShaderItem(item);
         ShaderCase sCase = (shader != null && shader.getItem() instanceof IShaderItem)
-                ? ((IShaderItem) shader.getItem()).getShaderCase(shader, item, "revolver")
-                : null;
+            ? ((IShaderItem) shader.getItem()).getShaderCase(shader, item, "revolver")
+            : null;
 
         if (sCase == null) ClientUtils.renderWavefrontWithIconUVs(modelobj, icon, parts);
         else {
             boolean inventory = type == ItemRenderType.INVENTORY;
             List<String> renderParts = Arrays.asList(parts);
-            for (GroupObject obj : modelobj.groupObjects)
-                if (renderParts.contains(obj.name)) {
-                    for (int pass = 0; pass < sCase.getPasses(shader, item, obj.name); pass++) {
-                        IIcon ic = sCase.getReplacementIcon(shader, item, obj.name, pass);
-                        if (ic == null) ic = icon;
-                        int[] col = sCase.getRGBAColourModifier(shader, item, obj.name, pass);
-                        if (col == null || col.length < 4) col = new int[] {255, 255, 255, 255};
+            for (GroupObject obj : modelobj.groupObjects) if (renderParts.contains(obj.name)) {
+                for (int pass = 0; pass < sCase.getPasses(shader, item, obj.name); pass++) {
+                    IIcon ic = sCase.getReplacementIcon(shader, item, obj.name, pass);
+                    if (ic == null) ic = icon;
+                    int[] col = sCase.getRGBAColourModifier(shader, item, obj.name, pass);
+                    if (col == null || col.length < 4) col = new int[] { 255, 255, 255, 255 };
 
-                        sCase.modifyRender(shader, item, obj.name, pass, true, inventory);
-                        ClientUtils.tes().startDrawing(obj.glDrawingMode);
-                        ClientUtils.tes().setColorRGBA(col[0], col[1], col[2], col[3]);
-                        ClientUtils.tessellateWavefrontGroupObjectWithIconUVs(obj, ic);
-                        ClientUtils.tes().draw();
-                        sCase.modifyRender(shader, item, obj.name, pass, false, inventory);
-                    }
+                    sCase.modifyRender(shader, item, obj.name, pass, true, inventory);
+                    ClientUtils.tes()
+                        .startDrawing(obj.glDrawingMode);
+                    ClientUtils.tes()
+                        .setColorRGBA(col[0], col[1], col[2], col[3]);
+                    ClientUtils.tessellateWavefrontGroupObjectWithIconUVs(obj, ic);
+                    ClientUtils.tes()
+                        .draw();
+                    sCase.modifyRender(shader, item, obj.name, pass, false, inventory);
                 }
+            }
         }
 
         GL11.glDisable(3042);

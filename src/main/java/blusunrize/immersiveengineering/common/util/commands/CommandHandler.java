@@ -1,13 +1,16 @@
 package blusunrize.immersiveengineering.common.util.commands;
 
-import blusunrize.immersiveengineering.common.util.Lib;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentTranslation;
 
+import blusunrize.immersiveengineering.common.util.Lib;
+
 public class CommandHandler extends CommandBase {
+
     static ArrayList<IESubCommand> commands = new ArrayList();
 
     static {
@@ -24,17 +27,18 @@ public class CommandHandler extends CommandBase {
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
         ArrayList<String> list = new ArrayList<String>();
-        if (args.length > 0)
-            for (IESubCommand sub : commands) {
-                if (args.length == 1) {
-                    if (args[0].isEmpty() || sub.getIdent().startsWith(args[0].toLowerCase())) list.add(sub.getIdent());
-                } else if (sub.getIdent().equalsIgnoreCase(args[0])) {
+        if (args.length > 0) for (IESubCommand sub : commands) {
+            if (args.length == 1) {
+                if (args[0].isEmpty() || sub.getIdent()
+                    .startsWith(args[0].toLowerCase())) list.add(sub.getIdent());
+            } else if (sub.getIdent()
+                .equalsIgnoreCase(args[0])) {
                     String[] redArgs = new String[args.length - 1];
                     System.arraycopy(args, 1, redArgs, 0, redArgs.length);
                     ArrayList<String> subCommands = sub.getSubCommands(redArgs);
                     if (subCommands != null) list.addAll(subCommands);
                 }
-            }
+        }
         return list;
     }
 
@@ -67,10 +71,10 @@ public class CommandHandler extends CommandBase {
         }
         args = list.toArray(new String[list.size()]);
 
-        if (args.length > 0)
-            for (IESubCommand com : commands) {
-                if (com.getIdent().equalsIgnoreCase(args[0])) com.perform(sender, args);
-            }
+        if (args.length > 0) for (IESubCommand com : commands) {
+            if (com.getIdent()
+                .equalsIgnoreCase(args[0])) com.perform(sender, args);
+        }
         else {
             String sub = "";
             int i = 0;
@@ -80,6 +84,7 @@ public class CommandHandler extends CommandBase {
     }
 
     public abstract static class IESubCommand {
+
         public abstract String getIdent();
 
         public abstract void perform(ICommandSender sender, String[] args);

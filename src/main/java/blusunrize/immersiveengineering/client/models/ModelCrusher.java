@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 5.0.0
  */
 public class ModelCrusher extends ModelBase {
+
     public ModelRenderer leg8;
     public ModelRenderer leg4;
     public ModelRenderer leg2;

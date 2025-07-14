@@ -1,9 +1,7 @@
 package blusunrize.immersiveengineering.common.items;
 
-import blusunrize.immersiveengineering.api.tool.IUpgrade;
-import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import java.util.HashMap;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -11,7 +9,12 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import blusunrize.immersiveengineering.api.tool.IUpgrade;
+import blusunrize.immersiveengineering.api.tool.IUpgradeableTool;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+
 public abstract class ItemUpgradeableTool extends ItemInternalStorage implements IUpgradeableTool {
+
     String upgradeType;
 
     public ItemUpgradeableTool(String name, int stackSize, String upgradeType, String... subNames) {
@@ -42,8 +45,8 @@ public abstract class ItemUpgradeableTool extends ItemInternalStorage implements
             ItemStack u = inv[i];
             if (u != null && u.getItem() instanceof IUpgrade) {
                 IUpgrade upg = (IUpgrade) u.getItem();
-                if (upg.getUpgradeTypes(u).contains(upgradeType) && upg.canApplyUpgrades(stack, u))
-                    upg.applyUpgrades(stack, u, map);
+                if (upg.getUpgradeTypes(u)
+                    .contains(upgradeType) && upg.canApplyUpgrades(stack, u)) upg.applyUpgrades(stack, u, map);
             }
         }
         NBTTagCompound upgradeTag = (NBTTagCompound) getUpgradeBase(stack).copy();

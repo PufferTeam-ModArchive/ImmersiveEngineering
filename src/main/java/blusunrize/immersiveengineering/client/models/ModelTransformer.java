@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 4.1.1
  */
 public class ModelTransformer extends ModelBase {
+
     public ModelRenderer Transformer;
     public ModelRenderer ceramic;
     public ModelRenderer ceramic_1;

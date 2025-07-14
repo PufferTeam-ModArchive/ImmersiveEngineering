@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockStorage extends BlockIEBase {
+
     public BlockStorage(String... subNames) {
         super("storage", Material.iron, 2, ItemBlockIEBase.class, subNames);
         for (int i = 0; i < subNames.length; i++) this.setMetaLightOpacity(i, 255);
@@ -15,14 +16,13 @@ public class BlockStorage extends BlockIEBase {
 
     @Override
     public void registerBlockIcons(IIconRegister iconRegister) {
-        for (int i = 0; i < subNames.length; i++)
-            if (subNames[i].startsWith("Coil")) {
-                icons[i][0] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i] + "_top");
-                icons[i][1] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i] + "_side");
-            } else {
-                icons[i][0] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i]);
-                icons[i][1] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i]);
-            }
+        for (int i = 0; i < subNames.length; i++) if (subNames[i].startsWith("Coil")) {
+            icons[i][0] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i] + "_top");
+            icons[i][1] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i] + "_side");
+        } else {
+            icons[i][0] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i]);
+            icons[i][1] = iconRegister.registerIcon("immersiveengineering:" + name + "_" + subNames[i]);
+        }
     }
 
     @Override

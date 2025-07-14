@@ -1,8 +1,5 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySilo;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -11,9 +8,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.IModelCustom;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySilo;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class TileRenderSilo extends TileEntitySpecialRenderer {
+
     static IModelCustom model = ClientUtils.getModel("immersiveengineering:models/silo.obj");
 
     @Override
@@ -38,7 +41,8 @@ public class TileRenderSilo extends TileEntitySpecialRenderer {
             GL11.glScalef(baseScale, -baseScale, baseScale);
             ItemStack stack = Utils.copyStackWithAmount(silo.identStack, silo.storageAmount);
             String s = "" + stack.stackSize;
-            float w = this.func_147498_b().getStringWidth(s);
+            float w = this.func_147498_b()
+                .getStringWidth(s);
             RenderItem ri = RenderItem.getInstance();
 
             float xx = -.5f * itemScale;
@@ -50,21 +54,29 @@ public class TileRenderSilo extends TileEntitySpecialRenderer {
                 GL11.glTranslatef(xx, 0, zz);
                 GL11.glScalef(1, 1, flatScale);
                 if (!ForgeHooksClient.renderInventoryItem(
-                        RenderBlocks.getInstance(),
-                        ClientUtils.mc().getTextureManager(),
+                    RenderBlocks.getInstance(),
+                    ClientUtils.mc()
+                        .getTextureManager(),
+                    stack,
+                    true,
+                    0.0F,
+                    0.0F,
+                    0.0F))
+                    ri.renderItemIntoGUI(
+                        ClientUtils.font(),
+                        ClientUtils.mc()
+                            .getTextureManager(),
                         stack,
-                        true,
-                        0.0F,
-                        0.0F,
-                        0.0F))
-                    ri.renderItemIntoGUI(ClientUtils.font(), ClientUtils.mc().getTextureManager(), stack, 0, 0);
+                        0,
+                        0);
                 GL11.glScalef(1, 1, 1 / flatScale);
 
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glDepthMask(false);
                 GL11.glTranslatef(8 - w / 2, 17, .001f);
                 GL11.glScalef(textScale, textScale, 1);
-                ClientUtils.font().drawString("" + stack.stackSize, 0, 0, 0x888888, true);
+                ClientUtils.font()
+                    .drawString("" + stack.stackSize, 0, 0, 0x888888, true);
                 GL11.glScalef(1 / textScale, 1 / textScale, 1);
                 GL11.glTranslatef(-(8 - w / 2), -17, -.001f);
                 GL11.glDepthMask(true);

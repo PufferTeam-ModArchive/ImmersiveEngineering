@@ -1,9 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.stone;
 
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockPart;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +16,13 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockPart;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISidedInventory, IFluidHandler {
+
     public FluidTank tank = new FluidTank(12000);
     ItemStack[] inventory = new ItemStack[4];
     public int facing = 2;
@@ -41,7 +43,7 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
 
     @Override
     public float[] getBlockBounds() {
-        return new float[] {0, 0, 0, 1, 1, 1};
+        return new float[] { 0, 0, 0, 1, 1, 1 };
     }
 
     @Override
@@ -87,9 +89,8 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
                 }
             }
 
-            if (tank.getFluidAmount() > 0
-                    && tank.getFluid() != null
-                    && (inventory[3] == null || inventory[3].stackSize + 1 <= inventory[3].getMaxStackSize())) {
+            if (tank.getFluidAmount() > 0 && tank.getFluid() != null
+                && (inventory[3] == null || inventory[3].stackSize + 1 <= inventory[3].getMaxStackSize())) {
                 ItemStack filledContainer = Utils.fillFluidContainer(tank, inventory[2], inventory[3]);
                 if (filledContainer != null) {
                     if (inventory[3] != null && OreDictionary.itemMatches(inventory[3], filledContainer, true))
@@ -108,19 +109,18 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
                 int zMax = facing == 3 ? 0 : facing == 2 ? 2 : 1;
                 TileEntity tileEntity;
                 for (int yy = -1; yy <= 1; yy++)
-                    for (int xx = xMin; xx <= xMax; xx++)
-                        for (int zz = zMin; zz <= zMax; zz++) {
-                            tileEntity = worldObj.getTileEntity(xCoord + xx, yCoord + yy, zCoord + zz);
-                            if (tileEntity != null) tileEntity.markDirty();
-                            worldObj.markBlockForUpdate(xCoord + xx, yCoord + yy, zCoord + zz);
-                            worldObj.addBlockEvent(
-                                    xCoord + xx,
-                                    yCoord + yy,
-                                    zCoord + zz,
-                                    IEContent.blockStoneDevice,
-                                    1,
-                                    active ? 1 : 0);
-                        }
+                    for (int xx = xMin; xx <= xMax; xx++) for (int zz = zMin; zz <= zMax; zz++) {
+                        tileEntity = worldObj.getTileEntity(xCoord + xx, yCoord + yy, zCoord + zz);
+                        if (tileEntity != null) tileEntity.markDirty();
+                        worldObj.markBlockForUpdate(xCoord + xx, yCoord + yy, zCoord + zz);
+                        worldObj.addBlockEvent(
+                            xCoord + xx,
+                            yCoord + yy,
+                            zCoord + zz,
+                            IEContent.blockStoneDevice,
+                            1,
+                            active ? 1 : 0);
+                    }
             }
         }
     }
@@ -129,9 +129,8 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
         CokeOvenRecipe recipe = CokeOvenRecipe.findRecipe(inventory[0]);
         if (recipe == null) return null;
 
-        if (inventory[1] == null
-                || (OreDictionary.itemMatches(inventory[1], recipe.output, false)
-                        && inventory[1].stackSize + recipe.output.stackSize <= getInventoryStackLimit()))
+        if (inventory[1] == null || (OreDictionary.itemMatches(inventory[1], recipe.output, false)
+            && inventory[1].stackSize + recipe.output.stackSize <= getInventoryStackLimit()))
             if (tank.getFluidAmount() + recipe.creosoteOutput <= tank.getCapacity()) return recipe;
         return null;
     }
@@ -166,12 +165,11 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
         TileEntityCokeOven master = master();
         if (master != null) return master.decrStackSize(slot, amount);
         ItemStack stack = getStackInSlot(slot);
-        if (stack != null)
-            if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-            else {
-                stack = stack.splitStack(amount);
-                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-            }
+        if (stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+        else {
+            stack = stack.splitStack(amount);
+            if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+        }
         return stack;
     }
 
@@ -214,9 +212,8 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this
-                ? false
-                : player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
+        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false
+            : player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
     }
 
     @Override
@@ -240,7 +237,7 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
         if (!formed) return new int[0];
         TileEntityCokeOven master = master();
         if (master != null) return master.getAccessibleSlotsFromSide(side);
-        return new int[] {0, 1, 2, 3};
+        return new int[] { 0, 1, 2, 3 };
     }
 
     @Override
@@ -298,40 +295,38 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
             int startY = yCoord - offset[1];
             int startZ = zCoord - offset[2];
             if (!(offset[0] == 0 && offset[1] == 0 && offset[2] == 0)
-                    && !(worldObj.getTileEntity(startX, startY, startZ) instanceof TileEntityCokeOven)) return;
+                && !(worldObj.getTileEntity(startX, startY, startZ) instanceof TileEntityCokeOven)) return;
 
             int xMin = facing == 5 ? -2 : facing == 4 ? 0 : -1;
             int xMax = facing == 5 ? 0 : facing == 4 ? 2 : 1;
             int zMin = facing == 3 ? -2 : facing == 2 ? 0 : -1;
             int zMax = facing == 3 ? 0 : facing == 2 ? 2 : 1;
             for (int yy = -1; yy <= 1; yy++)
-                for (int xx = xMin; xx <= xMax; xx++)
-                    for (int zz = zMin; zz <= zMax; zz++) {
-                        ItemStack s = null;
-                        TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (te instanceof TileEntityCokeOven) {
-                            s = ((TileEntityCokeOven) te).getOriginalBlock();
-                            ((TileEntityCokeOven) te).formed = false;
-                        }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
+                for (int xx = xMin; xx <= xMax; xx++) for (int zz = zMin; zz <= zMax; zz++) {
+                    ItemStack s = null;
+                    TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                    if (te instanceof TileEntityCokeOven) {
+                        s = ((TileEntityCokeOven) te).getOriginalBlock();
+                        ((TileEntityCokeOven) te).formed = false;
+                    }
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        s = this.getOriginalBlock();
+                    if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord) worldObj
+                            .spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                        else {
+                            if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                                worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                            worldObj.setBlock(
+                                startX + xx,
+                                startY + yy,
+                                startZ + zz,
+                                Block.getBlockFromItem(s.getItem()),
+                                s.getItemDamage(),
+                                0x3);
                         }
                     }
+                }
         }
     }
 
@@ -377,6 +372,6 @@ public class TileEntityCokeOven extends TileEntityMultiblockPart implements ISid
         if (!formed) return new FluidTankInfo[] {};
         TileEntityCokeOven master = master();
         if (master != null) return master.getTankInfo(from);
-        return new FluidTankInfo[] {tank.getInfo()};
+        return new FluidTankInfo[] { tank.getInfo() };
     }
 }

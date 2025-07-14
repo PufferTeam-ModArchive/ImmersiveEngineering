@@ -1,25 +1,28 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.api.tool.RailgunHandler;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.entities.EntityRailgunShot;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import blusunrize.immersiveengineering.api.tool.RailgunHandler;
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.entities.EntityRailgunShot;
+
 public class EntityRenderRailgunShot extends Render {
+
     @Override
     public void doRender(Entity entity, double x, double y, double z, float f0, float f1) {
         double yaw = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * f1 - 90.0F;
         double pitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * f1;
 
         ItemStack ammo = ((EntityRailgunShot) entity).getAmmo();
-        int[][] colourMap = {{0x777777, 0xa4a4a4}};
+        int[][] colourMap = { { 0x777777, 0xa4a4a4 } };
         if (ammo != null) {
             RailgunHandler.RailgunProjectileProperties prop = RailgunHandler.getProjectileProperties(ammo);
             colourMap = prop != null ? prop.colourMap : colourMap;
@@ -28,8 +31,8 @@ public class EntityRenderRailgunShot extends Render {
         renderRailgunProjectile(x, y, z, yaw, pitch, colourMap);
     }
 
-    public static void renderRailgunProjectile(
-            double x, double y, double z, double yaw, double pitch, int[][] colourMap) {
+    public static void renderRailgunProjectile(double x, double y, double z, double yaw, double pitch,
+        int[][] colourMap) {
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -47,7 +50,7 @@ public class EntityRenderRailgunShot extends Render {
         GL11.glScalef(.25f, .25f, .25f);
 
         if (colourMap.length == 1) {
-            colourMap = new int[][] {colourMap[0], colourMap[0]};
+            colourMap = new int[][] { colourMap[0], colourMap[0] };
         }
 
         float height = .1875f;
@@ -94,21 +97,20 @@ public class EntityRenderRailgunShot extends Render {
             tes.addVertex(lengthStep * (i + 1), height, halfWidth);
         }
         // Top&Bottom
-        for (int i = 0; i < colLength; i++)
-            for (int j = 0; j < colWidth; j++) {
-                tes.setNormal(0, 1, 0);
-                tes.setColorOpaque_I(colourMap[i][j]);
-                tes.addVertex(lengthStep * (i + 1), height, -halfWidth + widthStep * j);
-                tes.addVertex(lengthStep * i, height, -halfWidth + widthStep * j);
-                tes.addVertex(lengthStep * i, height, -halfWidth + widthStep * (j + 1));
-                tes.addVertex(lengthStep * (i + 1), height, -halfWidth + widthStep * (j + 1));
+        for (int i = 0; i < colLength; i++) for (int j = 0; j < colWidth; j++) {
+            tes.setNormal(0, 1, 0);
+            tes.setColorOpaque_I(colourMap[i][j]);
+            tes.addVertex(lengthStep * (i + 1), height, -halfWidth + widthStep * j);
+            tes.addVertex(lengthStep * i, height, -halfWidth + widthStep * j);
+            tes.addVertex(lengthStep * i, height, -halfWidth + widthStep * (j + 1));
+            tes.addVertex(lengthStep * (i + 1), height, -halfWidth + widthStep * (j + 1));
 
-                tes.setNormal(0, -1, 0);
-                tes.addVertex(lengthStep * i, 0, -halfWidth + widthStep * j);
-                tes.addVertex(lengthStep * (i + 1), 0, -halfWidth + widthStep * j);
-                tes.addVertex(lengthStep * (i + 1), 0, -halfWidth + widthStep * (j + 1));
-                tes.addVertex(lengthStep * i, 0, -halfWidth + widthStep * (j + 1));
-            }
+            tes.setNormal(0, -1, 0);
+            tes.addVertex(lengthStep * i, 0, -halfWidth + widthStep * j);
+            tes.addVertex(lengthStep * (i + 1), 0, -halfWidth + widthStep * j);
+            tes.addVertex(lengthStep * (i + 1), 0, -halfWidth + widthStep * (j + 1));
+            tes.addVertex(lengthStep * i, 0, -halfWidth + widthStep * (j + 1));
+        }
         tes.draw();
 
         GL11.glDisable(GL11.GL_BLEND);

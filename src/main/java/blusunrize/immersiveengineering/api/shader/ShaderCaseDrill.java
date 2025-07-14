@@ -5,14 +5,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
 public class ShaderCaseDrill extends ShaderCase {
+
     public String additionalTexture = null;
 
-    public ShaderCaseDrill(
-            String overlayType,
-            int[] colourGrip,
-            int[] colourPrimary,
-            int[] colourSecondary,
-            String additionalTexture) {
+    public ShaderCaseDrill(String overlayType, int[] colourGrip, int[] colourPrimary, int[] colourSecondary,
+        String additionalTexture) {
         super(overlayType, colourGrip, colourPrimary, colourSecondary, "immersiveengineering:shaders/drill_diesel_");
         this.additionalTexture = additionalTexture;
     }
@@ -33,7 +30,7 @@ public class ShaderCaseDrill extends ShaderCase {
     public IIcon getReplacementIcon(ItemStack shader, ItemStack item, String modelPart, int pass) {
         int maxPass = getPasses(shader, item, modelPart);
         if (pass == maxPass - 1) // uncoloured
-        return i_drillUncoloured;
+            return i_drillUncoloured;
         if (pass == maxPass - 2 && i_drillAdditional != null) return i_drillAdditional;
 
         return pass == 0 ? i_drillBase : i_drillOverlay;
@@ -75,6 +72,6 @@ public class ShaderCaseDrill extends ShaderCase {
     }
 
     @Override
-    public void modifyRender(
-            ItemStack shader, ItemStack item, String modelPart, int pass, boolean pre, boolean inventory) {}
+    public void modifyRender(ItemStack shader, ItemStack item, String modelPart, int pass, boolean pre,
+        boolean inventory) {}
 }

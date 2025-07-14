@@ -1,14 +1,16 @@
 package blusunrize.immersiveengineering.common.gui;
 
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityAssembler;
-import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityAssembler;
+import blusunrize.immersiveengineering.common.util.Utils;
+
 public class ContainerAssembler extends Container {
+
     TileEntityAssembler tile;
     int slotCount;
 
@@ -26,9 +28,8 @@ public class ContainerAssembler extends Container {
         for (int i = 0; i < 18; i++) this.addSlotToContainer(new Slot(tile, i, 13 + (i % 9) * 18, 87 + (i / 9) * 18));
         slotCount = 21;
 
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 9; j++)
-                addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 13 + j * 18, 137 + i * 18));
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++)
+            addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 13 + j * 18, 137 + i * 18));
         for (int i = 0; i < 9; i++) addSlotToContainer(new Slot(inventoryPlayer, i, 13 + i * 18, 195));
     }
 

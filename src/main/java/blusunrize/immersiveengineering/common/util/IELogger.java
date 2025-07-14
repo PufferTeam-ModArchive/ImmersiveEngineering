@@ -1,10 +1,12 @@
 package blusunrize.immersiveengineering.common.util;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
-import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import cpw.mods.fml.common.FMLLog;
+
 public class IELogger {
+
     public static boolean debug = false;
 
     public static void log(Level logLevel, Object object) {
@@ -24,7 +26,7 @@ public class IELogger {
     }
 
     public static void debug(Object object) {
-        //		if(debug)
-        //			log(Level.INFO, "[DEBUG:] "+object);
+        // if(debug)
+        // log(Level.INFO, "[DEBUG:] "+object);
     }
 }

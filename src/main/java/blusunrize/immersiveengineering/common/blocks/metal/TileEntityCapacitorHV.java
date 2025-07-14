@@ -3,6 +3,7 @@ package blusunrize.immersiveengineering.common.blocks.metal;
 import blusunrize.immersiveengineering.common.Config;
 
 public class TileEntityCapacitorHV extends TileEntityCapacitorMV {
+
     @Override
     public int getMaxStorage() {
         return Config.getInt("capacitorHV_storage");

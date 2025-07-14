@@ -9,19 +9,21 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class EntityFXItemParts extends EntityFXIEBase {
+
     ItemStack item;
     int part = 0;
 
-    public EntityFXItemParts(
-            World world, ItemStack item, int part, double x, double y, double z, double mx, double my, double mz) {
+    public EntityFXItemParts(World world, ItemStack item, int part, double x, double y, double z, double mx, double my,
+        double mz) {
         super(world, x, y, z, mx, my, mz);
         this.item = item;
         this.part = part;
         this.particleMaxAge = 16;
         if (item != null && item.getItem() != null) {
-            if (item.getItem() instanceof ItemBlock)
-                this.particleIcon = Block.getBlockFromItem(item.getItem()).getIcon(0, item.getItemDamage());
-            else this.particleIcon = item.getItem().getIcon(item, 0);
+            if (item.getItem() instanceof ItemBlock) this.particleIcon = Block.getBlockFromItem(item.getItem())
+                .getIcon(0, item.getItemDamage());
+            else this.particleIcon = item.getItem()
+                .getIcon(item, 0);
         }
         this.posX = x;
         this.posY = y;
@@ -57,29 +59,29 @@ public class EntityFXItemParts extends EntityFXIEBase {
             tessellator.setBrightness(getBrightnessForRender(f7));
             tessellator.setColorRGBA_F(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
             tessellator.addVertexWithUV(
-                    (double) (f11 - f3 * f10 - f6 * f10),
-                    (double) (f12 - f4 * f10),
-                    (double) (f13 - f5 * f10 - f7 * f10),
-                    (double) uMax,
-                    (double) vMax);
+                (double) (f11 - f3 * f10 - f6 * f10),
+                (double) (f12 - f4 * f10),
+                (double) (f13 - f5 * f10 - f7 * f10),
+                (double) uMax,
+                (double) vMax);
             tessellator.addVertexWithUV(
-                    (double) (f11 - f3 * f10 + f6 * f10),
-                    (double) (f12 + f4 * f10),
-                    (double) (f13 - f5 * f10 + f7 * f10),
-                    (double) uMax,
-                    (double) vMin);
+                (double) (f11 - f3 * f10 + f6 * f10),
+                (double) (f12 + f4 * f10),
+                (double) (f13 - f5 * f10 + f7 * f10),
+                (double) uMax,
+                (double) vMin);
             tessellator.addVertexWithUV(
-                    (double) (f11 + f3 * f10 + f6 * f10),
-                    (double) (f12 + f4 * f10),
-                    (double) (f13 + f5 * f10 + f7 * f10),
-                    (double) uMin,
-                    (double) vMin);
+                (double) (f11 + f3 * f10 + f6 * f10),
+                (double) (f12 + f4 * f10),
+                (double) (f13 + f5 * f10 + f7 * f10),
+                (double) uMin,
+                (double) vMin);
             tessellator.addVertexWithUV(
-                    (double) (f11 + f3 * f10 - f6 * f10),
-                    (double) (f12 - f4 * f10),
-                    (double) (f13 + f5 * f10 - f7 * f10),
-                    (double) uMin,
-                    (double) vMax);
+                (double) (f11 + f3 * f10 - f6 * f10),
+                (double) (f12 - f4 * f10),
+                (double) (f13 + f5 * f10 - f7 * f10),
+                (double) uMin,
+                (double) vMax);
         }
     }
 }

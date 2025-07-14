@@ -1,9 +1,7 @@
 package blusunrize.immersiveengineering.client.gui;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.gui.ContainerToolbox;
-import blusunrize.immersiveengineering.common.util.Lib;
 import java.util.ArrayList;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -11,9 +9,15 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.common.gui.ContainerToolbox;
+import blusunrize.immersiveengineering.common.util.Lib;
+
 public class GuiToolbox extends GuiContainer {
+
     public GuiToolbox(InventoryPlayer inventoryPlayer, World world) {
         super(new ContainerToolbox(inventoryPlayer, world));
         this.ySize = 238;
@@ -26,11 +30,10 @@ public class GuiToolbox extends GuiContainer {
         int slot = -1;
         for (int i = 0; i < ((ContainerToolbox) this.inventorySlots).internalSlots; i++) {
             Slot s = (Slot) this.inventorySlots.inventorySlots.get(i);
-            if (!s.getHasStack()
-                    && mx > guiLeft + s.xDisplayPosition
-                    && mx < guiLeft + s.xDisplayPosition + 16
-                    && my > guiTop + s.yDisplayPosition
-                    && my < guiTop + s.yDisplayPosition + 16) slot = i;
+            if (!s.getHasStack() && mx > guiLeft + s.xDisplayPosition
+                && mx < guiLeft + s.xDisplayPosition + 16
+                && my > guiTop + s.yDisplayPosition
+                && my < guiTop + s.yDisplayPosition + 16) slot = i;
         }
         String ss = null;
         if (slot >= 0) ss = slot < 3 ? "food" : slot < 10 ? "tool" : slot < 16 ? "wire" : "any";

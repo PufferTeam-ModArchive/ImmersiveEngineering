@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class ComparableItemStack {
+
     public ItemStack stack;
     public boolean useNBT;
     public boolean ignoreOreDict;
@@ -41,7 +42,8 @@ public class ComparableItemStack {
     public int hashCode() {
         if (!ignoreOreDict && this.oreID != -1) return this.oreID;
         // return this.stack.getItemDamage()&0xFFFF | Item.getIdFromItem(this.stack.getItem())<<16;
-        return (stack.getItemDamage() & 0xffff) * 31 + stack.getItem().hashCode() * 31;
+        return (stack.getItemDamage() & 0xffff) * 31 + stack.getItem()
+            .hashCode() * 31;
     }
 
     @Override

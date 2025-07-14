@@ -5,14 +5,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
 public class ShaderCaseBalloon extends ShaderCase {
+
     public String additionalTexture = null;
 
-    public ShaderCaseBalloon(
-            String overlayType,
-            int[] colourUnderlying,
-            int[] colourPrimary,
-            int[] colourSecondary,
-            String additionalTexture) {
+    public ShaderCaseBalloon(String overlayType, int[] colourUnderlying, int[] colourPrimary, int[] colourSecondary,
+        String additionalTexture) {
         super(overlayType, colourUnderlying, colourPrimary, colourSecondary, "immersiveengineering:shaders/balloon_");
         this.additionalTexture = additionalTexture;
     }
@@ -53,6 +50,6 @@ public class ShaderCaseBalloon extends ShaderCase {
     }
 
     @Override
-    public void modifyRender(
-            ItemStack shader, ItemStack item, String modelPart, int pass, boolean pre, boolean inventory) {}
+    public void modifyRender(ItemStack shader, ItemStack item, String modelPart, int pass, boolean pre,
+        boolean inventory) {}
 }

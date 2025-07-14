@@ -1,5 +1,11 @@
 package blusunrize.immersiveengineering.common.util.network;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.client.models.ModelShaderMinecart;
 import blusunrize.immersiveengineering.common.entities.EntityPropertiesShaderCart;
@@ -8,13 +14,9 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 public class MessageMinecartShaderSync implements IMessage {
+
     int dimension;
     int entityID;
     boolean request = false;
@@ -46,14 +48,15 @@ public class MessageMinecartShaderSync implements IMessage {
     }
 
     public static class HandlerServer implements IMessageHandler<MessageMinecartShaderSync, IMessage> {
+
         @Override
         public IMessage onMessage(MessageMinecartShaderSync message, MessageContext ctx) {
             World world = DimensionManager.getWorld(message.dimension);
             if (world != null) {
                 Entity entity = world.getEntityByID(message.entityID);
                 if (entity != null) {
-                    EntityPropertiesShaderCart properties = (EntityPropertiesShaderCart)
-                            entity.getExtendedProperties(EntityPropertiesShaderCart.PROPERTY_NAME);
+                    EntityPropertiesShaderCart properties = (EntityPropertiesShaderCart) entity
+                        .getExtendedProperties(EntityPropertiesShaderCart.PROPERTY_NAME);
                     if (properties != null)
                         ImmersiveEngineering.packetHandler.sendToAll(new MessageMinecartShaderSync(entity, properties));
                 }
@@ -63,6 +66,7 @@ public class MessageMinecartShaderSync implements IMessage {
     }
 
     public static class HandlerClient implements IMessageHandler<MessageMinecartShaderSync, IMessage> {
+
         @Override
         public IMessage onMessage(MessageMinecartShaderSync message, MessageContext ctx) {
             World world = ImmersiveEngineering.proxy.getClientWorld();

@@ -1,14 +1,7 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.energy.DieselHandler;
-import blusunrize.immersiveengineering.api.energy.DieselHandler.SqueezerRecipe;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockSqueezer;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyReceiver;
 import java.util.HashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,8 +18,18 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.energy.DieselHandler;
+import blusunrize.immersiveengineering.api.energy.DieselHandler.SqueezerRecipe;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockSqueezer;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyReceiver;
+
 public class TileEntitySqueezer extends TileEntityMultiblockPart
-        implements IFluidHandler, ISidedInventory, IEnergyReceiver {
+    implements IFluidHandler, ISidedInventory, IEnergyReceiver {
+
     public int facing = 2;
     public FluidTank tank = new FluidTank(12000);
     public EnergyStorage energyStorage = new EnergyStorage(32000, Math.max(256, Config.getInt("squeezer_consumption")));
@@ -53,7 +56,7 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
 
     @Override
     public float[] getBlockBounds() {
-        return new float[] {0, 0, 0, 1, 1, 1};
+        return new float[] { 0, 0, 0, 1, 1, 1 };
     }
 
     @Override
@@ -80,36 +83,31 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
                         if (stack != null) {
                             SqueezerRecipe rr = getRecipe(stack);
                             if (rr == null) continue;
-                            if (recipe == null
-                                    || rr == recipe
-                                    || (rr.fluid != null
-                                            ? rr.fluid.isFluidEqual(recipe.fluid)
-                                            : recipe.fluid != null ? recipe.fluid.isFluidEqual(rr.fluid) : false))
+                            if (recipe == null || rr == recipe
+                                || (rr.fluid != null ? rr.fluid.isFluidEqual(recipe.fluid)
+                                    : recipe.fluid != null ? recipe.fluid.isFluidEqual(rr.fluid) : false))
                                 recipe = rr;
                             else continue;
 
                             if (recipe != null) {
-                                int recipeInputSize =
-                                        recipe.input instanceof ItemStack ? ((ItemStack) recipe.input).stackSize : 1;
-                                int outLimit = recipe.output == null
-                                        ? 9
-                                        : ((64 - (inventory[11] != null ? inventory[11].stackSize : 0))
-                                                / recipe.output.stackSize);
-                                int fluidLimit = recipe.fluid == null
-                                        ? 9
-                                        : ((tank.getCapacity() - tank.getFluidAmount()) / recipe.fluid.amount);
+                                int recipeInputSize = recipe.input instanceof ItemStack
+                                    ? ((ItemStack) recipe.input).stackSize
+                                    : 1;
+                                int outLimit = recipe.output == null ? 9
+                                    : ((64 - (inventory[11] != null ? inventory[11].stackSize : 0))
+                                        / recipe.output.stackSize);
+                                int fluidLimit = recipe.fluid == null ? 9
+                                    : ((tank.getCapacity() - tank.getFluidAmount()) / recipe.fluid.amount);
                                 int taken = Math.min(
-                                        Math.min(inputs, stack.stackSize / recipeInputSize),
-                                        Math.min(outLimit, fluidLimit));
+                                    Math.min(inputs, stack.stackSize / recipeInputSize),
+                                    Math.min(outLimit, fluidLimit));
                                 //
                                 if (taken > 0) {
                                     this.decrStackSize(i, taken * recipeInputSize);
-                                    if (recipe.output != null)
-                                        if (inventory[11] != null)
-                                            inventory[11].stackSize += taken * recipe.output.copy().stackSize;
-                                        else if (inventory[11] == null)
-                                            inventory[11] = Utils.copyStackWithAmount(
-                                                    recipe.output, taken * recipe.output.stackSize);
+                                    if (recipe.output != null) if (inventory[11] != null)
+                                        inventory[11].stackSize += taken * recipe.output.copy().stackSize;
+                                    else if (inventory[11] == null) inventory[11] = Utils
+                                        .copyStackWithAmount(recipe.output, taken * recipe.output.stackSize);
                                     if (recipe.fluid != null)
                                         this.tank.fill(new FluidStack(recipe.fluid, taken * recipe.fluid.amount), true);
                                     inputs -= taken;
@@ -123,9 +121,8 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
                     tick = 0;
                 }
             } else if (tick > 0) tick = 0;
-            if (tank.getFluidAmount() > 0
-                    && tank.getFluid() != null
-                    && (inventory[10] == null || inventory[10].stackSize + 1 < inventory[10].getMaxStackSize())) {
+            if (tank.getFluidAmount() > 0 && tank.getFluid() != null
+                && (inventory[10] == null || inventory[10].stackSize + 1 < inventory[10].getMaxStackSize())) {
                 ItemStack filledContainer = Utils.fillFluidContainer(tank, inventory[9], inventory[10]);
                 if (filledContainer != null) {
                     if (inventory[10] != null && OreDictionary.itemMatches(inventory[10], filledContainer, true))
@@ -142,12 +139,14 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
                     for (int f = 2; f < 6; f++) {
                         direction = ForgeDirection.getOrientation(f);
                         te = Utils.getExistingTileEntity(
-                                worldObj, xCoord + direction.offsetX * 2, yCoord - 1, zCoord + direction.offsetZ * 2);
-                        if (te instanceof IFluidHandler
-                                && ((IFluidHandler) te)
-                                        .canFill(
-                                                direction.getOpposite(),
-                                                this.tank.getFluid().getFluid()))
+                            worldObj,
+                            xCoord + direction.offsetX * 2,
+                            yCoord - 1,
+                            zCoord + direction.offsetZ * 2);
+                        if (te instanceof IFluidHandler && ((IFluidHandler) te).canFill(
+                            direction.getOpposite(),
+                            this.tank.getFluid()
+                                .getFluid()))
                             targets.put(direction, (IFluidHandler) te);
                     }
                     if (targets.size() > 0) {
@@ -158,9 +157,12 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
 
                             fluidHandler = targets.get(targetDirection);
                             int accepted = fluidHandler.fill(
-                                    targetDirection.getOpposite(),
-                                    new FluidStack(this.tank.getFluid().getFluid(), out),
-                                    false);
+                                targetDirection.getOpposite(),
+                                new FluidStack(
+                                    this.tank.getFluid()
+                                        .getFluid(),
+                                    out),
+                                false);
                             if (accepted > 0) {
                                 FluidStack drained = this.tank.drain(accepted, true);
                                 fluidHandler.fill(targetDirection.getOpposite(), drained, true);
@@ -181,14 +183,13 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
         SqueezerRecipe recipe = DieselHandler.findSqueezerRecipe(input);
         if (recipe == null) return null;
 
-        if (inventory[11] == null
-                || recipe.output == null
-                || (OreDictionary.itemMatches(inventory[11], recipe.output, false)
-                        && inventory[11].stackSize + recipe.output.stackSize <= recipe.output.getMaxStackSize()))
-            if (tank.getFluid() == null
-                    || recipe.fluid == null
-                    || (tank.getFluid().isFluidEqual(recipe.fluid)
-                            && tank.getFluidAmount() + recipe.fluid.amount <= tank.getCapacity())) return recipe;
+        if (inventory[11] == null || recipe.output == null
+            || (OreDictionary.itemMatches(inventory[11], recipe.output, false)
+                && inventory[11].stackSize + recipe.output.stackSize <= recipe.output.getMaxStackSize()))
+            if (tank.getFluid() == null || recipe.fluid == null
+                || (tank.getFluid()
+                    .isFluidEqual(recipe.fluid) && tank.getFluidAmount() + recipe.fluid.amount <= tank.getCapacity()))
+                return recipe;
         return null;
     }
 
@@ -203,7 +204,7 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
                 if (r.time > time) time = r.time;
             }
         }
-        return new int[] {in, time};
+        return new int[] { in, time };
     }
 
     public int getScaledProgress(int scale) {
@@ -211,20 +212,20 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
         return (int) (scale * (tick / (float) processMaxTime));
     }
 
-    //	boolean hasTankSpace()
-    //	{
-    //		for(int i=0; i<9; i++)
-    //		{
-    //			ItemStack stack = this.getStackInSlot(i);
-    //			if(stack!=null)
-    //			{
-    //				int f = DieselHandler.getPlantoilOutput(stack);
-    //				if(f>0 && tank.getFluidAmount()+f<tank.getCapacity())
-    //					return true;
-    //			}
-    //		}
-    //		return false;
-    //	}
+    // boolean hasTankSpace()
+    // {
+    // for(int i=0; i<9; i++)
+    // {
+    // ItemStack stack = this.getStackInSlot(i);
+    // if(stack!=null)
+    // {
+    // int f = DieselHandler.getPlantoilOutput(stack);
+    // if(f>0 && tank.getFluidAmount()+f<tank.getCapacity())
+    // return true;
+    // }
+    // }
+    // return false;
+    // }
 
     @Override
     public void readCustomNBT(NBTTagCompound nbt, boolean descPacket) {
@@ -299,7 +300,7 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
         if ((pos == 1 || pos == 9 || pos == 11 || pos == 19) && from.ordinal() > 1) {
             TileEntitySqueezer master = master();
-            return new FluidTankInfo[] {(master != null) ? master.tank.getInfo() : tank.getInfo()};
+            return new FluidTankInfo[] { (master != null) ? master.tank.getInfo() : tank.getInfo() };
         }
         return new FluidTankInfo[0];
     }
@@ -315,38 +316,35 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
             int startX = xCoord - (f == 4 ? il : f == 5 ? -il : f == 2 ? -iw : iw);
             int startY = yCoord - ih;
             int startZ = zCoord - (f == 2 ? il : f == 3 ? -il : f == 5 ? -iw : iw);
-            for (int l = 0; l < 3; l++)
-                for (int w = -1; w <= 1; w++)
-                    for (int h = -1; h <= 1; h++) {
-                        int xx = (f == 4 ? l : f == 5 ? -l : f == 2 ? -w : w);
-                        int yy = h;
-                        int zz = (f == 2 ? l : f == 3 ? -l : f == 5 ? -w : w);
+            for (int l = 0; l < 3; l++) for (int w = -1; w <= 1; w++) for (int h = -1; h <= 1; h++) {
+                int xx = (f == 4 ? l : f == 5 ? -l : f == 2 ? -w : w);
+                int yy = h;
+                int zz = (f == 2 ? l : f == 3 ? -l : f == 5 ? -w : w);
 
-                        ItemStack s = null;
-                        TileEntity tileEntity = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (tileEntity instanceof TileEntitySqueezer) {
-                            s = ((TileEntitySqueezer) tileEntity).getOriginalBlock();
-                            ((TileEntitySqueezer) tileEntity).formed = false;
-                        }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
-                        }
+                ItemStack s = null;
+                TileEntity tileEntity = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                if (tileEntity instanceof TileEntitySqueezer) {
+                    s = ((TileEntitySqueezer) tileEntity).getOriginalBlock();
+                    ((TileEntitySqueezer) tileEntity).formed = false;
+                }
+                if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                    s = this.getOriginalBlock();
+                if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                    else {
+                        if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                            worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                        worldObj.setBlock(
+                            startX + xx,
+                            startY + yy,
+                            startZ + zz,
+                            Block.getBlockFromItem(s.getItem()),
+                            s.getItemDamage(),
+                            0x3);
                     }
+                }
+            }
         }
     }
 
@@ -371,12 +369,11 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
         TileEntitySqueezer master = master();
         if (master != null) return master.decrStackSize(slot, amount);
         ItemStack stack = getStackInSlot(slot);
-        if (stack != null)
-            if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-            else {
-                stack = stack.splitStack(amount);
-                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-            }
+        if (stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+        else {
+            stack = stack.splitStack(amount);
+            if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+        }
         return stack;
     }
 
@@ -419,9 +416,8 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this
-                ? false
-                : formed && player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
+        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false
+            : formed && player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
     }
 
     @Override
@@ -435,9 +431,8 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
         if (!formed) return false;
         TileEntitySqueezer master = master();
         if (master != null) return master.isItemValidForSlot(slot, stack);
-        return slot < 9
-                ? DieselHandler.findSqueezerRecipe(stack) != null
-                : (slot == 9 && FluidContainerRegistry.isEmptyContainer(stack));
+        return slot < 9 ? DieselHandler.findSqueezerRecipe(stack) != null
+            : (slot == 9 && FluidContainerRegistry.isEmptyContainer(stack));
     }
 
     @Override
@@ -445,7 +440,7 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
         if (!formed) return new int[0];
         TileEntitySqueezer master = master();
         if (master != null) return master.getAccessibleSlotsFromSide(side);
-        return new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+        return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
     }
 
     @Override
@@ -472,9 +467,8 @@ public class TileEntitySqueezer extends TileEntityMultiblockPart
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
         TileEntitySqueezer master = master();
-        if (formed
-                && master != null
-                && ((pos == 10 && from == ForgeDirection.DOWN) || (pos == 16 && from == ForgeDirection.UP))) {
+        if (formed && master != null
+            && ((pos == 10 && from == ForgeDirection.DOWN) || (pos == 16 && from == ForgeDirection.UP))) {
             int rec = master.energyStorage.receiveEnergy(maxReceive, simulate);
             master.markDirty();
             if (rec > 0) worldObj.markBlockForUpdate(master.xCoord, master.yCoord, master.zCoord);

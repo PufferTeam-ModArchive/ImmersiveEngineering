@@ -1,11 +1,8 @@
 package blusunrize.immersiveengineering.common.blocks;
 
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.EventHandler;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISpawnInterdiction;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFloodlight;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -17,7 +14,13 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.EventHandler;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISpawnInterdiction;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFloodlight;
+
 public class BlockFakeLight extends BlockIEBase {
+
     public BlockFakeLight() {
         super("fakeLight", Material.air, 0, ItemBlockIEBase.class);
     }
@@ -43,8 +46,8 @@ public class BlockFakeLight extends BlockIEBase {
     }
 
     @Override
-    public void addCollisionBoxesToList(
-            World world, int x, int y, int z, AxisAlignedBB box, List list, Entity entity) {}
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB box, List list,
+        Entity entity) {}
 
     @Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
@@ -72,8 +75,8 @@ public class BlockFakeLight extends BlockIEBase {
     }
 
     @Override
-    public MovingObjectPosition collisionRayTrace(
-            World par1World, int par2, int par3, int par4, Vec3 par5Vec3, Vec3 par6Vec3) {
+    public MovingObjectPosition collisionRayTrace(World par1World, int par2, int par3, int par4, Vec3 par5Vec3,
+        Vec3 par6Vec3) {
         return null;
     }
 
@@ -104,13 +107,13 @@ public class BlockFakeLight extends BlockIEBase {
     }
 
     public static class TileEntityFakeLight extends TileEntityIEBase implements ISpawnInterdiction {
-        public int[] floodlightCoords = {-1, -1, -1};
+
+        public int[] floodlightCoords = { -1, -1, -1 };
 
         public TileEntityFakeLight() {
-            if (Config.getBoolean("floodlight_spawnPrevent"))
-                synchronized (EventHandler.interdictionTiles) {
-                    if (!EventHandler.interdictionTiles.contains(this)) EventHandler.interdictionTiles.add(this);
-                }
+            if (Config.getBoolean("floodlight_spawnPrevent")) synchronized (EventHandler.interdictionTiles) {
+                if (!EventHandler.interdictionTiles.contains(this)) EventHandler.interdictionTiles.add(this);
+            }
         }
 
         @Override

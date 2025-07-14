@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class EntityRenderNone extends Render {
+
     @Override
     public void doRender(Entity entity, double x, double y, double z, float f0, float f1) {}
 

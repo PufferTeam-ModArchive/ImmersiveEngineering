@@ -1,15 +1,5 @@
 package blusunrize.immersiveengineering.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.energy.DieselHandler;
-import blusunrize.immersiveengineering.api.energy.DieselHandler.RefineryRecipe;
-import blusunrize.immersiveengineering.common.Config;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockRefinery;
-import blusunrize.immersiveengineering.common.util.Utils;
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyReceiver;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,8 +17,20 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.energy.DieselHandler;
+import blusunrize.immersiveengineering.api.energy.DieselHandler.RefineryRecipe;
+import blusunrize.immersiveengineering.common.Config;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.MultiblockRefinery;
+import blusunrize.immersiveengineering.common.util.Utils;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyReceiver;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class TileEntityRefinery extends TileEntityMultiblockPart
-        implements IFluidHandler, IEnergyReceiver, ISidedInventory {
+    implements IFluidHandler, IEnergyReceiver, ISidedInventory {
+
     public int facing = 2;
     public FluidTank tank0 = new FluidTank(12000);
     public FluidTank tank1 = new FluidTank(12000);
@@ -58,29 +60,13 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
 
     @Override
     public float[] getBlockBounds() {
-        if (pos == 7) return new float[] {.0625f, 0, .0625f, .9375f, 1, .9375f};
-        else if (pos == 37)
-            return new float[] {
-                facing == 4 ? .5f : 0, 0, facing == 2 ? .5f : 0, facing == 5 ? .5f : 1, 1, facing == 3 ? .5f : 1
-            };
-        else if (pos == 20 || pos == 25)
-            return new float[] {
-                facing == 3 ? .1875f : 0,
-                0,
-                facing == 4 ? .1875f : 0,
-                facing == 2 ? .8125f : 1,
-                1,
-                facing == 5 ? .8125f : 1
-            };
-        else if (pos == 24 || pos == 29)
-            return new float[] {
-                facing == 2 ? .1875f : 0,
-                0,
-                facing == 5 ? .1875f : 0,
-                facing == 3 ? .8125f : 1,
-                1,
-                facing == 4 ? .8125f : 1
-            };
+        if (pos == 7) return new float[] { .0625f, 0, .0625f, .9375f, 1, .9375f };
+        else if (pos == 37) return new float[] { facing == 4 ? .5f : 0, 0, facing == 2 ? .5f : 0, facing == 5 ? .5f : 1,
+            1, facing == 3 ? .5f : 1 };
+        else if (pos == 20 || pos == 25) return new float[] { facing == 3 ? .1875f : 0, 0, facing == 4 ? .1875f : 0,
+            facing == 2 ? .8125f : 1, 1, facing == 5 ? .8125f : 1 };
+        else if (pos == 24 || pos == 29) return new float[] { facing == 2 ? .1875f : 0, 0, facing == 5 ? .1875f : 0,
+            facing == 3 ? .8125f : 1, 1, facing == 4 ? .8125f : 1 };
         else if ((pos >= 5 && pos < 15 && pos != 9) || (pos >= 35 && pos < 45)) {
             float minY = pos / 5 > 1 ? 0 : .375f;
             float maxY = 1;
@@ -106,10 +92,10 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
                 minZ = facing == 4 || facing == 5 ? 0 : minZ;
                 maxZ = facing == 4 || facing == 5 ? 1 : maxZ;
             }
-            return new float[] {minX, minY, minZ, maxX, maxY, maxZ};
+            return new float[] { minX, minY, minZ, maxX, maxY, maxZ };
         } else if (pos == 0 || pos == 1 || pos == 3 || pos == 30 || pos == 31 || pos == 33 || pos == 34)
-            return new float[] {0, 0, 0, 1, .5f, 1};
-        else return new float[] {0, 0, 0, 1, 1, 1};
+            return new float[] { 0, 0, 0, 1, .5f, 1 };
+        else return new float[] { 0, 0, 0, 1, 1, 1 };
     }
 
     @Override
@@ -121,23 +107,20 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
             int prevAmount = tank2.getFluidAmount();
             boolean enabled;
             if (computerControlled) enabled = computerOn;
-            else
-                enabled = !worldObj.isBlockIndirectlyGettingPowered(
-                        xCoord + (facing == 4 ? -1 : facing == 5 ? 1 : facing == 2 ? -2 : 2),
-                        yCoord + 1,
-                        zCoord + (facing == 2 ? -1 : facing == 3 ? 1 : facing == 4 ? 2 : -2));
+            else enabled = !worldObj.isBlockIndirectlyGettingPowered(
+                xCoord + (facing == 4 ? -1 : facing == 5 ? 1 : facing == 2 ? -2 : 2),
+                yCoord + 1,
+                zCoord + (facing == 2 ? -1 : facing == 3 ? 1 : facing == 4 ? 2 : -2));
             if (enabled) {
                 RefineryRecipe recipe = getRecipe(true);
                 if (recipe != null) {
                     int consumed = Config.getInt("refinery_consumption");
                     if (energyStorage.extractEnergy(consumed, true) == consumed
-                            && tank2.fill(recipe.output.copy(), false) == recipe.output.amount) {
-                        int drain0 = tank0.getFluid().isFluidEqual(recipe.input0)
-                                ? recipe.input0.amount
-                                : recipe.input1.amount;
-                        int drain1 = tank0.getFluid().isFluidEqual(recipe.input0)
-                                ? recipe.input1.amount
-                                : recipe.input0.amount;
+                        && tank2.fill(recipe.output.copy(), false) == recipe.output.amount) {
+                        int drain0 = tank0.getFluid()
+                            .isFluidEqual(recipe.input0) ? recipe.input0.amount : recipe.input1.amount;
+                        int drain1 = tank0.getFluid()
+                            .isFluidEqual(recipe.input0) ? recipe.input1.amount : recipe.input0.amount;
                         if (tank0.getFluidAmount() >= drain0 && tank1.getFluidAmount() >= drain1) {
                             energyStorage.extractEnergy(consumed, false);
                             tank0.drain(drain0, true);
@@ -149,7 +132,7 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
                 }
             }
             if (tank2.getFluidAmount() > 0
-                    && (inventory[5] == null || inventory[5].stackSize < inventory[5].getMaxStackSize())) {
+                && (inventory[5] == null || inventory[5].stackSize < inventory[5].getMaxStackSize())) {
                 ItemStack filledContainer = Utils.fillFluidContainer(tank2, inventory[4], inventory[5]);
                 if (filledContainer != null) {
                     if (inventory[5] != null && OreDictionary.itemMatches(inventory[5], filledContainer, true))
@@ -161,16 +144,19 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
                 if (tank2.getFluidAmount() > 0) {
                     ForgeDirection f = ForgeDirection.getOrientation(facing);
                     int out = Math.min(144, tank2.getFluidAmount());
-                    TileEntity te = Utils.getExistingTileEntity(
-                            worldObj, xCoord + f.offsetX * 2, yCoord, zCoord + f.offsetZ * 2);
-                    if (te instanceof IFluidHandler
-                            && ((IFluidHandler) te)
-                                    .canFill(f.getOpposite(), tank2.getFluid().getFluid())) {
-                        int accepted = ((IFluidHandler) te)
-                                .fill(
-                                        f.getOpposite(),
-                                        new FluidStack(tank2.getFluid().getFluid(), out),
-                                        false);
+                    TileEntity te = Utils
+                        .getExistingTileEntity(worldObj, xCoord + f.offsetX * 2, yCoord, zCoord + f.offsetZ * 2);
+                    if (te instanceof IFluidHandler && ((IFluidHandler) te).canFill(
+                        f.getOpposite(),
+                        tank2.getFluid()
+                            .getFluid())) {
+                        int accepted = ((IFluidHandler) te).fill(
+                            f.getOpposite(),
+                            new FluidStack(
+                                tank2.getFluid()
+                                    .getFluid(),
+                                out),
+                            false);
                         FluidStack drained = this.tank2.drain(accepted, true);
                         ((IFluidHandler) te).fill(f.getOpposite(), drained, true);
                     }
@@ -205,10 +191,9 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
     public RefineryRecipe getRecipe(boolean checkCapacity) {
         RefineryRecipe recipe = DieselHandler.findRefineryRecipe(tank0.getFluid(), tank1.getFluid());
         if (recipe == null) return null;
-        if (tank2.getFluid() == null
-                || (tank2.getFluid().isFluidEqual(recipe.output)
-                        && (!checkCapacity || tank2.getFluidAmount() + recipe.output.amount <= tank2.getCapacity())))
-            return recipe;
+        if (tank2.getFluid() == null || (tank2.getFluid()
+            .isFluidEqual(recipe.output)
+            && (!checkCapacity || tank2.getFluidAmount() + recipe.output.amount <= tank2.getCapacity()))) return recipe;
         return null;
     }
 
@@ -253,17 +238,17 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
             else if (resource.isFluidEqual(tank1.getFluid())) fill = tank1.fill(resource, doFill);
             else if (tank0.getFluidAmount() <= 0 && tank1.getFluidAmount() <= 0)
                 fill = (DieselHandler.findIncompleteRefineryRecipe(resource, null) != null
-                        ? tank0.fill(resource, doFill)
-                        : 0);
+                    ? tank0.fill(resource, doFill)
+                    : 0);
             else {
                 if (tank0.getFluidAmount() > 0)
                     fill = (DieselHandler.findIncompleteRefineryRecipe(resource, tank0.getFluid()) != null
-                            ? tank1.fill(resource, doFill)
-                            : 0);
+                        ? tank1.fill(resource, doFill)
+                        : 0);
                 else if (tank1.getFluidAmount() > 0)
                     fill = (DieselHandler.findIncompleteRefineryRecipe(resource, tank1.getFluid()) != null
-                            ? tank0.fill(resource, doFill)
-                            : 0);
+                        ? tank0.fill(resource, doFill)
+                        : 0);
             }
             markDirty();
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -313,12 +298,12 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
         if (from.ordinal() <= 1) return new FluidTankInfo[0];
         switch (pos) {
             case 2:
-                return new FluidTankInfo[] {(master() != null) ? master().tank2.getInfo() : tank2.getInfo()};
+                return new FluidTankInfo[] { (master() != null) ? master().tank2.getInfo() : tank2.getInfo() };
             case 15:
             case 19:
                 TileEntityRefinery master = master();
-                if (master != null) return new FluidTankInfo[] {master.tank0.getInfo(), master.tank1.getInfo()};
-                return new FluidTankInfo[] {tank0.getInfo(), tank1.getInfo()};
+                if (master != null) return new FluidTankInfo[] { master.tank0.getInfo(), master.tank1.getInfo() };
+                return new FluidTankInfo[] { tank0.getInfo(), tank1.getInfo() };
             default:
                 return new FluidTankInfo[0];
         }
@@ -330,16 +315,14 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        if (renderAABB == null)
-            if (pos == 17)
-                renderAABB = AxisAlignedBB.getBoundingBox(
-                        xCoord - (facing == 2 || facing == 3 ? 2 : 1),
-                        yCoord,
-                        zCoord - (facing == 4 || facing == 5 ? 2 : 1),
-                        xCoord + (facing == 2 || facing == 3 ? 3 : 2),
-                        yCoord + 3,
-                        zCoord + (facing == 4 || facing == 5 ? 3 : 2));
-            else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (renderAABB == null) if (pos == 17) renderAABB = AxisAlignedBB.getBoundingBox(
+            xCoord - (facing == 2 || facing == 3 ? 2 : 1),
+            yCoord,
+            zCoord - (facing == 4 || facing == 5 ? 2 : 1),
+            xCoord + (facing == 2 || facing == 3 ? 3 : 2),
+            yCoord + 3,
+            zCoord + (facing == 4 || facing == 5 ? 3 : 2));
+        else renderAABB = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
         return renderAABB;
     }
 
@@ -361,76 +344,75 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
             int startX = xCoord - (f == 4 ? il : f == 5 ? -il : f == 2 ? -iw : iw);
             int startY = yCoord - ih;
             int startZ = zCoord - (f == 2 ? il : f == 3 ? -il : f == 5 ? -iw : iw);
-            for (int l = 0; l < 3; l++)
-                for (int w = -2; w <= 2; w++)
-                    for (int h = -1; h <= 1; h++) {
-                        if (w == 0 && (h == 1 || (h == 0 && l == 1))) continue;
-                        int xx = (f == 4 ? l : f == 5 ? -l : f == 2 ? -w : w);
-                        int yy = h;
-                        int zz = (f == 2 ? l : f == 3 ? -l : f == 5 ? -w : w);
+            for (int l = 0; l < 3; l++) for (int w = -2; w <= 2; w++) for (int h = -1; h <= 1; h++) {
+                if (w == 0 && (h == 1 || (h == 0 && l == 1))) continue;
+                int xx = (f == 4 ? l : f == 5 ? -l : f == 2 ? -w : w);
+                int yy = h;
+                int zz = (f == 2 ? l : f == 3 ? -l : f == 5 ? -w : w);
 
-                        ItemStack s = null;
-                        TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
-                        if (te instanceof TileEntityRefinery) {
-                            s = ((TileEntityRefinery) te).getOriginalBlock();
-                            ((TileEntityRefinery) te).formed = false;
-                        }
-                        if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                            s = this.getOriginalBlock();
-                        if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
-                            if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
-                                worldObj.spawnEntityInWorld(
-                                        new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
-                            else {
-                                if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
-                                    worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
-                                worldObj.setBlock(
-                                        startX + xx,
-                                        startY + yy,
-                                        startZ + zz,
-                                        Block.getBlockFromItem(s.getItem()),
-                                        s.getItemDamage(),
-                                        0x3);
-                            }
-                        }
-                        //
-                        //
-                        //						if((startX+xx!=xCoord) || (startY+yy!=yCoord) || (startZ+zz!=zCoord))
-                        //						{
-                        //							ItemStack s = null;
-                        //							if(worldObj.getTileEntity(startX+xx,startY+yy,startZ+zz) instanceof TileEntityRefinery)
-                        //							{
-                        //
-                        //	((TileEntityRefinery)worldObj.getTileEntity(startX+xx,startY+yy,startZ+zz)).formed=false;
-                        //								s =
-                        // ((TileEntityRefinery)worldObj.getTileEntity(startX+xx,startY+yy,startZ+zz)).getOriginalBlock();
-                        //							}
-                        //							if(s!=null && Block.getBlockFromItem(s.getItem())!=null)
-                        //							{
-                        //								if(Block.getBlockFromItem(s.getItem())==this.getBlockType() &&
-                        // s.getItemDamage()==this.getBlockMetadata())
-                        //									worldObj.setBlockToAir(startX+xx,startY+yy,startZ+zz);
-                        //								worldObj.setBlock(startX+xx,startY+yy,startZ+zz, Block.getBlockFromItem(s.getItem()),
-                        // s.getItemDamage(), 0x3);
-                        //							}
-                        //						}
+                ItemStack s = null;
+                TileEntity te = worldObj.getTileEntity(startX + xx, startY + yy, startZ + zz);
+                if (te instanceof TileEntityRefinery) {
+                    s = ((TileEntityRefinery) te).getOriginalBlock();
+                    ((TileEntityRefinery) te).formed = false;
+                }
+                if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                    s = this.getOriginalBlock();
+                if (s != null && Block.getBlockFromItem(s.getItem()) != null) {
+                    if (startX + xx == xCoord && startY + yy == yCoord && startZ + zz == zCoord)
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord + .5, yCoord + .5, zCoord + .5, s));
+                    else {
+                        if (Block.getBlockFromItem(s.getItem()) == IEContent.blockMetalMultiblocks)
+                            worldObj.setBlockToAir(startX + xx, startY + yy, startZ + zz);
+                        worldObj.setBlock(
+                            startX + xx,
+                            startY + yy,
+                            startZ + zz,
+                            Block.getBlockFromItem(s.getItem()),
+                            s.getItemDamage(),
+                            0x3);
                     }
+                }
+                //
+                //
+                // if((startX+xx!=xCoord) || (startY+yy!=yCoord) || (startZ+zz!=zCoord))
+                // {
+                // ItemStack s = null;
+                // if(worldObj.getTileEntity(startX+xx,startY+yy,startZ+zz) instanceof TileEntityRefinery)
+                // {
+                //
+                // ((TileEntityRefinery)worldObj.getTileEntity(startX+xx,startY+yy,startZ+zz)).formed=false;
+                // s =
+                // ((TileEntityRefinery)worldObj.getTileEntity(startX+xx,startY+yy,startZ+zz)).getOriginalBlock();
+                // }
+                // if(s!=null && Block.getBlockFromItem(s.getItem())!=null)
+                // {
+                // if(Block.getBlockFromItem(s.getItem())==this.getBlockType() &&
+                // s.getItemDamage()==this.getBlockMetadata())
+                // worldObj.setBlockToAir(startX+xx,startY+yy,startZ+zz);
+                // worldObj.setBlock(startX+xx,startY+yy,startZ+zz, Block.getBlockFromItem(s.getItem()),
+                // s.getItemDamage(), 0x3);
+                // }
+                // }
+            }
         }
     }
 
     @Override
     public boolean canConnectEnergy(ForgeDirection from) {
-        return formed
-                && pos == 37
-                && ForgeDirection.getOrientation(facing).getOpposite().equals(from);
+        return formed && pos == 37
+            && ForgeDirection.getOrientation(facing)
+                .getOpposite()
+                .equals(from);
     }
 
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        if (formed
-                && pos == 37
-                && master() != null
-                && ForgeDirection.getOrientation(facing).getOpposite().equals(from)) {
+        if (formed && pos == 37
+            && master() != null
+            && ForgeDirection.getOrientation(facing)
+                .getOpposite()
+                .equals(from)) {
             TileEntityRefinery master = master();
             int rec = master.energyStorage.receiveEnergy(maxReceive, simulate);
             master.markDirty();
@@ -471,12 +453,11 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
         if (!formed) return null;
         if (master() != null) return master().decrStackSize(slot, amount);
         ItemStack stack = getStackInSlot(slot);
-        if (stack != null)
-            if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
-            else {
-                stack = stack.splitStack(amount);
-                if (stack.stackSize == 0) setInventorySlotContents(slot, null);
-            }
+        if (stack != null) if (stack.stackSize <= amount) setInventorySlotContents(slot, null);
+        else {
+            stack = stack.splitStack(amount);
+            if (stack.stackSize == 0) setInventorySlotContents(slot, null);
+        }
         return stack;
     }
 
@@ -517,9 +498,8 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this
-                ? false
-                : formed && player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
+        return worldObj.getTileEntity(xCoord, yCoord, zCoord) != this ? false
+            : formed && player.getDistanceSq(xCoord + .5D, yCoord + .5D, zCoord + .5D) <= 64;
     }
 
     @Override
@@ -533,23 +513,18 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
         if (!formed) return false;
         if (master() != null) return master().isItemValidForSlot(slot, stack);
         if (slot == 1 || slot == 3 || slot == 5) return false;
-        if (slot == 4)
-            return (tank2.getFluidAmount() <= 0
-                    ? FluidContainerRegistry.isEmptyContainer(stack)
-                    : FluidContainerRegistry.fillFluidContainer(tank2.getFluid(), Utils.copyStackWithAmount(stack, 1))
-                            != null);
+        if (slot == 4) return (tank2.getFluidAmount() <= 0 ? FluidContainerRegistry.isEmptyContainer(stack)
+            : FluidContainerRegistry.fillFluidContainer(tank2.getFluid(), Utils.copyStackWithAmount(stack, 1)) != null);
         FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(stack);
         if (fs == null) return false;
         RefineryRecipe partialRecipe = DieselHandler.findIncompleteRefineryRecipe(fs, null);
         if (partialRecipe == null) return false;
         if (slot == 0)
-            return (tank0.getFluidAmount() <= 0 || fs.isFluidEqual(tank0.getFluid()))
-                    && (tank1.getFluidAmount() <= 0
-                            || DieselHandler.findIncompleteRefineryRecipe(fs, tank1.getFluid()) != null);
+            return (tank0.getFluidAmount() <= 0 || fs.isFluidEqual(tank0.getFluid())) && (tank1.getFluidAmount() <= 0
+                || DieselHandler.findIncompleteRefineryRecipe(fs, tank1.getFluid()) != null);
         if (slot == 2)
-            return (tank1.getFluidAmount() <= 0 || fs.isFluidEqual(tank1.getFluid()))
-                    && (tank0.getFluidAmount() <= 0
-                            || DieselHandler.findIncompleteRefineryRecipe(fs, tank0.getFluid()) != null);
+            return (tank1.getFluidAmount() <= 0 || fs.isFluidEqual(tank1.getFluid())) && (tank0.getFluidAmount() <= 0
+                || DieselHandler.findIncompleteRefineryRecipe(fs, tank0.getFluid()) != null);
         return false;
     }
 
@@ -557,7 +532,7 @@ public class TileEntityRefinery extends TileEntityMultiblockPart
     public int[] getAccessibleSlotsFromSide(int side) {
         if (!formed) return new int[0];
         if (master() != null) return master().getAccessibleSlotsFromSide(side);
-        return new int[] {0, 1, 2, 3, 4, 5};
+        return new int[] { 0, 1, 2, 3, 4, 5 };
     }
 
     @Override

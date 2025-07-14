@@ -3,6 +3,19 @@ package blusunrize.immersiveengineering.client.nei;
 import static codechicken.lib.gui.GuiDraw.changeTexture;
 import static codechicken.lib.gui.GuiDraw.drawTexturedModalRect;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
+
+import org.lwjgl.opengl.GL11;
+
 import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.IEContent;
@@ -14,19 +27,11 @@ import codechicken.nei.recipe.GuiCraftingRecipe;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.GuiUsageRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.Arrays;
-import java.util.List;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.oredict.OreDictionary;
-import org.lwjgl.opengl.GL11;
 
 public class NEICokeOvenHandler extends TemplateRecipeHandler {
+
     public class CachedCokeOvenRecipe extends CachedRecipe {
+
         PositionedStack input;
         PositionedStack output;
         public int creosote;
@@ -61,15 +66,15 @@ public class NEICokeOvenHandler extends TemplateRecipeHandler {
     public void loadCraftingRecipes(String outputId, Object... results) {
         boolean b = false;
         if (outputId == "liquid" && results != null && results.length > 0 && results[0] instanceof FluidStack)
-            b = ((FluidStack) results[0]).getFluid().equals(IEContent.fluidCreosote);
-        if (outputId == "item"
-                && results != null
-                && results.length > 0
-                && results[0] instanceof ItemStack
-                && FluidContainerRegistry.isFilledContainer((ItemStack) results[0]))
+            b = ((FluidStack) results[0]).getFluid()
+                .equals(IEContent.fluidCreosote);
+        if (outputId == "item" && results != null
+            && results.length > 0
+            && results[0] instanceof ItemStack
+            && FluidContainerRegistry.isFilledContainer((ItemStack) results[0]))
             b = FluidContainerRegistry.getFluidForFilledItem((ItemStack) results[0])
-                    .getFluid()
-                    .equals(IEContent.fluidCreosote);
+                .getFluid()
+                .equals(IEContent.fluidCreosote);
 
         if (b || outputId == getOverlayIdentifier()) {
             for (CokeOvenRecipe r : CokeOvenRecipe.recipeList)
@@ -99,10 +104,8 @@ public class NEICokeOvenHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result != null)
-            for (CokeOvenRecipe r : CokeOvenRecipe.recipeList)
-                if (r != null && Utils.stackMatchesObject(result, r.output))
-                    this.arecipes.add(new CachedCokeOvenRecipe(r));
+        if (result != null) for (CokeOvenRecipe r : CokeOvenRecipe.recipeList)
+            if (r != null && Utils.stackMatchesObject(result, r.output)) this.arecipes.add(new CachedCokeOvenRecipe(r));
     }
 
     @Override
@@ -120,15 +123,14 @@ public class NEICokeOvenHandler extends TemplateRecipeHandler {
             Point localPoint = GuiDraw.getMousePosition();
             int gl = (gui.width - 176) / 2;
             int gt = (gui.height - 176) / 2;
-            if (localPoint.x > gl + 124
-                    && localPoint.x <= gl + 124 + 16
-                    && localPoint.y > gt + 12
-                    && localPoint.y <= gt + 12 + 47) {
+            if (localPoint.x > gl + 124 && localPoint.x <= gl + 124 + 16
+                && localPoint.y > gt + 12
+                && localPoint.y <= gt + 12 + 47) {
                 FluidStack fs = new FluidStack(IEContent.fluidCreosote, r.creosote);
                 if (keyCode == NEIClientConfig.getKeyBinding("gui.recipe")) {
-                    if (GuiCraftingRecipe.openRecipeGui("liquid", new Object[] {fs})) return true;
+                    if (GuiCraftingRecipe.openRecipeGui("liquid", new Object[] { fs })) return true;
                 } else if (keyCode == NEIClientConfig.getKeyBinding("gui.usage")) {
-                    if (GuiUsageRecipe.openRecipeGui("liquid", new Object[] {fs})) return true;
+                    if (GuiUsageRecipe.openRecipeGui("liquid", new Object[] { fs })) return true;
                 }
             }
         }
@@ -142,15 +144,14 @@ public class NEICokeOvenHandler extends TemplateRecipeHandler {
             Point localPoint = GuiDraw.getMousePosition();
             int gl = (gui.width - 176) / 2;
             int gt = (gui.height - 176) / 2;
-            if (localPoint.x > gl + 124
-                    && localPoint.x <= gl + 124 + 16
-                    && localPoint.y > gt + 12
-                    && localPoint.y <= gt + 12 + 47) {
+            if (localPoint.x > gl + 124 && localPoint.x <= gl + 124 + 16
+                && localPoint.y > gt + 12
+                && localPoint.y <= gt + 12 + 47) {
                 FluidStack fs = new FluidStack(IEContent.fluidCreosote, r.creosote);
                 if (button == 0) {
-                    if (GuiCraftingRecipe.openRecipeGui("liquid", new Object[] {fs})) return true;
+                    if (GuiCraftingRecipe.openRecipeGui("liquid", new Object[] { fs })) return true;
                 } else if (button == 1) {
-                    if (GuiUsageRecipe.openRecipeGui("liquid", new Object[] {fs})) return true;
+                    if (GuiUsageRecipe.openRecipeGui("liquid", new Object[] { fs })) return true;
                 }
             }
         }
@@ -164,10 +165,9 @@ public class NEICokeOvenHandler extends TemplateRecipeHandler {
             Point localPoint = GuiDraw.getMousePosition();
             int gl = (gui.width - 176) / 2;
             int gt = (gui.height - 134) / 2;
-            if (localPoint.x > gl + 124
-                    && localPoint.x <= gl + 124 + 16
-                    && localPoint.y > gt + (64 * (recipe % 2)) + 12
-                    && localPoint.y <= gt + (64 * (recipe % 2)) + 12 + 47) {
+            if (localPoint.x > gl + 124 && localPoint.x <= gl + 124 + 16
+                && localPoint.y > gt + (64 * (recipe % 2)) + 12
+                && localPoint.y <= gt + (64 * (recipe % 2)) + 12 + 47) {
                 list.add(IEContent.fluidCreosote.getLocalizedName(new FluidStack(IEContent.fluidCreosote, r.creosote)));
                 list.add(r.creosote + " mB");
             }
@@ -183,7 +183,14 @@ public class NEICokeOvenHandler extends TemplateRecipeHandler {
         CachedCokeOvenRecipe r = (CachedCokeOvenRecipe) this.arecipes.get(recipe % arecipes.size());
         if (r != null) {
             String s = r.time + " Ticks";
-            ClientUtils.font().drawString(s, 50 - ClientUtils.font().getStringWidth(s) / 2, 53, 0xaaaaaa, true);
+            ClientUtils.font()
+                .drawString(
+                    s,
+                    50 - ClientUtils.font()
+                        .getStringWidth(s) / 2,
+                    53,
+                    0xaaaaaa,
+                    true);
             GL11.glColor4f(1, 1, 1, 1);
 
             int h = (int) Math.max(1, 47 * (r.creosote / (float) 12000));

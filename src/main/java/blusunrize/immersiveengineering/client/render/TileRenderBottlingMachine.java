@@ -1,12 +1,5 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.models.ModelIEObj;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices;
-import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalMultiblocks;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBottlingMachine;
-import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -18,10 +11,21 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.obj.Vertex;
+
 import org.lwjgl.opengl.GL11;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import blusunrize.immersiveengineering.client.models.ModelIEObj;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDevices;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalMultiblocks;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityBottlingMachine;
+import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
+
 public class TileRenderBottlingMachine extends TileRenderIE {
+
     ModelIEObj model = new ModelIEObj("immersiveengineering:models/bottlingMachine.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             if (groupName.equalsIgnoreCase("conveyors"))
@@ -36,10 +40,10 @@ public class TileRenderBottlingMachine extends TileRenderIE {
 
         translationMatrix.translate(.5, 0, .5);
         rotationMatrix.rotate(
-                Math.toRadians(bottler.facing == 3 ? 180 : bottler.facing == 4 ? 90 : bottler.facing == 5 ? -90 : 0),
-                0,
-                1,
-                0);
+            Math.toRadians(bottler.facing == 3 ? 180 : bottler.facing == 4 ? 90 : bottler.facing == 5 ? -90 : 0),
+            0,
+            1,
+            0);
         if (bottler.mirrored)
             translationMatrix.scale(new Vertex(bottler.facing < 4 ? -1 : 1, 1, bottler.facing > 3 ? -1 : 1));
 
@@ -71,40 +75,34 @@ public class TileRenderBottlingMachine extends TileRenderIE {
                 double fill = step >= .4 + d0 + d1 * 1.5 ? 1 : 0;
                 if (bottler.predictedOutput[i] != null)
                     if (step >= .4 + d0 && step < .4 + d0 + d1) fill = tapShift = (step - .4 - d0) / d1;
-                    else if (step >= .4 + d0 + d1 && step < .4 + d0 + d1 * 1.5) fill = tapShift = 1;
-                    else if (step >= .4 + d0 + d1 * 1.5 && step < .4 + d0 + d1 * 2.5)
-                        tapShift = 1 - (step - .4 - d0 - d1 * 1.5) / d1;
+                else if (step >= .4 + d0 + d1 && step < .4 + d0 + d1 * 1.5) fill = tapShift = 1;
+                else if (step >= .4 + d0 + d1 * 1.5 && step < .4 + d0 + d1 * 2.5)
+                    tapShift = 1 - (step - .4 - d0 - d1 * 1.5) / d1;
 
                 GL11.glPushMatrix();
                 GL11.glTranslated(1, 1.15625, .5);
                 double itemX = 0;
                 double itemY = 0;
                 double itemZ = 0;
-                itemX = -(step < .18
-                        ? 0
-                        : step < .4
-                                ? ((step - .18) / .22) * .75
-                                : step < .6
-                                        ? .75 + ((step - .40) / .2) * .8125
-                                        : step < .82 ? 1.5625 + (step - .6) / .22 * .75 : 2.3125);
-                itemZ = -(step < .18
-                        ? step / .18 * .9
-                        : step < .4
-                                ? .9 + ((step - .18) / .22) * .7875
-                                : step < .6
-                                        ? 1.6875
-                                        : step < .82 ? 1.6875 - ((step - .6) / .22) * .7875 : (1 - step) / .18 * .9);
+                itemX = -(step < .18 ? 0
+                    : step < .4 ? ((step - .18) / .22) * .75
+                        : step < .6 ? .75 + ((step - .40) / .2) * .8125
+                            : step < .82 ? 1.5625 + (step - .6) / .22 * .75 : 2.3125);
+                itemZ = -(step < .18 ? step / .18 * .9
+                    : step < .4 ? .9 + ((step - .18) / .22) * .7875
+                        : step < .6 ? 1.6875
+                            : step < .82 ? 1.6875 - ((step - .6) / .22) * .7875 : (1 - step) / .18 * .9);
 
                 GL11.glTranslated(itemX, itemY, itemZ);
 
                 if (bottler.mirrored) GL11.glScalef(-1, 1, 1);
                 renderItemToFill(
-                        bottler.inventory[i],
-                        bottler.predictedOutput[i],
-                        (float) fill,
-                        step >= .71,
-                        bottler.getWorldObj(),
-                        bottler.facing);
+                    bottler.inventory[i],
+                    bottler.predictedOutput[i],
+                    (float) fill,
+                    step >= .71,
+                    bottler.getWorldObj(),
+                    bottler.facing);
                 GL11.glPopMatrix();
             }
 
@@ -119,40 +117,51 @@ public class TileRenderBottlingMachine extends TileRenderIE {
         GL11.glPopMatrix();
     }
 
-    static void renderItemToFill(
-            ItemStack empty, ItemStack full, float fill, boolean packaged, World world, int machineRotation) {
+    static void renderItemToFill(ItemStack empty, ItemStack full, float fill, boolean packaged, World world,
+        int machineRotation) {
         if (empty == null) return;
-        if (full != null
-                && MinecraftForgeClient.getItemRenderer(empty, ItemRenderType.ENTITY) == null
-                && MinecraftForgeClient.getItemRenderer(full, ItemRenderType.ENTITY) == null
-                && empty.getItemSpriteNumber() == 1
-                && full.getItemSpriteNumber() == 1) {
+        if (full != null && MinecraftForgeClient.getItemRenderer(empty, ItemRenderType.ENTITY) == null
+            && MinecraftForgeClient.getItemRenderer(full, ItemRenderType.ENTITY) == null
+            && empty.getItemSpriteNumber() == 1
+            && full.getItemSpriteNumber() == 1) {
             GL11.glPushMatrix();
             ClientUtils.bindAtlas(1);
             GL11.glTranslated(.0, -.0525, .0625 / 6);
             GL11.glScalef(.51f, .51f, .51f);
 
-            if (fill > 0)
-                for (int pass = 0; pass < full.getItem().getRenderPasses(full.getItemDamage()); pass++) {
-                    IIcon iconFull = full.getItem().getIcon(full, pass);
+            if (fill > 0) for (int pass = 0; pass < full.getItem()
+                .getRenderPasses(full.getItemDamage()); pass++) {
+                    IIcon iconFull = full.getItem()
+                        .getIcon(full, pass);
                     int h = Math.round(fill * iconFull.getIconHeight());
                     double pxFill = h / (double) iconFull.getIconHeight();
-                    int col = full.getItem().getColorFromItemStack(full, pass);
+                    int col = full.getItem()
+                        .getColorFromItemStack(full, pass);
                     GL11.glColor3f((col >> 16 & 255) / 255f, (col >> 8 & 255) / 255f, (col & 255) / 255f);
                     ClientUtils.renderItemIn2D(
-                            iconFull, new double[] {0, 1, 1 - pxFill, 1}, iconFull.getIconWidth(), h, .0625f);
+                        iconFull,
+                        new double[] { 0, 1, 1 - pxFill, 1 },
+                        iconFull.getIconWidth(),
+                        h,
+                        .0625f);
                     GL11.glColor3f(1, 1, 1);
                 }
-            if (fill < 1)
-                for (int pass = 0; pass < empty.getItem().getRenderPasses(empty.getItemDamage()); pass++) {
-                    IIcon iconEmpty = empty.getItem().getIcon(empty, pass);
+            if (fill < 1) for (int pass = 0; pass < empty.getItem()
+                .getRenderPasses(empty.getItemDamage()); pass++) {
+                    IIcon iconEmpty = empty.getItem()
+                        .getIcon(empty, pass);
                     int h = Math.round((1 - fill) * iconEmpty.getIconHeight());
                     double pxFill = h / (double) iconEmpty.getIconHeight();
                     GL11.glTranslated(0, 1 - pxFill, 0);
-                    int col = empty.getItem().getColorFromItemStack(empty, pass);
+                    int col = empty.getItem()
+                        .getColorFromItemStack(empty, pass);
                     GL11.glColor3f((col >> 16 & 255) / 255f, (col >> 8 & 255) / 255f, (col & 255) / 255f);
                     ClientUtils.renderItemIn2D(
-                            iconEmpty, new double[] {0, 1, 0, pxFill}, iconEmpty.getIconWidth(), h, .0625f);
+                        iconEmpty,
+                        new double[] { 0, 1, 0, pxFill },
+                        iconEmpty.getIconWidth(),
+                        h,
+                        .0625f);
                     GL11.glColor3f(1, 1, 1);
                     GL11.glTranslated(0, -1 - pxFill, 0);
                 }

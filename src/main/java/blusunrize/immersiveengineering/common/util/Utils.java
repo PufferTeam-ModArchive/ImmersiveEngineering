@@ -1,11 +1,5 @@
 package blusunrize.immersiveengineering.common.util;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.DirectionalChunkCoords;
-import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.registry.GameData;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -16,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -55,7 +50,15 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
+import blusunrize.immersiveengineering.api.DirectionalChunkCoords;
+import blusunrize.immersiveengineering.api.energy.IImmersiveConnectable;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.registry.GameData;
+
 public class Utils {
+
     public static boolean compareToOreName(ItemStack stack, String oreName) {
         if (!ApiUtils.isExistingOreName(oreName)) return false;
         ItemStack comp = copyStackWithAmount(stack, 1);
@@ -69,24 +72,20 @@ public class Utils {
     }
 
     public static boolean stackMatchesObject(ItemStack stack, Object o, boolean checkNBT) {
-        if (o instanceof ItemStack)
-            return OreDictionary.itemMatches((ItemStack) o, stack, false)
-                    && (!checkNBT
-                            || ((ItemStack) o).getItemDamage() == OreDictionary.WILDCARD_VALUE
-                            || ItemStack.areItemStackTagsEqual((ItemStack) o, stack));
+        if (o instanceof ItemStack) return OreDictionary.itemMatches((ItemStack) o, stack, false)
+            && (!checkNBT || ((ItemStack) o).getItemDamage() == OreDictionary.WILDCARD_VALUE
+                || ItemStack.areItemStackTagsEqual((ItemStack) o, stack));
         else if (o instanceof ArrayList) {
             for (Object io : (ArrayList) o)
-                if (io instanceof ItemStack
-                        && OreDictionary.itemMatches((ItemStack) io, stack, false)
-                        && (!checkNBT
-                                || ((ItemStack) io).getItemDamage() == OreDictionary.WILDCARD_VALUE
-                                || ItemStack.areItemStackTagsEqual((ItemStack) io, stack))) return true;
+                if (io instanceof ItemStack && OreDictionary.itemMatches((ItemStack) io, stack, false)
+                    && (!checkNBT || ((ItemStack) io).getItemDamage() == OreDictionary.WILDCARD_VALUE
+                        || ItemStack.areItemStackTagsEqual((ItemStack) io, stack)))
+                    return true;
         } else if (o instanceof ItemStack[]) {
-            for (ItemStack io : (ItemStack[]) o)
-                if (OreDictionary.itemMatches(io, stack, false)
-                        && (!checkNBT
-                                || io.getItemDamage() == OreDictionary.WILDCARD_VALUE
-                                || ItemStack.areItemStackTagsEqual(io, stack))) return true;
+            for (ItemStack io : (ItemStack[]) o) if (OreDictionary.itemMatches(io, stack, false)
+                && (!checkNBT || io.getItemDamage() == OreDictionary.WILDCARD_VALUE
+                    || ItemStack.areItemStackTagsEqual(io, stack)))
+                return true;
         } else if (o instanceof String) return compareToOreName(stack, (String) o);
         return false;
     }
@@ -98,28 +97,13 @@ public class Utils {
         return s2;
     }
 
-    static String[] dyeNames = {
-        "Black",
-        "Red",
-        "Green",
-        "Brown",
-        "Blue",
-        "Purple",
-        "Cyan",
-        "LightGray",
-        "Gray",
-        "Pink",
-        "Lime",
-        "Yellow",
-        "LightBlue",
-        "Magenta",
-        "Orange",
-        "White"
-    };
+    static String[] dyeNames = { "Black", "Red", "Green", "Brown", "Blue", "Purple", "Cyan", "LightGray", "Gray",
+        "Pink", "Lime", "Yellow", "LightBlue", "Magenta", "Orange", "White" };
 
     public static int getDye(ItemStack stack) {
         if (stack == null) return -1;
-        if (stack.getItem().equals(Items.dye)) return stack.getItemDamage();
+        if (stack.getItem()
+            .equals(Items.dye)) return stack.getItemDamage();
         for (int dye = 0; dye < dyeNames.length; dye++) if (compareToOreName(stack, "dye" + dyeNames[dye])) return dye;
         return -1;
     }
@@ -136,37 +120,36 @@ public class Utils {
 
     public static ChunkCoordinates toCC(Object object) {
         if (object instanceof ChunkCoordinates) return (ChunkCoordinates) object;
-        if (object instanceof TileEntity)
-            return new ChunkCoordinates(
-                    ((TileEntity) object).xCoord, ((TileEntity) object).yCoord, ((TileEntity) object).zCoord);
+        if (object instanceof TileEntity) return new ChunkCoordinates(
+            ((TileEntity) object).xCoord,
+            ((TileEntity) object).yCoord,
+            ((TileEntity) object).zCoord);
         return null;
     }
 
     public static DirectionalChunkCoords toDirCC(Object object, ForgeDirection direction) {
         if (object instanceof ChunkCoordinates) return new DirectionalChunkCoords((ChunkCoordinates) object, direction);
-        if (object instanceof TileEntity)
-            return new DirectionalChunkCoords(
-                    ((TileEntity) object).xCoord,
-                    ((TileEntity) object).yCoord,
-                    ((TileEntity) object).zCoord,
-                    direction);
+        if (object instanceof TileEntity) return new DirectionalChunkCoords(
+            ((TileEntity) object).xCoord,
+            ((TileEntity) object).yCoord,
+            ((TileEntity) object).zCoord,
+            direction);
         return null;
     }
 
     public static IImmersiveConnectable toIIC(Object object, World world) {
         if (object instanceof IImmersiveConnectable) return (IImmersiveConnectable) object;
-        else if (object instanceof ChunkCoordinates
-                && world != null
-                && world.blockExists(
+        else if (object instanceof ChunkCoordinates && world != null
+            && world.blockExists(
+                ((ChunkCoordinates) object).posX,
+                ((ChunkCoordinates) object).posY,
+                ((ChunkCoordinates) object).posZ)) {
+                    TileEntity te = world.getTileEntity(
                         ((ChunkCoordinates) object).posX,
                         ((ChunkCoordinates) object).posY,
-                        ((ChunkCoordinates) object).posZ)) {
-            TileEntity te = world.getTileEntity(
-                    ((ChunkCoordinates) object).posX,
-                    ((ChunkCoordinates) object).posY,
-                    ((ChunkCoordinates) object).posZ);
-            if (te instanceof IImmersiveConnectable) return (IImmersiveConnectable) te;
-        }
+                        ((ChunkCoordinates) object).posZ);
+                    if (te instanceof IImmersiveConnectable) return (IImmersiveConnectable) te;
+                }
         return null;
     }
 
@@ -176,15 +159,17 @@ public class Utils {
     }
 
     public static String toScientificNotation(int value, String decimalPrecision, int useKilo) {
-        float formatted = value >= 1000000000
-                ? value / 1000000000f
-                : value >= 1000000 ? value / 1000000f : value >= useKilo ? value / 1000f : value;
+        float formatted = value >= 1000000000 ? value / 1000000000f
+            : value >= 1000000 ? value / 1000000f : value >= useKilo ? value / 1000f : value;
         String notation = value >= 1000000000 ? "G" : value >= 1000000 ? "M" : value >= useKilo ? "K" : "";
         return formatDouble(formatted, "0." + decimalPrecision) + notation;
     }
 
     public static String toCamelCase(String s) {
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+        return s.substring(0, 1)
+            .toUpperCase()
+            + s.substring(1)
+                .toLowerCase();
     }
 
     static Method m_getHarvestLevel = null;
@@ -197,15 +182,16 @@ public class Utils {
                     if (clazz != null) m_getHarvestLevel = clazz.getDeclaredMethod("getHarvestLevelName", int.class);
                 }
                 if (m_getHarvestLevel != null) return (String) m_getHarvestLevel.invoke(null, lvl);
-            } catch (Exception e) {
-            }
+            } catch (Exception e) {}
         }
         return StatCollector.translateToLocal(Lib.DESC_INFO + "mininglvl." + Math.max(-1, Math.min(lvl, 6)));
     }
 
     public static String getModVersion(String modid) {
-        for (ModContainer container : Loader.instance().getActiveModList())
-            if (container.getModId().equalsIgnoreCase(modid)) return container.getVersion();
+        for (ModContainer container : Loader.instance()
+            .getActiveModList())
+            if (container.getModId()
+                .equalsIgnoreCase(modid)) return container.getVersion();
         return "";
     }
 
@@ -213,21 +199,17 @@ public class Utils {
         return tile0.xCoord == tile1.xCoord && tile0.yCoord == tile1.yCoord && tile0.zCoord == tile1.zCoord;
     }
 
-    public static MovingObjectPosition getMovingObjectPositionFromPlayer(
-            World world, EntityLivingBase living, boolean bool) {
+    public static MovingObjectPosition getMovingObjectPositionFromPlayer(World world, EntityLivingBase living,
+        boolean bool) {
         float f = 1.0F;
         float f1 = living.prevRotationPitch + (living.rotationPitch - living.prevRotationPitch) * f;
         float f2 = living.prevRotationYaw + (living.rotationYaw - living.prevRotationYaw) * f;
         double d0 = living.prevPosX + (living.posX - living.prevPosX) * (double) f;
-        double d1 = living.prevPosY
-                + (living.posY - living.prevPosY) * (double) f
-                + (double)
-                        (world.isRemote
-                                ? living.getEyeHeight()
-                                        - (living instanceof EntityPlayer
-                                                ? ((EntityPlayer) living).getDefaultEyeHeight()
-                                                : 0)
-                                : living.getEyeHeight()); // isRemote check to revert changes to ray trace position due
+        double d1 = living.prevPosY + (living.posY - living.prevPosY) * (double) f
+            + (double) (world.isRemote
+                ? living.getEyeHeight()
+                    - (living instanceof EntityPlayer ? ((EntityPlayer) living).getDefaultEyeHeight() : 0)
+                : living.getEyeHeight()); // isRemote check to revert changes to ray trace position due
         // to adding the eye height clientside and player yOffset
         // differences
         double d2 = living.prevPosZ + (living.posZ - living.prevPosZ) * (double) f;
@@ -246,8 +228,8 @@ public class Utils {
         return world.func_147447_a(vec3, vec31, bool, !bool, false);
     }
 
-    public static boolean canBlocksSeeOther(
-            World world, ChunkCoordinates cc0, ChunkCoordinates cc1, Vec3 pos0, Vec3 pos1) {
+    public static boolean canBlocksSeeOther(World world, ChunkCoordinates cc0, ChunkCoordinates cc1, Vec3 pos0,
+        Vec3 pos1) {
         HashSet<ChunkCoordinates> inter = rayTrace(pos0, pos1, world);
         Iterator<ChunkCoordinates> it = inter.iterator();
         while (it.hasNext()) {
@@ -259,7 +241,9 @@ public class Utils {
 
     public static boolean isHammer(ItemStack stack) {
         if (stack == null) return false;
-        return stack.getItem().getToolClasses(stack).contains(Lib.TOOL_HAMMER);
+        return stack.getItem()
+            .getToolClasses(stack)
+            .contains(Lib.TOOL_HAMMER);
     }
 
     public static Vec3 getFlowVector(World world, int x, int y, int z) {
@@ -284,13 +268,15 @@ public class Utils {
             int i2;
 
             if (l1 < 0) {
-                if (!world.getBlock(j1, y, k1).getMaterial().blocksMovement()) {
+                if (!world.getBlock(j1, y, k1)
+                    .getMaterial()
+                    .blocksMovement()) {
                     l1 = getEffectiveFlowDecay(world, j1, y - 1, k1, mat);
 
                     if (l1 >= 0) {
                         i2 = l1 - (l - 8);
-                        vec3 = vec3.addVector(
-                                (double) ((j1 - x) * i2), (double) ((y - y) * i2), (double) ((k1 - z) * i2));
+                        vec3 = vec3
+                            .addVector((double) ((j1 - x) * i2), (double) ((y - y) * i2), (double) ((k1 - z) * i2));
                     }
                 }
             } else if (l1 >= 0) {
@@ -310,14 +296,16 @@ public class Utils {
             if (flag || block.isBlockSolid(world, x, y + 1, z + 1, 3)) flag = true;
             if (flag || block.isBlockSolid(world, x - 1, y + 1, z, 4)) flag = true;
             if (flag || block.isBlockSolid(world, x + 1, y + 1, z, 5)) flag = true;
-            if (flag) vec3 = vec3.normalize().addVector(0.0D, -6.0D, 0.0D);
+            if (flag) vec3 = vec3.normalize()
+                .addVector(0.0D, -6.0D, 0.0D);
         }
         vec3 = vec3.normalize();
         return vec3;
     }
 
     static int getEffectiveFlowDecay(IBlockAccess world, int x, int y, int z, Material mat) {
-        if (world.getBlock(x, y, z).getMaterial() != mat) return -1;
+        if (world.getBlock(x, y, z)
+            .getMaterial() != mat) return -1;
         int l = world.getBlockMetadata(x, y, z);
         if (l >= 8) l = 0;
         return l;
@@ -336,9 +324,9 @@ public class Utils {
     }
 
     public static boolean isVecInEntityHead(EntityLivingBase entity, Vec3 vec) {
-        if (entity.height / entity.width
-                < 2) // Crude check to see if the entity is bipedal or at least upright (this should work for blazes)
-        return false;
+        if (entity.height / entity.width < 2) // Crude check to see if the entity is bipedal or at least upright (this
+                                              // should work for blazes)
+            return false;
         double d = vec.yCoord - (entity.posY + entity.getEyeHeight());
         if (Math.abs(d) < .25) return true;
         return false;
@@ -390,7 +378,8 @@ public class Utils {
     public static boolean placeFluidBlock(World world, int x, int y, int z, FluidStack fluid) {
         if (fluid == null || fluid.getFluid() == null) return false;
         Block b = world.getBlock(x, y, z);
-        Block fluidBlock = fluid.getFluid().getBlock();
+        Block fluidBlock = fluid.getFluid()
+            .getBlock();
 
         if (Blocks.water.equals(fluidBlock)) fluidBlock = Blocks.flowing_water;
         else if (Blocks.lava.equals(fluidBlock)) fluidBlock = Blocks.flowing_lava;
@@ -419,9 +408,9 @@ public class Utils {
     public static String nameFromStack(ItemStack stack) {
         if (stack == null) return "";
         try {
-            return GameData.getItemRegistry().getNameForObject(stack.getItem());
-        } catch (NullPointerException e) {
-        }
+            return GameData.getItemRegistry()
+                .getNameForObject(stack.getItem());
+        } catch (NullPointerException e) {}
         return "";
     }
 
@@ -436,26 +425,25 @@ public class Utils {
                 ItemStack existingStack = inventory.getStackInSlot(slots[i]);
                 if (existingStack == null) continue;
                 ItemStack toInsert = copyStackWithAmount(
-                        stack,
-                        Math.min(existingStack.getMaxStackSize(), inventory.getInventoryStackLimit())
-                                - existingStack.stackSize);
+                    stack,
+                    Math.min(existingStack.getMaxStackSize(), inventory.getInventoryStackLimit())
+                        - existingStack.stackSize);
                 if (sidedInv.canInsertItem(slots[i], toInsert, side)) {
                     if (OreDictionary.itemMatches(existingStack, stack, true)
-                            && ItemStack.areItemStackTagsEqual(stack, existingStack))
+                        && ItemStack.areItemStackTagsEqual(stack, existingStack))
                         stack = addToOccupiedSlot(sidedInv, slots[i], stack, existingStack);
                 }
             }
             for (int i = 0; i < slots.length && stack != null; i++)
-                if (inventory.getStackInSlot(slots[i]) == null
-                        && sidedInv.canInsertItem(
-                                slots[i], copyStackWithAmount(stack, inventory.getInventoryStackLimit()), side))
+                if (inventory.getStackInSlot(slots[i]) == null && sidedInv
+                    .canInsertItem(slots[i], copyStackWithAmount(stack, inventory.getInventoryStackLimit()), side))
                     stack = addToEmptyInventorySlot(sidedInv, slots[i], stack);
         } else {
             int invSize = inventory.getSizeInventory();
             for (int i = 0; i < invSize && stack != null; i++) {
                 ItemStack existingStack = inventory.getStackInSlot(i);
                 if (OreDictionary.itemMatches(existingStack, stack, true)
-                        && ItemStack.areItemStackTagsEqual(stack, existingStack))
+                    && ItemStack.areItemStackTagsEqual(stack, existingStack))
                     stack = addToOccupiedSlot(inventory, i, stack, existingStack);
             }
             for (int i = 0; i < invSize && stack != null; i++)
@@ -474,8 +462,8 @@ public class Utils {
         return stackLimit >= stack.stackSize ? null : stack.splitStack(stack.stackSize - stackLimit);
     }
 
-    public static ItemStack addToOccupiedSlot(
-            IInventory inventory, int slot, ItemStack stack, ItemStack existingStack) {
+    public static ItemStack addToOccupiedSlot(IInventory inventory, int slot, ItemStack stack,
+        ItemStack existingStack) {
         int stackLimit = Math.min(inventory.getInventoryStackLimit(), stack.getMaxStackSize());
         if (stack.stackSize + existingStack.stackSize > stackLimit) {
             int stackDiff = stackLimit - existingStack.stackSize;
@@ -500,24 +488,22 @@ public class Utils {
                     ItemStack existingStack = inventory.getStackInSlot(slots[i]);
                     if (existingStack == null) return true;
                     else if (OreDictionary.itemMatches(existingStack, stack, true)
-                            && ItemStack.areItemStackTagsEqual(stack, existingStack))
+                        && ItemStack.areItemStackTagsEqual(stack, existingStack))
                         if (existingStack.stackSize + stack.stackSize <= inventory.getInventoryStackLimit()
-                                && existingStack.stackSize + stack.stackSize <= existingStack.getMaxStackSize())
+                            && existingStack.stackSize + stack.stackSize <= existingStack.getMaxStackSize())
                             return true;
                 }
             }
         } else {
             int invSize = inventory.getSizeInventory();
-            for (int i = 0; i < invSize && stack != null; i++)
-                if (inventory.isItemValidForSlot(i, stack)) {
-                    ItemStack existingStack = inventory.getStackInSlot(i);
-                    if (existingStack == null) return true;
-                    else if (OreDictionary.itemMatches(existingStack, stack, true)
-                            && ItemStack.areItemStackTagsEqual(stack, existingStack))
-                        if (existingStack.stackSize + stack.stackSize <= inventory.getInventoryStackLimit()
-                                && existingStack.stackSize + stack.stackSize <= existingStack.getMaxStackSize())
-                            return true;
-                }
+            for (int i = 0; i < invSize && stack != null; i++) if (inventory.isItemValidForSlot(i, stack)) {
+                ItemStack existingStack = inventory.getStackInSlot(i);
+                if (existingStack == null) return true;
+                else if (OreDictionary.itemMatches(existingStack, stack, true)
+                    && ItemStack.areItemStackTagsEqual(stack, existingStack))
+                    if (existingStack.stackSize + stack.stackSize <= inventory.getInventoryStackLimit()
+                        && existingStack.stackSize + stack.stackSize <= existingStack.getMaxStackSize()) return true;
+            }
         }
         return false;
     }
@@ -529,9 +515,8 @@ public class Utils {
                 if (filledContainer != null) {
                     FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(filledContainer);
                     if (fs.amount <= tank.getFluidAmount()
-                            && (containerOut == null
-                                    || (OreDictionary.itemMatches(containerOut, filledContainer, true)
-                                            && ItemStack.areItemStackTagsEqual(containerOut, filledContainer)))) {
+                        && (containerOut == null || (OreDictionary.itemMatches(containerOut, filledContainer, true)
+                            && ItemStack.areItemStackTagsEqual(containerOut, filledContainer)))) {
                         tank.drain(fs.amount, true);
                         return filledContainer;
                     }
@@ -540,15 +525,14 @@ public class Utils {
                 IFluidContainerItem iContainer = (IFluidContainerItem) containerIn.getItem();
                 int available = tank.getFluidAmount();
                 int space = iContainer.getCapacity(containerIn)
-                        - (iContainer.getFluid(containerIn) == null ? 0 : iContainer.getFluid(containerIn).amount);
-                if (available >= space
-                        && iContainer.fill(containerIn, tank.getFluid(), false) == space) // Fill in one go
+                    - (iContainer.getFluid(containerIn) == null ? 0 : iContainer.getFluid(containerIn).amount);
+                if (available >= space && iContainer.fill(containerIn, tank.getFluid(), false) == space) // Fill in one
+                                                                                                         // go
                 {
                     ItemStack filledContainer = copyStackWithAmount(containerIn, 1);
                     int filled = iContainer.fill(filledContainer, tank.getFluid(), true);
-                    if (containerOut == null
-                            || (OreDictionary.itemMatches(containerOut, filledContainer, true)
-                                    && ItemStack.areItemStackTagsEqual(filledContainer, containerOut))) {
+                    if (containerOut == null || (OreDictionary.itemMatches(containerOut, filledContainer, true)
+                        && ItemStack.areItemStackTagsEqual(filledContainer, containerOut))) {
                         tank.drain(filled, true);
                         return filledContainer;
                     }
@@ -559,10 +543,9 @@ public class Utils {
                     } else {
                         ItemStack filledContainer = copyStackWithAmount(containerIn, 1);
                         int filled = iContainer.fill(filledContainer, tank.getFluid(), true);
-                        if (containerOut == null
-                                || (OreDictionary.itemMatches(containerOut, filledContainer, true)
-                                        && ItemStack.areItemStackTagsEqual(filledContainer, containerOut)
-                                        && containerOut.stackSize + 1 < containerOut.getMaxStackSize())) {
+                        if (containerOut == null || (OreDictionary.itemMatches(containerOut, filledContainer, true)
+                            && ItemStack.areItemStackTagsEqual(filledContainer, containerOut)
+                            && containerOut.stackSize + 1 < containerOut.getMaxStackSize())) {
                             tank.drain(filled, true);
                             return filledContainer;
                         }
@@ -574,14 +557,13 @@ public class Utils {
     }
 
     public static ItemStack drainFluidContainer(FluidTank tank, ItemStack containerIn) {
-        if (containerIn != null)
-            if (FluidContainerRegistry.isFilledContainer(containerIn)) {
-                FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(containerIn);
-                if (fs != null && tank.getFluidAmount() + fs.amount <= tank.getCapacity()) {
-                    ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(containerIn);
-                    if (emptyContainer != null && tank.fill(fs, true) == fs.amount) return emptyContainer;
-                }
+        if (containerIn != null) if (FluidContainerRegistry.isFilledContainer(containerIn)) {
+            FluidStack fs = FluidContainerRegistry.getFluidForFilledItem(containerIn);
+            if (fs != null && tank.getFluidAmount() + fs.amount <= tank.getCapacity()) {
+                ItemStack emptyContainer = FluidContainerRegistry.drainFluidContainer(containerIn);
+                if (emptyContainer != null && tank.fill(fs, true) == fs.amount) return emptyContainer;
             }
+        }
         return null;
     }
 
@@ -599,8 +581,8 @@ public class Utils {
         return FluidContainerRegistry.isContainer(stack) || stack.getItem() instanceof IFluidContainerItem;
     }
 
-    public static boolean fillPlayerItemFromFluidHandler(
-            World world, IFluidHandler handler, EntityPlayer player, FluidStack tankFluid) {
+    public static boolean fillPlayerItemFromFluidHandler(World world, IFluidHandler handler, EntityPlayer player,
+        FluidStack tankFluid) {
         if (tankFluid == null) return false;
         ItemStack equipped = player.getCurrentEquippedItem();
         if (equipped == null) return false;
@@ -610,20 +592,18 @@ public class Utils {
             if (fluid == null || filledStack == null) return false;
             if (world.isRemote) return true;
 
-            if (!player.capabilities.isCreativeMode)
-                if (equipped.stackSize == 1) {
-                    player.inventory.setInventorySlotContents(player.inventory.currentItem, filledStack);
-                    equipped.stackSize -= 1;
-                    if (equipped.stackSize <= 0) equipped = null;
-                } else {
-                    equipped.stackSize -= 1;
-                    if (!player.inventory.addItemStackToInventory(filledStack))
-                        player.func_146097_a(filledStack, false, true);
-                    player.openContainer.detectAndSendChanges();
-                    ((EntityPlayerMP) player)
-                            .sendContainerAndContentsToPlayer(
-                                    player.openContainer, player.openContainer.getInventory());
-                }
+            if (!player.capabilities.isCreativeMode) if (equipped.stackSize == 1) {
+                player.inventory.setInventorySlotContents(player.inventory.currentItem, filledStack);
+                equipped.stackSize -= 1;
+                if (equipped.stackSize <= 0) equipped = null;
+            } else {
+                equipped.stackSize -= 1;
+                if (!player.inventory.addItemStackToInventory(filledStack))
+                    player.func_146097_a(filledStack, false, true);
+                player.openContainer.detectAndSendChanges();
+                ((EntityPlayerMP) player)
+                    .sendContainerAndContentsToPlayer(player.openContainer, player.openContainer.getInventory());
+            }
             handler.drain(ForgeDirection.UNKNOWN, fluid.amount, true);
             return true;
         } else if (equipped.getItem() instanceof IFluidContainerItem) {
@@ -643,7 +623,7 @@ public class Utils {
                 handler.drain(ForgeDirection.UNKNOWN, fill, true);
                 player.openContainer.detectAndSendChanges();
                 ((EntityPlayerMP) player)
-                        .sendContainerAndContentsToPlayer(player.openContainer, player.openContainer.getInventory());
+                    .sendContainerAndContentsToPlayer(player.openContainer, player.openContainer.getInventory());
                 return true;
             }
         }
@@ -656,7 +636,7 @@ public class Utils {
         FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(equipped);
         if (fluid != null) {
             if (handler.fill(ForgeDirection.UNKNOWN, fluid, false) == fluid.amount
-                    || player.capabilities.isCreativeMode) {
+                || player.capabilities.isCreativeMode) {
                 if (world.isRemote) return true;
 
                 ItemStack filledStack = FluidContainerRegistry.drainFluidContainer(equipped);
@@ -671,8 +651,7 @@ public class Utils {
                     }
                     player.openContainer.detectAndSendChanges();
                     ((EntityPlayerMP) player)
-                            .sendContainerAndContentsToPlayer(
-                                    player.openContainer, player.openContainer.getInventory());
+                        .sendContainerAndContentsToPlayer(player.openContainer, player.openContainer.getInventory());
                 }
                 handler.fill(ForgeDirection.UNKNOWN, fluid, true);
                 return true;
@@ -694,7 +673,7 @@ public class Utils {
                 }
                 player.openContainer.detectAndSendChanges();
                 ((EntityPlayerMP) player)
-                        .sendContainerAndContentsToPlayer(player.openContainer, player.openContainer.getInventory());
+                    .sendContainerAndContentsToPlayer(player.openContainer, player.openContainer.getInventory());
                 return true;
             }
         }
@@ -702,16 +681,21 @@ public class Utils {
     }
 
     public static IRecipe findRecipe(InventoryCrafting crafting, World world) {
-        for (int i = 0; i < CraftingManager.getInstance().getRecipeList().size(); i++) {
-            IRecipe irecipe =
-                    (IRecipe) CraftingManager.getInstance().getRecipeList().get(i);
+        for (int i = 0; i < CraftingManager.getInstance()
+            .getRecipeList()
+            .size(); i++) {
+            IRecipe irecipe = (IRecipe) CraftingManager.getInstance()
+                .getRecipeList()
+                .get(i);
             if (irecipe.matches(crafting, world)) return irecipe;
         }
         return null;
     }
 
     public static class InventoryCraftingFalse extends InventoryCrafting {
+
         private static final Container nullContainer = new Container() {
+
             @Override
             public void onCraftMatrixChanged(IInventory paramIInventory) {}
 
@@ -777,15 +761,8 @@ public class Utils {
         return ret;
     }
 
-    private static void ray(
-            double dif,
-            Vec3 mov,
-            Vec3 start,
-            double lengthAdd,
-            HashSet<ChunkCoordinates> ret,
-            World world,
-            HashSet<ChunkCoordinates> checked,
-            Block tmp) {
+    private static void ray(double dif, Vec3 mov, Vec3 start, double lengthAdd, HashSet<ChunkCoordinates> ret,
+        World world, HashSet<ChunkCoordinates> checked, Block tmp) {
         // Do NOT set this to true unless for debugging. Causes blocks to be placed along the traced ray
         boolean place = false;
         double standartOff = .0625;
@@ -796,25 +773,28 @@ public class Utils {
             Vec3 posVeryPrev = addVectors(start, scalarProd(mov, i - 1 + lengthAdd - standartOff));
 
             ChunkCoordinates cc = new ChunkCoordinates(
-                    (int) Math.floor(pos.xCoord), (int) Math.floor(pos.yCoord), (int) Math.floor(pos.zCoord));
+                (int) Math.floor(pos.xCoord),
+                (int) Math.floor(pos.yCoord),
+                (int) Math.floor(pos.zCoord));
             Block b;
             int meta;
             if (!checked.contains(cc) && i + lengthAdd + standartOff < dif) {
                 b = world.getBlock(cc.posX, cc.posY, cc.posZ);
                 meta = world.getBlockMetadata(cc.posX, cc.posY, cc.posZ);
                 if (b.canCollideCheck(meta, false)
-                        && b.collisionRayTrace(world, cc.posX, cc.posY, cc.posZ, pos, posNext) != null) ret.add(cc);
+                    && b.collisionRayTrace(world, cc.posX, cc.posY, cc.posZ, pos, posNext) != null) ret.add(cc);
                 if (place) world.setBlock(cc.posX, cc.posY, cc.posZ, tmp);
                 checked.add(cc);
             }
-            cc = new ChunkCoordinates((int) Math.floor(posPrev.xCoord), (int) Math.floor(posPrev.yCoord), (int)
-                    Math.floor(posPrev.zCoord));
+            cc = new ChunkCoordinates(
+                (int) Math.floor(posPrev.xCoord),
+                (int) Math.floor(posPrev.yCoord),
+                (int) Math.floor(posPrev.zCoord));
             if (!checked.contains(cc) && i + lengthAdd - standartOff < dif) {
                 b = world.getBlock(cc.posX, cc.posY, cc.posZ);
                 meta = world.getBlockMetadata(cc.posX, cc.posY, cc.posZ);
                 if (b.canCollideCheck(meta, false)
-                        && b.collisionRayTrace(world, cc.posX, cc.posY, cc.posZ, posVeryPrev, posPrev) != null)
-                    ret.add(cc);
+                    && b.collisionRayTrace(world, cc.posX, cc.posY, cc.posZ, posVeryPrev, posPrev) != null) ret.add(cc);
                 if (place) world.setBlock(cc.posX, cc.posY, cc.posZ, tmp);
                 checked.add(cc);
             }
@@ -832,7 +812,8 @@ public class Utils {
         if (start.yCoord != end.yCoord) trace = findMinOrMax(trace, start.yCoord > end.yCoord, 0);
         if (start.zCoord != end.zCoord) trace = findMinOrMax(trace, start.zCoord > end.zCoord, 0);
         if (trace.size() > 0) {
-            ChunkCoordinates ret = trace.iterator().next();
+            ChunkCoordinates ret = trace.iterator()
+                .next();
             return ret;
         }
         return null;
@@ -856,7 +837,9 @@ public class Utils {
 
     /**
      * get tile entity without loading currently unloaded chunks
-     * @return return value of {@link net.minecraft.world.IBlockAccess#getTileEntity(int, int, int)} or always null if chunk is not loaded
+     * 
+     * @return return value of {@link net.minecraft.world.IBlockAccess#getTileEntity(int, int, int)} or always null if
+     *         chunk is not loaded
      */
     public static TileEntity getExistingTileEntity(World world, int x, int y, int z) {
         if (world.blockExists(x, y, z)) return world.getTileEntity(x, y, z);
@@ -876,13 +859,12 @@ public class Utils {
 
     public static NBTTagList writeInventory(ItemStack[] inv) {
         NBTTagList invList = new NBTTagList();
-        for (int i = 0; i < inv.length; i++)
-            if (inv[i] != null) {
-                NBTTagCompound itemTag = new NBTTagCompound();
-                itemTag.setByte("Slot", (byte) i);
-                inv[i].writeToNBT(itemTag);
-                invList.appendTag(itemTag);
-            }
+        for (int i = 0; i < inv.length; i++) if (inv[i] != null) {
+            NBTTagCompound itemTag = new NBTTagCompound();
+            itemTag.setByte("Slot", (byte) i);
+            inv[i].writeToNBT(itemTag);
+            invList.appendTag(itemTag);
+        }
         return invList;
     }
 
@@ -904,7 +886,11 @@ public class Utils {
     public static Map<String, Object> saveFluidTank(FluidTank tank) {
         HashMap<String, Object> ret = new HashMap<>();
         if (tank != null && tank.getFluid() != null) {
-            ret.put("name", tank.getFluid().getFluid().getUnlocalizedName());
+            ret.put(
+                "name",
+                tank.getFluid()
+                    .getFluid()
+                    .getUnlocalizedName());
             ret.put("amount", tank.getFluidAmount());
             ret.put("capacity", tank.getCapacity());
             ret.put("hasTag", tank.getFluid().tag != null);
@@ -915,7 +901,10 @@ public class Utils {
     public static Map<String, Object> saveFluidStack(FluidStack tank) {
         HashMap<String, Object> ret = new HashMap<>();
         if (tank != null && tank.getFluid() != null) {
-            ret.put("name", tank.getFluid().getUnlocalizedName());
+            ret.put(
+                "name",
+                tank.getFluid()
+                    .getUnlocalizedName());
             ret.put("amount", tank.amount);
             ret.put("hasTag", tank.tag != null);
         }

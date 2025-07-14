@@ -1,6 +1,5 @@
 package blusunrize.immersiveengineering.common.gui;
 
-import blusunrize.immersiveengineering.common.items.ItemDrill;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -9,7 +8,10 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.common.items.ItemDrill;
+
 public class ContainerDrill extends Container {
+
     private World worldObj;
     private int blockedSlot;
     public IInventory input;
@@ -28,26 +30,24 @@ public class ContainerDrill extends Container {
         int i = 0;
         this.addSlotToContainer(new IESlot.DrillHead(this, this.input, i++, 80, 12));
         //
-        //		this.addSlotToContainer(new IESlot.Upgrades(this, this.input,i++, 60,44, IUpgrade.UpgradeType.DRILL, true));
-        //		this.addSlotToContainer(new IESlot.Upgrades(this, this.input,i++, 80,50, IUpgrade.UpgradeType.DRILL, true));
-        //		this.addSlotToContainer(new IESlot.Upgrades(this, this.input,i++,100,44, IUpgrade.UpgradeType.DRILL, true));
+        // this.addSlotToContainer(new IESlot.Upgrades(this, this.input,i++, 60,44, IUpgrade.UpgradeType.DRILL, true));
+        // this.addSlotToContainer(new IESlot.Upgrades(this, this.input,i++, 80,50, IUpgrade.UpgradeType.DRILL, true));
+        // this.addSlotToContainer(new IESlot.Upgrades(this, this.input,i++,100,44, IUpgrade.UpgradeType.DRILL, true));
 
         bindPlayerInventory(iinventory);
 
-        if (!world.isRemote)
-            try {
-                ((InventoryStorageItem) this.input).stackList =
-                        ((ItemDrill) this.drill.getItem()).getContainedItems(this.drill);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (!world.isRemote) try {
+            ((InventoryStorageItem) this.input).stackList = ((ItemDrill) this.drill.getItem())
+                .getContainedItems(this.drill);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.onCraftMatrixChanged(this.input);
     }
 
     protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 9; j++)
-                this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++)
+            this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
 
         for (int i = 0; i < 9; i++) this.addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143));
     }
@@ -64,17 +64,17 @@ public class ContainerDrill extends Container {
             if (slot < drillSlots) {
                 if (!this.mergeItemStack(stackInSlot, drillSlots, this.inventorySlots.size(), true)) return null;
             } else {
-                //				boolean b = true;
-                //				for(int i=0;i<revolverSlots;i++)
-                //					if(this.getSlot(i).isItemValid(stackInSlot))
-                //						if(this.mergeItemStack(Utils.copyStackWithAmount(stackInSlot,1), i,i+1, false))
-                //						{
-                //							stackInSlot.stackSize--;
-                //							stack.stackSize--;
-                //							b=false;
-                //							break;
-                //						}
-                //				if(b)
+                // boolean b = true;
+                // for(int i=0;i<revolverSlots;i++)
+                // if(this.getSlot(i).isItemValid(stackInSlot))
+                // if(this.mergeItemStack(Utils.copyStackWithAmount(stackInSlot,1), i,i+1, false))
+                // {
+                // stackInSlot.stackSize--;
+                // stack.stackSize--;
+                // b=false;
+                // break;
+                // }
+                // if(b)
                 return null;
             }
 
@@ -103,11 +103,11 @@ public class ContainerDrill extends Container {
         super.onContainerClosed(par1EntityPlayer);
         if (!this.worldObj.isRemote) {
             ((ItemDrill) this.drill.getItem())
-                    .setContainedItems(this.drill, ((InventoryStorageItem) this.input).stackList);
+                .setContainedItems(this.drill, ((InventoryStorageItem) this.input).stackList);
             ((ItemDrill) this.drill.getItem()).recalculateUpgrades(this.drill);
 
-            if (!this.player.getCurrentEquippedItem().equals(this.drill))
-                this.player.setCurrentItemOrArmor(0, this.drill);
+            if (!this.player.getCurrentEquippedItem()
+                .equals(this.drill)) this.player.setCurrentItemOrArmor(0, this.drill);
             this.player.inventory.markDirty();
         }
     }

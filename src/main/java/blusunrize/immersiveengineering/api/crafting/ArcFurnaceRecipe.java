@@ -1,18 +1,21 @@
 package blusunrize.immersiveengineering.api.crafting;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.api.ApiUtils;
+
 /**
  * @author BluSunrize - 23.03.2015
- * <br>
- * The recipe for the arc furnace
+ *         <br>
+ *         The recipe for the arc furnace
  */
 public class ArcFurnaceRecipe {
+
     public final Object input;
     public final String oreInputString;
     public final ItemStack output;
@@ -24,8 +27,8 @@ public class ArcFurnaceRecipe {
     public String specialRecipeType;
     public static ArrayList<String> specialRecipeTypes = new ArrayList<String>();
 
-    public ArcFurnaceRecipe(
-            ItemStack output, Object input, ItemStack slag, int time, int energyPerTick, Object... additives) {
+    public ArcFurnaceRecipe(ItemStack output, Object input, ItemStack slag, int time, int energyPerTick,
+        Object... additives) {
         this.output = output;
         this.input = input == null ? null : ApiUtils.convertToValidRecipeInput(input);
         this.oreInputString = input instanceof String ? (String) input : null;
@@ -41,7 +44,7 @@ public class ArcFurnaceRecipe {
     }
 
     public ItemStack[] getOutputs(ItemStack input, ItemStack[] additives) {
-        return new ItemStack[] {output};
+        return new ItemStack[] { output };
     }
 
     public boolean matches(ItemStack input, ItemStack[] additives) {
@@ -49,29 +52,28 @@ public class ArcFurnaceRecipe {
             ArrayList<ItemStack> qAdd = new ArrayList<ItemStack>(additives.length);
             for (ItemStack s : additives) qAdd.add(s);
 
-            for (Object add : this.additives)
-                if (add != null) {
-                    int addAmount = add instanceof ItemStack ? ((ItemStack) add).stackSize : 1;
-                    Iterator<ItemStack> it = qAdd.iterator();
-                    while (it.hasNext()) {
-                        ItemStack query = it.next();
-                        if (query != null) {
-                            if (ApiUtils.stackMatchesObject(query, add)) {
-                                if (query.stackSize > addAmount) {
-                                    query.stackSize -= addAmount;
-                                    addAmount = 0;
-                                } else {
-                                    addAmount -= query.stackSize;
-                                    query.stackSize = 0;
-                                }
+            for (Object add : this.additives) if (add != null) {
+                int addAmount = add instanceof ItemStack ? ((ItemStack) add).stackSize : 1;
+                Iterator<ItemStack> it = qAdd.iterator();
+                while (it.hasNext()) {
+                    ItemStack query = it.next();
+                    if (query != null) {
+                        if (ApiUtils.stackMatchesObject(query, add)) {
+                            if (query.stackSize > addAmount) {
+                                query.stackSize -= addAmount;
+                                addAmount = 0;
+                            } else {
+                                addAmount -= query.stackSize;
+                                query.stackSize = 0;
                             }
-                            if (query.stackSize <= 0) it.remove();
-                            if (addAmount <= 0) break;
                         }
+                        if (query.stackSize <= 0) it.remove();
+                        if (addAmount <= 0) break;
                     }
-
-                    if (addAmount > 0) return false;
                 }
+
+                if (addAmount > 0) return false;
+            }
             return true;
         }
         return false;
@@ -94,8 +96,8 @@ public class ArcFurnaceRecipe {
 
     public static ArrayList<ArcFurnaceRecipe> recipeList = new ArrayList<ArcFurnaceRecipe>();
 
-    public static ArcFurnaceRecipe addRecipe(
-            ItemStack output, Object input, ItemStack slag, int time, int energyPerTick, Object... additives) {
+    public static ArcFurnaceRecipe addRecipe(ItemStack output, Object input, ItemStack slag, int time,
+        int energyPerTick, Object... additives) {
         ArcFurnaceRecipe recipe = new ArcFurnaceRecipe(output, input, slag, time, energyPerTick, additives);
         if (recipe.input != null) recipeList.add(recipe);
         return recipe;
@@ -131,16 +133,20 @@ public class ArcFurnaceRecipe {
     }
 
     public static ArrayList recyclingAllowed = new ArrayList();
+
     /**
-     * Set an item/oredict-entry to be considered for recycling in the arc furnace. Tools and Armor should usually be auto-detected
+     * Set an item/oredict-entry to be considered for recycling in the arc furnace. Tools and Armor should usually be
+     * auto-detected
      */
     public static void allowItemForRecycling(Object stack) {
         recyclingAllowed.add(ApiUtils.convertToValidRecipeInput(stack));
     }
 
     public static ArrayList invalidRecyclingOutput = new ArrayList();
+
     /**
-     * Set an item/oredict-entry to be an invalid output for the recycling process. Used for magical ingots that should be reclaimable or similar
+     * Set an item/oredict-entry to be an invalid output for the recycling process. Used for magical ingots that should
+     * be reclaimable or similar
      */
     public static void makeItemInvalidRecyclingOutput(Object stack) {
         invalidRecyclingOutput.add(ApiUtils.convertToValidRecipeInput(stack));

@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 5.0.0
  */
 public class ModelConnectorStructural extends ModelBase {
+
     public ModelRenderer side1;
     public ModelRenderer base;
     public ModelRenderer conncetionside1;
@@ -50,12 +51,12 @@ public class ModelConnectorStructural extends ModelBase {
 
     @Override
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-        //        this.Connection.render(f5);
+        // this.Connection.render(f5);
         this.base.render(f5);
-        //        this.side1.render(f5);
-        //        this.Csonnectionside2.render(f5);
-        //        this.conncetionside1.render(f5);
-        //        this.side2.render(f5);
+        // this.side1.render(f5);
+        // this.Csonnectionside2.render(f5);
+        // this.conncetionside1.render(f5);
+        // this.side2.render(f5);
     }
 
     /**

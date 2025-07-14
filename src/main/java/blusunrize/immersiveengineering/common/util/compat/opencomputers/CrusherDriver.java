@@ -1,5 +1,8 @@
 package blusunrize.immersiveengineering.common.util.compat.opencomputers;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityCrusher;
 import li.cil.oc.api.machine.Arguments;
@@ -8,8 +11,6 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.prefab.DriverTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class CrusherDriver extends DriverTileEntity {
 
@@ -21,11 +22,11 @@ public class CrusherDriver extends DriverTileEntity {
             if (pos == 9) {
                 TileEntityCrusher crush = (TileEntityCrusher) te;
                 return new CrusherEnvironment(
-                        w,
-                        crush.xCoord - crush.offset[0],
-                        crush.yCoord - crush.offset[1],
-                        crush.zCoord - crush.offset[2],
-                        TileEntityCrusher.class);
+                    w,
+                    crush.xCoord - crush.offset[0],
+                    crush.yCoord - crush.offset[1],
+                    crush.zCoord - crush.offset[2],
+                    TileEntityCrusher.class);
             }
         }
         return null;
@@ -37,6 +38,7 @@ public class CrusherDriver extends DriverTileEntity {
     }
 
     public class CrusherEnvironment extends ManagedEnvironmentIE<TileEntityCrusher> {
+
         public CrusherEnvironment(World w, int x, int y, int z, Class<? extends TileEntityIEBase> teClass) {
             super(w, x, y, z, teClass);
         }
@@ -49,17 +51,17 @@ public class CrusherDriver extends DriverTileEntity {
 
         @Callback(doc = "function():number -- get energy storage capacity")
         public Object[] getEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().energyStorage.getEnergyStored()};
+            return new Object[] { getTileEntity().energyStorage.getEnergyStored() };
         }
 
         @Callback(doc = "function():number -- get currently stored energy")
         public Object[] getMaxEnergyStored(Context context, Arguments args) {
-            return new Object[] {getTileEntity().energyStorage.getMaxEnergyStored()};
+            return new Object[] { getTileEntity().energyStorage.getMaxEnergyStored() };
         }
 
         @Callback(doc = "function():boolean -- get whether the crusher is currently crushing items")
         public Object[] isActive(Context context, Arguments args) {
-            return new Object[] {getTileEntity().active};
+            return new Object[] { getTileEntity().active };
         }
 
         @Callback(doc = "function(n:int):table -- get the n'th stack in the input queue")
@@ -68,7 +70,7 @@ public class CrusherDriver extends DriverTileEntity {
             TileEntityCrusher master = getTileEntity();
             if (slot < 1 || slot > master.inputs.size())
                 throw new IllegalArgumentException("The requested place in the queue does not exist");
-            return new Object[] {master.inputs.get(slot - 1)};
+            return new Object[] { master.inputs.get(slot - 1) };
         }
 
         @Callback(doc = "function():int -- get the current grinding progress in RF")
@@ -77,7 +79,7 @@ public class CrusherDriver extends DriverTileEntity {
             if (master.inputs.isEmpty()) throw new IllegalArgumentException("The crusher doesn't have any inputs");
             int time = master.getRecipeTime(master.inputs.get(0)) - master.process;
             if (time <= 0) throw new IllegalArgumentException("The current crusher recipe is invalid");
-            return new Object[] {time};
+            return new Object[] { time };
         }
 
         @Callback(doc = "function():int -- get the grinding progress in RF at which the current grinding will be done")
@@ -86,12 +88,12 @@ public class CrusherDriver extends DriverTileEntity {
             if (master.inputs.isEmpty()) throw new IllegalArgumentException("The crusher doesn't have any inputs");
             int time = master.getRecipeTime(master.inputs.get(0));
             if (time <= 0) throw new IllegalArgumentException("The current crusher recipe is invalid");
-            return new Object[] {time};
+            return new Object[] { time };
         }
 
         @Callback(doc = "function():int -- get the length of the input queue")
         public Object[] getQueueLength(Context context, Arguments args) {
-            return new Object[] {getTileEntity().inputs.size()};
+            return new Object[] { getTileEntity().inputs.size() };
         }
 
         @Override

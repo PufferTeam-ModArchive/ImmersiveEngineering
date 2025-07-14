@@ -1,7 +1,5 @@
 package blusunrize.immersiveengineering.client.render;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
@@ -13,10 +11,15 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import blusunrize.immersiveengineering.client.ClientUtils;
+import cofh.api.energy.IEnergyReceiver;
+
 public class ItemRenderVoltmeter implements IItemRenderer {
+
     WavefrontObject model = ClientUtils.getModel("immersiveengineering:models/voltmeter.obj");
 
     @Override
@@ -65,8 +68,8 @@ public class ItemRenderVoltmeter implements IItemRenderer {
         if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
             MovingObjectPosition mop = ClientUtils.mc().objectMouseOver;
             if (mop != null) {
-                TileEntity tileEntity =
-                        ClientUtils.mc().thePlayer.worldObj.getTileEntity(mop.blockX, mop.blockY, mop.blockZ);
+                TileEntity tileEntity = ClientUtils.mc().thePlayer.worldObj
+                    .getTileEntity(mop.blockX, mop.blockY, mop.blockZ);
                 if (tileEntity instanceof IEnergyReceiver) {
                     ForgeDirection fd = ForgeDirection.getOrientation(mop.sideHit);
                     int maxStorage = ((IEnergyReceiver) tileEntity).getMaxEnergyStored(fd);
@@ -89,8 +92,11 @@ public class ItemRenderVoltmeter implements IItemRenderer {
             GL11.glTranslatef(0.0F, 0.0F * f12 - (1.0F - 1.0f) * 1.2F + 0.04F, -0.9F * f12);
             GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-            ClientUtils.bindTexture(player.getLocationSkin().getResourceDomain() + ":"
-                    + player.getLocationSkin().getResourcePath());
+            ClientUtils.bindTexture(
+                player.getLocationSkin()
+                    .getResourceDomain() + ":"
+                    + player.getLocationSkin()
+                        .getResourcePath());
 
             for (int arm = 0; arm < 2; ++arm) {
                 int l = arm * 2 - 1;

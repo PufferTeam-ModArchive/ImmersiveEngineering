@@ -1,25 +1,25 @@
 package blusunrize.immersiveengineering.common.crafting;
 
-import blusunrize.immersiveengineering.common.IEContent;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
+import blusunrize.immersiveengineering.common.IEContent;
+
 public class RecipeRevolver implements IRecipe {
+
     @Override
     public boolean matches(InventoryCrafting inv, World world) {
         ItemStack revolver = null;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stackInSlot = inv.getStackInSlot(i);
             if (stackInSlot != null) {
-                if (revolver == null
-                        && OreDictionary.itemMatches(
-                                new ItemStack(IEContent.itemRevolver, 1, OreDictionary.WILDCARD_VALUE),
-                                stackInSlot,
-                                false)
-                        && stackInSlot.getItemDamage() != 1) revolver = stackInSlot;
+                if (revolver == null && OreDictionary.itemMatches(
+                    new ItemStack(IEContent.itemRevolver, 1, OreDictionary.WILDCARD_VALUE),
+                    stackInSlot,
+                    false) && stackInSlot.getItemDamage() != 1) revolver = stackInSlot;
                 else return false;
             }
         }
@@ -32,12 +32,10 @@ public class RecipeRevolver implements IRecipe {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stackInSlot = inv.getStackInSlot(i);
             if (stackInSlot != null) {
-                if (revolver == null
-                        && OreDictionary.itemMatches(
-                                new ItemStack(IEContent.itemRevolver, 1, OreDictionary.WILDCARD_VALUE),
-                                stackInSlot,
-                                false)
-                        && stackInSlot.getItemDamage() != 1) revolver = stackInSlot;
+                if (revolver == null && OreDictionary.itemMatches(
+                    new ItemStack(IEContent.itemRevolver, 1, OreDictionary.WILDCARD_VALUE),
+                    stackInSlot,
+                    false) && stackInSlot.getItemDamage() != 1) revolver = stackInSlot;
                 else return null;
             }
         }

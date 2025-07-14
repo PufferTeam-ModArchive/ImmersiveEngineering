@@ -1,16 +1,19 @@
 package blusunrize.immersiveengineering.client.render;
 
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+
 import blusunrize.immersiveengineering.client.models.ModelIEObj;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockMetalDecoration;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityLantern;
 import blusunrize.immersiveengineering.common.util.chickenbones.Matrix4;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 
 public class TileRenderLantern extends TileRenderImmersiveConnectable {
+
     ModelIEObj model = new ModelIEObj("immersiveengineering:models/lantern.obj") {
+
         @Override
         public IIcon getBlockIcon(String groupName) {
             return IEContent.blockMetalDecoration.getIcon(0, BlockMetalDecoration.META_lantern);
@@ -22,7 +25,7 @@ public class TileRenderLantern extends TileRenderImmersiveConnectable {
         translationMatrix.translate(.5, 0, .5);
 
         TileEntityLantern lantern = (TileEntityLantern) tile;
-        String[] render = new String[] {"base", ""};
+        String[] render = new String[] { "base", "" };
 
         render[1] = lantern.facing == 1 ? "attach_b" : lantern.facing == 0 ? "attach_t" : "attach_s";
         switch (lantern.facing) {

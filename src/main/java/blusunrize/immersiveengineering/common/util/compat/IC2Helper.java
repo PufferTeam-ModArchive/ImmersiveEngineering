@@ -1,5 +1,10 @@
 package blusunrize.immersiveengineering.common.util.compat;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
@@ -8,12 +13,9 @@ import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class IC2Helper extends IECompatModule {
+
     public static void loadIC2Tile(TileEntity tile) {
         MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile) tile));
     }
@@ -34,8 +36,8 @@ public class IC2Helper extends IECompatModule {
         return ret instanceof IEnergySink && ((IEnergySink) ret).acceptsEnergyFrom(tile, fd);
     }
 
-    public static double injectEnergy(
-            TileEntity sink, ForgeDirection fd, double amount, double voltage, boolean simulate) {
+    public static double injectEnergy(TileEntity sink, ForgeDirection fd, double amount, double voltage,
+        boolean simulate) {
         TileEntity ret = EnergyNet.instance.getTileEntity(sink.getWorldObj(), sink.xCoord, sink.yCoord, sink.zCoord);
         if (ret == null || !(ret instanceof IEnergySink)) return amount;
         double demanded = Math.max(0, ((IEnergySink) ret).getDemandedEnergy());

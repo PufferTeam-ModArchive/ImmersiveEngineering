@@ -1,5 +1,10 @@
 package blusunrize.immersiveengineering.common.util.network;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.Vec3;
+
 import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.entities.EntitySkylineHook;
@@ -8,12 +13,9 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.Vec3;
 
 public class MessageSkyhookSync implements IMessage {
+
     int entityID;
     Connection connection;
     ChunkCoordinates target;
@@ -60,6 +62,7 @@ public class MessageSkyhookSync implements IMessage {
     }
 
     public static class Handler implements IMessageHandler<MessageSkyhookSync, IMessage> {
+
         @Override
         public IMessage onMessage(MessageSkyhookSync message, MessageContext ctx) {
             Entity ent = ClientUtils.mc().theWorld.getEntityByID(message.entityID);

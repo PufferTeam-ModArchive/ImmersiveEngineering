@@ -1,5 +1,14 @@
 package blusunrize.immersiveengineering.common.blocks;
 
+import java.util.Set;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.DimensionBlockPos;
 import blusunrize.immersiveengineering.api.TargetingInfo;
@@ -11,16 +20,10 @@ import blusunrize.immersiveengineering.api.energy.ImmersiveNetHandler.Connection
 import blusunrize.immersiveengineering.api.energy.WireType;
 import blusunrize.immersiveengineering.common.util.IELogger;
 import blusunrize.immersiveengineering.common.util.Utils;
-import java.util.Set;
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 
 public abstract class TileEntityImmersiveConnectable extends TileEntityIEBase
-        implements IImmersiveConnectable, IImmersiveConnectablePrecisePassthrough {
+    implements IImmersiveConnectable, IImmersiveConnectablePrecisePassthrough {
+
     protected WireType limitType = null;
 
     protected boolean canTakeLV() {
@@ -38,7 +41,8 @@ public abstract class TileEntityImmersiveConnectable extends TileEntityIEBase
     @Override
     public void invalidate() {
         super.invalidate();
-        if (worldObj != null && (!worldObj.isRemote || !Minecraft.getMinecraft().isSingleplayer()))
+        if (worldObj != null && (!worldObj.isRemote || !Minecraft.getMinecraft()
+            .isSingleplayer()))
             ImmersiveNetHandler.INSTANCE.clearAllConnectionsFor(Utils.toCC(this), worldObj, !worldObj.isRemote);
     }
 
@@ -130,7 +134,9 @@ public abstract class TileEntityImmersiveConnectable extends TileEntityIEBase
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
         NBTTagCompound nbt = pkt.func_148857_g();
         this.readFromNBT(nbt);
-        if (worldObj != null && worldObj.isRemote && !Minecraft.getMinecraft().isSingleplayer()) {
+        if (worldObj != null && worldObj.isRemote
+            && !Minecraft.getMinecraft()
+                .isSingleplayer()) {
             NBTTagList connectionList = nbt.getTagList("connectionList", 10);
             ImmersiveNetHandler.INSTANCE.clearConnectionsOriginatingFrom(Utils.toCC(this), worldObj);
             for (int i = 0; i < connectionList.tagCount(); i++) {
@@ -157,65 +163,65 @@ public abstract class TileEntityImmersiveConnectable extends TileEntityIEBase
         try {
             if (nbt.hasKey("limitType")) limitType = ApiUtils.getWireTypeFromNBT(nbt, "limitType");
 
-            //			int[] prevPos = nbt.getIntArray("prevPos");
-            //			if(prevPos!=null && prevPos.length>3 && FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER)
-            //			{
-            //				//				if(worldObj.provider.dimensionId!=prevPos[0])
-            //				//				{
-            //				//					ImmersiveNetHandler.clearAllConnectionsFor(Utils.toCC(this),worldObj);
-            //				//				}
-            //				//				else
-            //				World worldTest =
+            // int[] prevPos = nbt.getIntArray("prevPos");
+            // if(prevPos!=null && prevPos.length>3 && FMLCommonHandler.instance().getEffectiveSide()==Side.SERVER)
+            // {
+            // // if(worldObj.provider.dimensionId!=prevPos[0])
+            // // {
+            // // ImmersiveNetHandler.clearAllConnectionsFor(Utils.toCC(this),worldObj);
+            // // }
+            // // else
+            // World worldTest =
             // FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(prevPos[0]);
-            //				if(xCoord!=prevPos[1] || yCoord!=prevPos[2] || zCoord!=prevPos[3])
-            //				{
-            //					IELogger.info("Tile was moved! Attmpting to update connections...");
+            // if(xCoord!=prevPos[1] || yCoord!=prevPos[2] || zCoord!=prevPos[3])
+            // {
+            // IELogger.info("Tile was moved! Attmpting to update connections...");
             //
-            //					if(worldTest.getTileEntity(prevPos[1],prevPos[2],prevPos[3]) instanceof IImmersiveConnectable)
-            //					{
-            //						IELogger.info("Someone else has taken my place");
-            //					}
+            // if(worldTest.getTileEntity(prevPos[1],prevPos[2],prevPos[3]) instanceof IImmersiveConnectable)
+            // {
+            // IELogger.info("Someone else has taken my place");
+            // }
             //
-            //					Iterator<Connection> it = ImmersiveNetHandler.getAllConnections(worldTest).iterator();
-            //					ChunkCoordinates node = new ChunkCoordinates(prevPos[1],prevPos[2],prevPos[3]);
-            //					while(it.hasNext())
-            //					{
-            //						Connection con = it.next();
-            //						if(node.equals(con.start))
-            //							con.start = Utils.toCC(this);
-            //						if(node.equals(con.end))
-            //							con.end = Utils.toCC(this);
-            //						//						if(node.equals(con.start) || node.equals(con.end))
-            //						//						{
-            //						////							it.remove();
-            //						//							//if(node.equals(con.start) && toIIC(con.end, world)!=null &&
+            // Iterator<Connection> it = ImmersiveNetHandler.getAllConnections(worldTest).iterator();
+            // ChunkCoordinates node = new ChunkCoordinates(prevPos[1],prevPos[2],prevPos[3]);
+            // while(it.hasNext())
+            // {
+            // Connection con = it.next();
+            // if(node.equals(con.start))
+            // con.start = Utils.toCC(this);
+            // if(node.equals(con.end))
+            // con.end = Utils.toCC(this);
+            // // if(node.equals(con.start) || node.equals(con.end))
+            // // {
+            // //// it.remove();
+            // // //if(node.equals(con.start) && toIIC(con.end, world)!=null &&
             // getConnections(world,con.end).isEmpty())
-            //						////							iic = toIIC(con.end, worldObj);
-            //						////							if(iic!=null)
-            //						////								iic.removeCable(con.cableType);
-            //						//							//if(node.equals(con.end) && toIIC(con.start, world)!=null &&
+            // //// iic = toIIC(con.end, worldObj);
+            // //// if(iic!=null)
+            // //// iic.removeCable(con.cableType);
+            // // //if(node.equals(con.end) && toIIC(con.start, world)!=null &&
             // getConnections(world,con.start).isEmpty())
-            //						////							iic = toIIC(con.start, worldObj);
-            //						////							if(iic!=null)
-            //						////								iic.removeCable(con.cableType);
-            //						//
-            //						//							if(node.equals(con.end))
-            //						//							{
-            //						//								double dx = node.posX+.5+Math.signum(con.start.posX-con.end.posX);
-            //						//								double dy = node.posY+.5+Math.signum(con.start.posY-con.end.posY);
-            //						//								double dz = node.posZ+.5+Math.signum(con.start.posZ-con.end.posZ);
-            //						//								worldObj.spawnEntityInWorld(new EntityItem(worldObj, dx,dy,dz, new
+            // //// iic = toIIC(con.start, worldObj);
+            // //// if(iic!=null)
+            // //// iic.removeCable(con.cableType);
+            // //
+            // // if(node.equals(con.end))
+            // // {
+            // // double dx = node.posX+.5+Math.signum(con.start.posX-con.end.posX);
+            // // double dy = node.posY+.5+Math.signum(con.start.posY-con.end.posY);
+            // // double dz = node.posZ+.5+Math.signum(con.start.posZ-con.end.posZ);
+            // // worldObj.spawnEntityInWorld(new EntityItem(worldObj, dx,dy,dz, new
             // ItemStack(IEContent.itemWireCoil,1,con.cableType.ordinal())));
-            //						//							}
-            //						//						}
-            //					}
-            //					IESaveData.setDirty(worldTest.provider.dimensionId);
-            //					//					ImmersiveNetHandler.indirectConnections.clear();
-            //				}
-            //			}
+            // // }
+            // // }
+            // }
+            // IESaveData.setDirty(worldTest.provider.dimensionId);
+            // // ImmersiveNetHandler.indirectConnections.clear();
+            // }
+            // }
         } catch (Exception e) {
             IELogger.error(
-                    "TileEntityImmersiveConenctable encountered MASSIVE error reading NBT. You shoudl probably report this.");
+                "TileEntityImmersiveConenctable encountered MASSIVE error reading NBT. You shoudl probably report this.");
         }
     }
 
@@ -225,11 +231,11 @@ public abstract class TileEntityImmersiveConnectable extends TileEntityIEBase
             if (limitType != null) nbt.setString("limitType", limitType.getUniqueName());
 
             if (this.worldObj != null) {
-                nbt.setIntArray("prevPos", new int[] {this.worldObj.provider.dimensionId, xCoord, yCoord, zCoord});
+                nbt.setIntArray("prevPos", new int[] { this.worldObj.provider.dimensionId, xCoord, yCoord, zCoord });
             }
         } catch (Exception e) {
             IELogger.error(
-                    "TileEntityImmersiveConenctable encountered MASSIVE error writing NBT. You should probably report this.");
+                "TileEntityImmersiveConenctable encountered MASSIVE error writing NBT. You should probably report this.");
         }
     }
 }

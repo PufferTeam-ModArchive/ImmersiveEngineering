@@ -1,27 +1,28 @@
 package blusunrize.immersiveengineering.common.crafting;
 
-import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
+import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
+import blusunrize.immersiveengineering.common.IEContent;
+import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+
 public class RecipeShaderBags implements IRecipe {
+
     @Override
     public boolean matches(InventoryCrafting inv, World world) {
         ItemStack stack = null;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stackInSlot = inv.getStackInSlot(i);
-            if (stackInSlot != null)
-                if (stack == null) {
-                    if (IEContent.itemShaderBag.equals(stackInSlot.getItem())
-                            && ItemNBTHelper.hasKey(stackInSlot, "rarity")) stack = stackInSlot;
-                    if (IEContent.itemShader.equals(stackInSlot.getItem())
-                            && ItemNBTHelper.hasKey(stackInSlot, "shader_name")) stack = stackInSlot;
-                } else return false;
+            if (stackInSlot != null) if (stack == null) {
+                if (IEContent.itemShaderBag.equals(stackInSlot.getItem())
+                    && ItemNBTHelper.hasKey(stackInSlot, "rarity")) stack = stackInSlot;
+                if (IEContent.itemShader.equals(stackInSlot.getItem())
+                    && ItemNBTHelper.hasKey(stackInSlot, "shader_name")) stack = stackInSlot;
+            } else return false;
         }
         return stack != null;
     }
@@ -32,7 +33,8 @@ public class RecipeShaderBags implements IRecipe {
             ItemStack stackInSlot = inv.getStackInSlot(i);
             if (stackInSlot != null) {
                 ItemStack output = new ItemStack(
-                        IEContent.itemShaderBag, IEContent.itemShaderBag.equals(stackInSlot.getItem()) ? 2 : 1);
+                    IEContent.itemShaderBag,
+                    IEContent.itemShaderBag.equals(stackInSlot.getItem()) ? 2 : 1);
                 EnumRarity next = ShaderRegistry.getLowerRarity(stackInSlot.getRarity());
                 if (next != null) {
                     ItemNBTHelper.setString(output, "rarity", next.toString());

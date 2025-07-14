@@ -3,6 +3,7 @@ package blusunrize.immersiveengineering.common.util.chickenbones;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.model.obj.Vertex;
 
@@ -25,6 +26,7 @@ import net.minecraftforge.client.model.obj.Vertex;
 // Slight adjustments have been made to fit my code.
 
 public class Matrix4 {
+
     // m<row><column>
     public double m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33;
 
@@ -32,23 +34,8 @@ public class Matrix4 {
         m00 = m11 = m22 = m33 = 1;
     }
 
-    public Matrix4(
-            double d00,
-            double d01,
-            double d02,
-            double d03,
-            double d10,
-            double d11,
-            double d12,
-            double d13,
-            double d20,
-            double d21,
-            double d22,
-            double d23,
-            double d30,
-            double d31,
-            double d32,
-            double d33) {
+    public Matrix4(double d00, double d01, double d02, double d03, double d10, double d11, double d12, double d13,
+        double d20, double d21, double d22, double d23, double d30, double d31, double d32, double d33) {
         m00 = d00;
         m01 = d01;
         m02 = d02;
@@ -364,13 +351,40 @@ public class Matrix4 {
     @Override
     public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "[" + new BigDecimal(m00, cont) + "," + new BigDecimal(m01, cont) + "," + new BigDecimal(m02, cont) + ","
-                + new BigDecimal(m03, cont) + "]\n" + "["
-                + new BigDecimal(m10, cont) + "," + new BigDecimal(m11, cont) + "," + new BigDecimal(m12, cont) + ","
-                + new BigDecimal(m13, cont) + "]\n" + "["
-                + new BigDecimal(m20, cont) + "," + new BigDecimal(m21, cont) + "," + new BigDecimal(m22, cont) + ","
-                + new BigDecimal(m23, cont) + "]\n" + "["
-                + new BigDecimal(m30, cont) + "," + new BigDecimal(m31, cont) + "," + new BigDecimal(m32, cont) + ","
-                + new BigDecimal(m33, cont) + "]";
+        return "[" + new BigDecimal(m00, cont)
+            + ","
+            + new BigDecimal(m01, cont)
+            + ","
+            + new BigDecimal(m02, cont)
+            + ","
+            + new BigDecimal(m03, cont)
+            + "]\n"
+            + "["
+            + new BigDecimal(m10, cont)
+            + ","
+            + new BigDecimal(m11, cont)
+            + ","
+            + new BigDecimal(m12, cont)
+            + ","
+            + new BigDecimal(m13, cont)
+            + "]\n"
+            + "["
+            + new BigDecimal(m20, cont)
+            + ","
+            + new BigDecimal(m21, cont)
+            + ","
+            + new BigDecimal(m22, cont)
+            + ","
+            + new BigDecimal(m23, cont)
+            + "]\n"
+            + "["
+            + new BigDecimal(m30, cont)
+            + ","
+            + new BigDecimal(m31, cont)
+            + ","
+            + new BigDecimal(m32, cont)
+            + ","
+            + new BigDecimal(m33, cont)
+            + "]";
     }
 }
