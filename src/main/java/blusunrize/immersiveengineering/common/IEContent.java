@@ -227,42 +227,9 @@ public class IEContent {
     public static boolean IEBiodiesel = false;
 
     public static void preInit() {
-        blockOres = (BlockIEBase) new BlockIESimple(
-            "ore",
-            Material.rock,
-            ItemBlockIEBase.class,
-            "Copper",
-            "Aluminum",
-            "Lead",
-            "Silver",
-            "Nickel").setHardness(3f)
-                .setResistance(5f);
-        blockStorage = (BlockIEBase) new BlockStorage(
-            "Copper",
-            "Aluminum",
-            "Lead",
-            "Silver",
-            "Nickel",
-            "Constantan",
-            "Electrum",
-            "Steel",
-            "CoilCopper",
-            "CoilElectrum",
-            "CoilHV").setHardness(4f)
-                .setResistance(5f);
-        blockStorageSlabs = (BlockIEBase) new BlockIESlabs(
-            "storageSlab",
-            "storage_",
-            Material.iron,
-            "Copper",
-            "Aluminum",
-            "Lead",
-            "Silver",
-            "Nickel",
-            "Constantan",
-            "Electrum",
-            "Steel").setHardness(4f)
-                .setResistance(5f);
+        blockStorage = (BlockIEBase) new BlockStorage("Aluminum", "Steel", "CoilCopper", "CoilElectrum", "CoilHV")
+            .setHardness(4f)
+            .setResistance(5f);
         blockStoneSlabs = (BlockIEBase) new BlockIESlabs(
             "stoneSlab",
             "stoneDecoration_",
@@ -302,48 +269,7 @@ public class IEContent {
         blockFakeLight = new BlockFakeLight();
         blockClothDevice = new BlockClothDevices();
 
-        itemMetal = new ItemIEBase(
-            "metal",
-            64,
-            "ingotCopper",
-            "ingotAluminum",
-            "ingotLead",
-            "ingotSilver",
-            "ingotNickel",
-            "ingotConstantan",
-            "ingotElectrum",
-            "ingotSteel",
-            "dustIron",
-            "dustGold",
-            "dustCopper",
-            "dustAluminum",
-            "dustLead",
-            "dustSilver",
-            "dustNickel",
-            "dustConstantan",
-            "dustElectrum",
-            "dustCoke",
-            "dustQuartz",
-            "dustHOPGraphite",
-            "ingotHOPGraphite",
-            "nuggetIron",
-            "nuggetCopper",
-            "nuggetAluminum",
-            "nuggetLead",
-            "nuggetSilver",
-            "nuggetNickel",
-            "nuggetConstantan",
-            "nuggetElectrum",
-            "nuggetSteel",
-            "plateIron",
-            "plateCopper",
-            "plateAluminum",
-            "plateLead",
-            "plateSilver",
-            "plateNickel",
-            "plateConstantan",
-            "plateElectrum",
-            "plateSteel").setMetaHidden(31, 34, 35, 37);
+        itemMetal = new ItemIEBase("metal", 64, "dustHOPGraphite", "ingotHOPGraphite");
 
         itemMaterial = new ItemIEBase(
             "material",
@@ -460,19 +386,6 @@ public class IEContent {
             IEBiodiesel = true;
         }
 
-        // Ore Dict
-        registerToOreDict("ore", blockOres);
-        registerToOreDict("block", blockStorage, 0, 1, 2, 3, 4, 5, 6, 7);
-        registerToOreDict("slab", blockStorageSlabs);
-        registerToOreDict("", itemMetal);
-        registerOre(
-            "Cupronickel",
-            null,
-            new ItemStack(itemMetal, 1, 5),
-            new ItemStack(itemMetal, 1, 15),
-            new ItemStack(blockStorage, 1, 5),
-            new ItemStack(itemMetal, 1, 27));
-
         OreDictionary.registerOre("seedIndustrialHemp", new ItemStack(itemSeeds));
         OreDictionary.registerOre("treatedStick", new ItemStack(itemMaterial, 1, 0));
         OreDictionary.registerOre("fabricHemp", new ItemStack(itemMaterial, 1, 4));
@@ -534,29 +447,6 @@ public class IEContent {
                 new ItemStack(itemFluidContainers, 1, 7),
                 new ItemStack(Items.bucket));
         } ;
-        // Mining
-        blockOres.setHarvestLevel("pickaxe", 1, 0); // Copper
-        blockOres.setHarvestLevel("pickaxe", 1, 1); // Bauxite
-        blockOres.setHarvestLevel("pickaxe", 2, 2); // Lead
-        blockOres.setHarvestLevel("pickaxe", 2, 3); // Silver
-        blockOres.setHarvestLevel("pickaxe", 2, 4); // Nickel
-        blockStorage.setHarvestLevel("pickaxe", 1, 0); // Copper
-        blockStorage.setHarvestLevel("pickaxe", 1, 1); // Aluminium
-        blockStorage.setHarvestLevel("pickaxe", 2, 2); // Lead
-        blockStorage.setHarvestLevel("pickaxe", 2, 3); // Silver
-        blockStorage.setHarvestLevel("pickaxe", 2, 4); // Nickel
-        blockStorage.setHarvestLevel("pickaxe", 2, 5); // Constantan
-        blockStorage.setHarvestLevel("pickaxe", 2, 6); // Electrum
-        blockStorage.setHarvestLevel("pickaxe", 2, 7); // Steel
-        blockStorage.setHarvestLevel("pickaxe", 2, 8); // CoilCopper
-        blockStorage.setHarvestLevel("pickaxe", 2, 9); // CoilElectrum
-        blockStorage.setHarvestLevel("pickaxe", 2, 10); // CoilHV
-
-        addConfiguredWorldgen(blockOres, 0, "ore_copper");
-        addConfiguredWorldgen(blockOres, 1, "ore_bauxite");
-        addConfiguredWorldgen(blockOres, 2, "ore_lead");
-        addConfiguredWorldgen(blockOres, 3, "ore_silver");
-        addConfiguredWorldgen(blockOres, 4, "ore_nickel");
     }
 
     public static void init() {

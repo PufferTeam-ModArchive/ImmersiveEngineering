@@ -415,7 +415,7 @@ public abstract class ManualPages implements IManualPage {
             this.stacks = stacks;
             this.recipePage = new int[stacks.length];
             this.yOff = new int[stacks.length];
-            recalculateCraftingRecipes();
+            // recalculateCraftingRecipes();
         }
 
         @Override
